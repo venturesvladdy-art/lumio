@@ -28,8 +28,17 @@ export interface DrillArea {
 }
 
 const QUESTION_COUNT = 8;
-/** Stage B: a single-area drill is a focused batch of this many questions. */
-const DRILL_COUNT = 20;
+/**
+ * Stage B: questions per single-area drill. Kept modest by default so the whole
+ * generation (questions + briefs + free-text rubrics) finishes inside the
+ * serverless time limit — a 20-question drill was timing out on Vercel and the
+ * client silently fell back to the un-persisted local bank. Raise via
+ * SKILLSPRINTER_DRILL_COUNT if you're on a plan with longer function limits.
+ */
+const DRILL_COUNT = Math.max(
+  4,
+  Math.min(20, Number(process.env.SKILLSPRINTER_DRILL_COUNT) || 10)
+);
 const XP_BY_DIFFICULTY: Record<Difficulty, number> = {
   beginner: 10,
   intermediate: 15,
@@ -273,7 +282,8 @@ export async function generateWithClaude(
   // output is requested via output_config.format (json_schema).
   const params = {
     model,
-    max_tokens: 16000,
+    // Bounded so a rambling response can't blow past the function time limit.
+    max_tokens: 10000,
     system: [
       {
         type: "text",

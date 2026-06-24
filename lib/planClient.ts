@@ -20,7 +20,9 @@ export async function requestPlan({
 }): Promise<PlanResult> {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 75_000);
+    // Wait long enough for server-side generation to finish; otherwise we abort
+    // and silently fall back to the local bank (which never persists).
+    const timeout = setTimeout(() => controller.abort(), 150_000);
     const res = await fetch("/api/generate-plan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

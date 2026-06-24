@@ -8,8 +8,9 @@ import type { OnboardingAnswers, PlanTier } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-// Opus generation can take a while; give the function room on Vercel.
-export const maxDuration = 60;
+// Drill generation can take a while; request the max the plan allows. (Vercel
+// caps this at the account's limit — 60s on Hobby, up to 300s on Pro.)
+export const maxDuration = 300;
 
 const BodySchema = z.object({
   skillId: z.string().min(1),
