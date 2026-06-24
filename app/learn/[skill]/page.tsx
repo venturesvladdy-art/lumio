@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import type {
   Difficulty,
@@ -442,15 +443,11 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
         {plan.modules.map((m, i) => {
           const playable = m.itemIds.length > 0;
           const done = m.itemIds.filter((x) => completed.has(x)).length;
+          const allDone = playable && done === m.itemIds.length;
           const pct = playable ? Math.round((done / m.itemIds.length) * 100) : 0;
-          return (
-            <div
-              key={m.id}
-              className={cn(
-                "flex items-center gap-4 rounded-2xl border p-4",
-                playable ? "border-slate-200 bg-white" : "border-slate-100 bg-paper"
-              )}
-            >
+
+          const rowBody = (
+            <>
               <span
                 className={cn(
                   "grid h-10 w-10 shrink-0 place-items-center rounded-xl text-sm font-bold",
@@ -460,7 +457,7 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
                 )}
               >
                 {playable ? (
-                  done === m.itemIds.length && done > 0 ? (
+                  allDone ? (
                     <Icon name="CheckCircle2" className="h-5 w-5 text-emerald-500" />
                   ) : (
                     i + 1
@@ -479,14 +476,42 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
                 {playable ? (
                   <div className="mt-2 flex items-center gap-2">
                     <ProgressBar value={pct} className="h-1.5" />
-                    <Pill tone="emerald" className="shrink-0">
-                      {t("plan.playable")}
-                    </Pill>
+                    <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-brand-600">
+                      {allDone ? t("dashboard.review") : t("dashboard.continue")}
+                      <Icon
+                        name="ChevronRight"
+                        className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+                      />
+                    </span>
                   </div>
                 ) : (
                   <p className="mt-1 text-xs text-slate-400">{t("plan.planned")}</p>
                 )}
               </div>
+            </>
+          );
+
+          if (playable) {
+            const href = `/learn/${skill.id}/session?module=${m.id}${
+              allDone ? "&review=1" : ""
+            }`;
+            return (
+              <Link
+                key={m.id}
+                href={href}
+                className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300 hover:bg-brand-50/40 focusable"
+              >
+                {rowBody}
+              </Link>
+            );
+          }
+
+          return (
+            <div
+              key={m.id}
+              className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-paper p-4"
+            >
+              {rowBody}
             </div>
           );
         })}

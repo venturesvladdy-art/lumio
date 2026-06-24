@@ -269,38 +269,57 @@ export async function persistCurriculum(opts: {
   const { userId, skill, result, source, model, answers } = opts;
   const plan = result.plan;
 
-  const created = await prisma.curriculum.create({
-    data: {
-      userId,
-      skillId: skill.id,
-      skillName: skill.name.en,
-      level: plan.level,
-      focus: plan.focus,
-      summaryEn: plan.summary.en,
-      summaryPl: plan.summary.pl,
-      totalPlanned: plan.totalPlanned,
-      source,
-      model: source === "claude" ? model : null,
-      answers: answers as object,
-      questions: {
-        create: result.items.map((it, i) => ({
-          clientId: it.id,
-          skillId: it.skillId,
-          difficulty: it.difficulty,
-          questionEn: it.question.en,
-          questionPl: it.question.pl,
-          optionsEn: it.options.en,
-          optionsPl: it.options.pl,
-          correctIndex: it.correctIndex,
-          explanationEn: it.explanation.en,
-          explanationPl: it.explanation.pl,
-          xp: it.xp,
-          orderIndex: i,
-        })),
-      },
+  // Built without `answers` so we can retry without it if that column is
+  // missing from an older database (otherwise a single missing column would
+  // drop the whole curriculum and the skill would never reach the dashboard).
+  const baseData = {
+    userId,
+    skillId: skill.id,
+    skillName: skill.name.en,
+    level: plan.level,
+    focus: plan.focus,
+    summaryEn: plan.summary.en,
+    summaryPl: plan.summary.pl,
+    totalPlanned: plan.totalPlanned,
+    source,
+    model: source === "claude" ? model : null,
+    questions: {
+      create: result.items.map((it, i) => ({
+        clientId: it.id,
+        skillId: it.skillId,
+        difficulty: it.difficulty,
+        questionEn: it.question.en,
+        questionPl: it.question.pl,
+        optionsEn: it.options.en,
+        optionsPl: it.options.pl,
+        correctIndex: it.correctIndex,
+        explanationEn: it.explanation.en,
+        explanationPl: it.explanation.pl,
+        xp: it.xp,
+        orderIndex: i,
+      })),
     },
-    select: { id: true },
-  });
+  };
+
+  let created: { id: string };
+  try {
+    created = await prisma.curriculum.create({
+      data: { ...baseData, answers: answers as object },
+      select: { id: true },
+    });
+  } catch (e) {
+    // Most likely the `answers` column doesn't exist yet on this DB. Persist
+    // the curriculum anyway (upgrade-regeneration just can't use stored answers
+    // until you run: ALTER TABLE "Curriculum" ADD COLUMN "answers" JSONB;).
+    console.warn(
+      "[planGen] curriculum insert with answers failed; retrying without it:",
+      e
+    );
+    created = await prisma.curriculum.create({
+      data: baseData,
+      select: { id: true },
+    });
+  }
 
   await prisma.auditEvent
     .create({

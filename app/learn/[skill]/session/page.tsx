@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import type { QAItem } from "@/lib/types";
 import { resolveSkill } from "@/lib/skills";
 import { getItem } from "@/lib/content";
@@ -31,11 +31,25 @@ interface Toast {
 }
 
 export default function SessionPage() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <SessionInner />
+    </Suspense>
+  );
+}
+
+function SessionInner() {
   const params = useParams();
+  const search = useSearchParams();
   const t = useT();
   const tx = useTx();
   const { state, hydrated, recordAnswer } = useStore();
   const { ready: authReady, user } = useRequireAuth();
+
+  // Optional ?module=<id> scopes the session to one plan section; ?review=1
+  // replays it including already-answered questions.
+  const moduleId = search.get("module");
+  const reviewMode = search.get("review") === "1";
 
   const id = String(params.skill);
   const skill = useMemo(() => resolveSkill(id), [id]);
@@ -56,12 +70,15 @@ export default function SessionPage() {
     const generated = new Map(
       (progress.generatedItems ?? []).map((i) => [i.id, i] as const)
     );
-    const items = planItemIds(progress.plan)
+    const scopedIds = moduleId
+      ? progress.plan.modules.find((m) => m.id === moduleId)?.itemIds ?? []
+      : planItemIds(progress.plan);
+    const items = scopedIds
       .map((qid) => generated.get(qid) ?? getItem(qid))
       .filter((x): x is QAItem => Boolean(x))
-      .filter((x) => !done.has(x.id));
+      .filter((x) => reviewMode || !done.has(x.id));
     setQueue(items);
-  }, [hydrated, progress]);
+  }, [hydrated, progress, moduleId, reviewMode]);
 
   const [cursor, setCursor] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
