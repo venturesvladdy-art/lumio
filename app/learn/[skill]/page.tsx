@@ -25,7 +25,12 @@ import { LogoMark } from "@/components/ui/Logo";
 import { Pill, ProgressBar, SectionLabel } from "@/components/ui/primitives";
 import { ACCENT_TILE } from "@/components/ui/accent";
 
-type Phase = "loading" | "locked" | "questions" | "building" | "plan";
+type Phase = "loading" | "locked" | "questions" | "area" | "building" | "plan";
+
+interface Area {
+  id: string;
+  name: string;
+}
 
 const LEVEL_LABEL: Record<Difficulty, { en: string; pl: string }> = {
   beginner: { en: "Beginner", pl: "Początkujący" },
@@ -84,17 +89,28 @@ function Onboarding() {
     }
   }, [hydrated, skill.id, state]);
 
-  const runBuild = useCallback(async () => {
-    setPhase("building");
-    const { plan: generated, items } = await requestPlan({ skill, answers });
-    startSkill(generated, items);
-    setPlan(generated);
-    setPhase("plan");
-  }, [skill, answers, startSkill]);
+  const runBuild = useCallback(
+    async (area: Area) => {
+      setPhase("building");
+      const { plan: generated, items } = await requestPlan({ skill, answers, area });
+      startSkill(generated, items);
+      setPlan(generated);
+      setPhase("plan");
+    },
+    [skill, answers, startSkill]
+  );
 
   if (!authReady || !user) return <CenteredLoader />;
   if (phase === "loading") return <CenteredLoader />;
   if (phase === "locked") return <LockedView skill={skill} />;
+  if (phase === "area")
+    return (
+      <AreaSelect
+        skill={skill}
+        onPick={(area) => void runBuild(area)}
+        onBack={() => setPhase("questions")}
+      />
+    );
   if (phase === "building") return <BuildingView skill={skill} />;
   if (phase === "plan" && plan)
     return <PlanView skill={skill} plan={plan} />;
@@ -124,7 +140,7 @@ function Onboarding() {
 
   const next = () => {
     if (!canProceed) return;
-    if (isLast) void runBuild();
+    if (isLast) setPhase("area");
     else setIndex((i) => i + 1);
   };
 
@@ -204,8 +220,8 @@ function Onboarding() {
           {t("common.back")}
         </Button>
         <Button onClick={next} disabled={!canProceed} size="lg">
-          {isLast ? t("onboarding.build") : t("common.next")}
-          <Icon name={isLast ? "Sparkles" : "ChevronRight"} className="h-4 w-4" />
+          {t("common.next")}
+          <Icon name="ChevronRight" className="h-4 w-4" />
         </Button>
       </div>
     </div>
@@ -297,6 +313,74 @@ function ScaleInput({
       <div className="mt-2 flex justify-between text-xs text-slate-400">
         <span>{lowLabel}</span>
         <span>{highLabel}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Area selection (Stage B) ---------- */
+function AreaSelect({
+  skill,
+  onPick,
+  onBack,
+}: {
+  skill: SkillDef;
+  onPick: (area: Area) => void;
+  onBack: () => void;
+}) {
+  const tx = useTx();
+  const areas = skill.topics.en.map((name, i) => ({
+    id: `area-${i}`,
+    name,
+    label: { en: name, pl: skill.topics.pl[i] ?? name },
+  }));
+
+  return (
+    <div className="container-page max-w-2xl py-12 lg:py-16">
+      <div className="flex items-center gap-3">
+        <span
+          className={cn(
+            "grid h-11 w-11 place-items-center rounded-2xl",
+            ACCENT_TILE[skill.accent]
+          )}
+        >
+          <Icon name={skill.icon} className="h-6 w-6" />
+        </span>
+        <div>
+          <SectionLabel>{tx(skill.name)}</SectionLabel>
+          <h1 className="font-display text-xl font-semibold text-ink">
+            Where would you like to start?
+          </h1>
+        </div>
+      </div>
+
+      <p className="mt-4 text-slate-600">
+        Pick an area to drill — we&apos;ll build a focused set of 20 questions
+        just for it. You can cover the rest afterwards.
+      </p>
+
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
+        {areas.map((a) => (
+          <button
+            key={a.id}
+            onClick={() => onPick({ id: a.id, name: a.name })}
+            className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left transition-all hover:border-brand-300 hover:bg-brand-50/40 focusable"
+          >
+            <span className="font-medium text-ink">{tx(a.label)}</span>
+            <Icon
+              name="ArrowRight"
+              className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5"
+            />
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-8">
+        <Button variant="ghost" onClick={onBack}>
+          <Icon name="ChevronLeft" className="h-4 w-4" />
+          {/* back to the questionnaire */}
+          Back
+        </Button>
       </div>
     </div>
   );

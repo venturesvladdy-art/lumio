@@ -122,6 +122,52 @@ export function assemblePlan(opts: {
   return { skillId, createdAt, level, focus: focusValues, totalPlanned, modules, summary };
 }
 
+/**
+ * Stage B: assemble a single-area DRILL — every item is playable (no locked
+ * "planned" modules), split into two short parts for a sense of progress.
+ */
+export function assembleDrill(opts: {
+  skillId: string;
+  level: Difficulty;
+  focusValues: string[];
+  summary: I18nText;
+  items: QAItem[];
+  areaName: string;
+  createdAt: number;
+}): LearningPlan {
+  const { skillId, level, focusValues, summary, items, areaName, createdAt } = opts;
+  const half = Math.max(1, Math.ceil(items.length / 2));
+  const m1 = items.slice(0, half);
+  const m2 = items.slice(half);
+
+  const modules: PlanModule[] = [
+    {
+      id: "m1",
+      title: { en: `${areaName} · Part 1`, pl: `${areaName} · Part 1` },
+      itemIds: m1.map((i) => i.id),
+      plannedCount: m1.length,
+    },
+  ];
+  if (m2.length) {
+    modules.push({
+      id: "m2",
+      title: { en: `${areaName} · Part 2`, pl: `${areaName} · Part 2` },
+      itemIds: m2.map((i) => i.id),
+      plannedCount: m2.length,
+    });
+  }
+
+  return {
+    skillId,
+    createdAt,
+    level,
+    focus: focusValues,
+    totalPlanned: items.length,
+    modules,
+    summary,
+  };
+}
+
 export interface GeneratePlanInput {
   skill: SkillDef;
   answers: OnboardingAnswers;

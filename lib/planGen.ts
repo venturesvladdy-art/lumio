@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { deriveLevel, focusLabels } from "@/lib/onboarding";
-import { assemblePlan, buildBankPlan } from "@/lib/agent";
+import { assemblePlan, assembleDrill, buildBankPlan } from "@/lib/agent";
 import { modelForTier } from "@/lib/aiModel";
 import { prisma } from "@/lib/db";
 import type {
@@ -18,7 +18,15 @@ import type {
  * persist curricula the exact same way.
  */
 
+/** A skill area to drill (Stage B). */
+export interface DrillArea {
+  id: string;
+  name: string;
+}
+
 const QUESTION_COUNT = 8;
+/** Stage B: a single-area drill is a focused batch of this many questions. */
+const DRILL_COUNT = 20;
 const XP_BY_DIFFICULTY: Record<Difficulty, number> = {
   beginner: 10,
   intermediate: 15,
@@ -103,7 +111,9 @@ function buildUserPrompt(
   skill: SkillDef,
   level: Difficulty,
   focusEn: string[],
-  answers: OnboardingAnswers
+  answers: OnboardingAnswers,
+  count: number,
+  area?: DrillArea
 ): string {
   const goal = GOAL_TEXT[first(answers, "goal") ?? ""] ?? "general improvement";
   const exp = EXP_TEXT[first(answers, "experience") ?? ""] ?? "some experience";
@@ -113,19 +123,25 @@ function buildUserPrompt(
   const selfRating = first(answers, "level") ?? "3";
   const focus = focusEn.length ? focusEn.join(", ") : skill.topics.en.join(", ");
 
+  const areaLine = area
+    ? `\nDrill area (focus ALL questions tightly on this one area): ${area.name}`
+    : `\nFocus areas they care about most: ${focus}`;
+  const concentration = area
+    ? `concentrated specifically on "${area.name}"`
+    : "concentrated on the focus areas above";
+
   return `Create a personalized practice set for this learner.
 
 Skill: ${skill.name.en}
 Derived level: ${level}
 Self-rating (1-5): ${selfRating}
 Prior experience: ${exp}
-Main goal: ${goal}
-Focus areas they care about most: ${focus}
+Main goal: ${goal}${areaLine}
 Preferred learning style: ${style}
 Preferred difficulty: ${challenge}
 Time available per day: ~${time} minutes
 
-Generate ${QUESTION_COUNT} multiple-choice questions tuned to a ${level} learner, concentrated on the focus areas above, with difficulty ramping up gradually. Return them (and the summary) in the structured format.`;
+Generate ${count} multiple-choice questions tuned to a ${level} learner, ${concentration}, with difficulty ramping up gradually. Return them (and the summary) in the structured format.`;
 }
 
 function normalizeQuestion(
@@ -169,14 +185,17 @@ function normalizeQuestion(
   };
 }
 
-/** Call Claude to produce a personalized plan + Q&A with the given model. */
+/** Call Claude to produce a personalized plan/drill + Q&A with the given model. */
 export async function generateWithClaude(
   apiKey: string,
   skill: SkillDef,
   answers: OnboardingAnswers,
-  model: string
+  model: string,
+  opts?: { area?: DrillArea; count?: number }
 ): Promise<{ plan: LearningPlan; items: QAItem[] }> {
   const client = new Anthropic({ apiKey });
+  const area = opts?.area;
+  const count = opts?.count ?? (area ? DRILL_COUNT : QUESTION_COUNT);
   const level = deriveLevel(answers);
   const focusValues = answers["focus"] ?? [];
   const focusList = focusLabels(skill, focusValues);
@@ -197,7 +216,7 @@ export async function generateWithClaude(
     messages: [
       {
         role: "user",
-        content: buildUserPrompt(skill, level, focusEn, answers),
+        content: buildUserPrompt(skill, level, focusEn, answers, count, area),
       },
     ],
     output_config: {
@@ -229,14 +248,24 @@ export async function generateWithClaude(
   const summaryText = typeof parsed.summary === "string" ? parsed.summary : "";
   const summary = { en: summaryText, pl: summaryText };
 
-  const plan = assemblePlan({
-    skillId: skill.id,
-    level,
-    focusValues,
-    summary,
-    items,
-    createdAt: Date.now(),
-  });
+  const plan = area
+    ? assembleDrill({
+        skillId: skill.id,
+        level,
+        focusValues,
+        summary,
+        items,
+        areaName: area.name,
+        createdAt: Date.now(),
+      })
+    : assemblePlan({
+        skillId: skill.id,
+        level,
+        focusValues,
+        summary,
+        items,
+        createdAt: Date.now(),
+      });
 
   return { plan, items };
 }
@@ -249,9 +278,10 @@ export async function persistCurriculum(opts: {
   source: string;
   model: string | null;
   answers: OnboardingAnswers;
+  area?: DrillArea;
 }): Promise<string | undefined> {
   if (!prisma) return undefined;
-  const { userId, skill, result, source, model, answers } = opts;
+  const { userId, skill, result, source, model, answers, area } = opts;
   const plan = result.plan;
 
   // Built without `answers` so we can retry without it if that column is
@@ -268,6 +298,8 @@ export async function persistCurriculum(opts: {
     totalPlanned: plan.totalPlanned,
     source,
     model: source === "claude" ? model : null,
+    areaId: area?.id ?? null,
+    areaName: area?.name ?? null,
     questions: {
       create: result.items.map((it, i) => ({
         clientId: it.id,
@@ -337,8 +369,9 @@ export async function buildPlanForUser(opts: {
   tier: PlanTier;
   skill: SkillDef;
   answers: OnboardingAnswers;
+  area?: DrillArea;
 }): Promise<BuildResult> {
-  const { userId, tier, skill, answers } = opts;
+  const { userId, tier, skill, answers, area } = opts;
   const apiKey = process.env.ANTHROPIC_API_KEY;
   const model = modelForTier(tier);
 
@@ -350,7 +383,7 @@ export async function buildPlanForUser(opts: {
     source = "bank";
   } else {
     try {
-      result = await generateWithClaude(apiKey, skill, answers, model);
+      result = await generateWithClaude(apiKey, skill, answers, model, { area });
       source = "claude";
     } catch (err) {
       console.error("[planGen] Claude generation failed; using bank:", err);
@@ -368,6 +401,7 @@ export async function buildPlanForUser(opts: {
       source,
       model: source === "claude" ? model : null,
       answers,
+      area,
     }).catch((e) => {
       console.error("[planGen] persist failed:", e);
       return undefined;

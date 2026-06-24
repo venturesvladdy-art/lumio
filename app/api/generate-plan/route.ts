@@ -17,6 +17,9 @@ const BodySchema = z.object({
   topicsEn: z.array(z.string()).optional(),
   topicsPl: z.array(z.string()).optional(),
   answers: z.record(z.string(), z.array(z.string())),
+  // Stage B: drill a single area (20 focused questions) when provided.
+  areaId: z.string().optional(),
+  areaName: z.string().optional(),
 });
 
 export async function POST(req: Request) {
@@ -45,7 +48,12 @@ export async function POST(req: Request) {
     }
   }
 
-  const built = await buildPlanForUser({ userId, tier, skill, answers });
+  const area =
+    body.areaId && body.areaName
+      ? { id: body.areaId, name: body.areaName }
+      : undefined;
+
+  const built = await buildPlanForUser({ userId, tier, skill, answers, area });
   const { plan, items, source, curriculumId } = built;
   return NextResponse.json({ plan, items, source, curriculumId });
 }

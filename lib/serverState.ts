@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import { resolveSkill } from "@/lib/skills";
-import { assemblePlan } from "@/lib/agent";
+import { assemblePlan, assembleDrill } from "@/lib/agent";
 import { evaluateBadges } from "@/lib/gamification";
 import { todayKey, dayDiff } from "@/lib/utils";
 import type {
@@ -71,14 +71,24 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
       xp: q.xp,
     }));
 
-    const plan = assemblePlan({
-      skillId,
-      level: c.level as Difficulty,
-      focusValues: c.focus,
-      summary: { en: c.summaryEn, pl: c.summaryPl },
-      items,
-      createdAt: c.createdAt.getTime(),
-    });
+    const plan = c.areaName
+      ? assembleDrill({
+          skillId,
+          level: c.level as Difficulty,
+          focusValues: c.focus,
+          summary: { en: c.summaryEn, pl: c.summaryPl },
+          items,
+          areaName: c.areaName,
+          createdAt: c.createdAt.getTime(),
+        })
+      : assemblePlan({
+          skillId,
+          level: c.level as Difficulty,
+          focusValues: c.focus,
+          summary: { en: c.summaryEn, pl: c.summaryPl },
+          items,
+          createdAt: c.createdAt.getTime(),
+        });
 
     skills[skillId] = {
       skillId,

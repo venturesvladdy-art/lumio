@@ -10,9 +10,11 @@ import { generatePlan, type PlanResult } from "@/lib/agent";
 export async function requestPlan({
   skill,
   answers,
+  area,
 }: {
   skill: SkillDef;
   answers: OnboardingAnswers;
+  area?: { id: string; name: string };
 }): Promise<PlanResult> {
   try {
     const controller = new AbortController();
@@ -27,6 +29,8 @@ export async function requestPlan({
         topicsEn: skill.topics.en,
         topicsPl: skill.topics.pl,
         answers,
+        areaId: area?.id,
+        areaName: area?.name,
       }),
     });
     clearTimeout(timeout);
