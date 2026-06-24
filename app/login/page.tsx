@@ -147,11 +147,20 @@ function DbLogin() {
 
       <form onSubmit={submit} className="space-y-3">
         {mode === "signup" && (
-          <Field label={t("auth.nameLabel")} value={name} onChange={setName} placeholder={t("auth.namePlaceholder")} />
+          <Field
+            label={t("auth.nameLabel")}
+            name="name"
+            autoComplete="name"
+            value={name}
+            onChange={setName}
+            placeholder={t("auth.namePlaceholder")}
+          />
         )}
         <Field
           label={t("auth.emailLabel")}
           type="email"
+          name="email"
+          autoComplete="email"
           value={email}
           onChange={setEmail}
           placeholder={t("auth.emailPlaceholder")}
@@ -159,6 +168,8 @@ function DbLogin() {
         <Field
           label={t("auth.passwordLabel")}
           type="password"
+          name="password"
+          autoComplete={mode === "signin" ? "current-password" : "new-password"}
           value={password}
           onChange={setPassword}
           placeholder={t("auth.passwordPlaceholder")}
@@ -262,12 +273,21 @@ function DemoLogin() {
           <Field
             label={t("auth.emailLabel")}
             type="email"
+            name="email"
+            autoComplete="email"
             value={email}
             onChange={setEmail}
             placeholder={t("auth.emailPlaceholder")}
             autoFocus
           />
-          <Field label={t("auth.nameLabel")} value={name} onChange={setName} placeholder={t("auth.namePlaceholder")} />
+          <Field
+            label={t("auth.nameLabel")}
+            name="name"
+            autoComplete="name"
+            value={name}
+            onChange={setName}
+            placeholder={t("auth.namePlaceholder")}
+          />
           {error && (
             <p className="flex items-center gap-1.5 text-sm text-rose-600">
               <Icon name="CircleHelp" className="h-4 w-4" />
@@ -307,6 +327,8 @@ function Field({
   placeholder,
   type = "text",
   autoFocus,
+  name,
+  autoComplete,
 }: {
   label: string;
   value: string;
@@ -314,12 +336,16 @@ function Field({
   placeholder?: string;
   type?: string;
   autoFocus?: boolean;
+  name?: string;
+  autoComplete?: string;
 }) {
   return (
     <label className="block">
       <span className="mb-1.5 block text-sm font-medium text-slate-700">{label}</span>
       <input
         type={type}
+        name={name}
+        autoComplete={autoComplete}
         value={value}
         autoFocus={autoFocus}
         onChange={(e) => onChange(e.target.value)}

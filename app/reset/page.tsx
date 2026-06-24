@@ -142,6 +142,7 @@ function Field({
       <span className="mb-1.5 block text-sm font-medium text-slate-700">{label}</span>
       <input
         type="password"
+        autoComplete="new-password"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

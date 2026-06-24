@@ -65,6 +65,8 @@ export default function ForgotPasswordPage() {
                 <span className="mb-1.5 block text-sm font-medium text-slate-700">Email</span>
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   autoFocus
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
