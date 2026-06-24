@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
+import { regenerateCurriculaForUser } from "@/lib/regenerate";
 
 export const runtime = "nodejs";
+// Upgrading regenerates plans with Opus, which can take a while.
+export const maxDuration = 60;
 
 // Valid codes live server-side only — never reach the client bundle.
 const CODES: Record<string, "guru" | "smart"> = {
@@ -55,5 +58,10 @@ export async function POST(req: Request) {
     })
     .catch(() => {});
 
-  return NextResponse.json({ ok: true, tier });
+  // Upgrading to a paid tier rebuilds existing plans with the Opus model.
+  const regenerated = await regenerateCurriculaForUser(userId, tier).catch(
+    () => 0
+  );
+
+  return NextResponse.json({ ok: true, tier, regenerated });
 }

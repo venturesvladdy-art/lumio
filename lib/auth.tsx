@@ -17,7 +17,7 @@ export interface AuthUser {
   createdAt: number;
 }
 
-const STORAGE_KEY = "lumio.auth.v1";
+const STORAGE_KEY = "skillsprinter.auth.v1";
 
 // Guru allowlist lives in a server-safe module so Auth.js can reuse it.
 export { tierForEmail } from "@/lib/allowlist";

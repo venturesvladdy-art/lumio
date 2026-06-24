@@ -20,7 +20,8 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "Lumio — Master any skill, one question at a time",
+  metadataBase: new URL("https://skillsprinter.com"),
+  title: "SkillSprinter — Master any skill, one question at a time",
   description:
     "AI-personalized, gamified learning. Choose a skill, answer a few quick questions, and get a custom plan that adapts as you learn. English & Polish.",
 };

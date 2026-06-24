@@ -29,7 +29,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
       <LanguageProvider>
         <SessionProvider>
-          <AppProvider>
+          <AppProvider dbMode>
             <DbSessionBridge>{children}</DbSessionBridge>
           </AppProvider>
         </SessionProvider>

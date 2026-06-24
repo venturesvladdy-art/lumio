@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe, tierForPriceId } from "@/lib/stripe";
 import { prisma } from "@/lib/db";
+import { regenerateCurriculaForUser } from "@/lib/regenerate";
+import type { PlanTier } from "@/lib/types";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   if (!stripe || !prisma) {
@@ -61,6 +64,12 @@ async function syncSubscription(sub: Stripe.Subscription) {
   const periodEndSec = (sub as unknown as { current_period_end?: number })
     .current_period_end;
 
+  // Find the affected users first so we can detect a tier upgrade.
+  const before = await prisma.user.findMany({
+    where: { stripeCustomerId: customerId },
+    select: { id: true, tier: true },
+  });
+
   await prisma.user.updateMany({
     where: { stripeCustomerId: customerId },
     data: {
@@ -70,6 +79,15 @@ async function syncSubscription(sub: Stripe.Subscription) {
       currentPeriodEnd: periodEndSec ? new Date(periodEndSec * 1000) : null,
     },
   });
+
+  // On an upgrade into a paid tier, rebuild plans with the Opus model.
+  if (tier === "smart" || tier === "guru") {
+    for (const u of before) {
+      if (u.tier !== tier) {
+        await regenerateCurriculaForUser(u.id, tier as PlanTier).catch(() => 0);
+      }
+    }
+  }
 
   await prisma.auditEvent
     .create({

@@ -7,7 +7,7 @@ const SECTIONS: LegalSection[] = [
   {
     heading: "Introduction",
     body: [
-      "This Privacy Policy explains how Lumio (\"we\", \"us\", \"our\") collects, uses, and protects your information when you use our website and learning services (the \"Service\"). By using the Service, you agree to the practices described here.",
+      "This Privacy Policy explains how SkillSprinter (\"we\", \"us\", \"our\") collects, uses, and protects your information when you use our website and learning services (the \"Service\"). By using the Service, you agree to the practices described here.",
     ],
   },
   {

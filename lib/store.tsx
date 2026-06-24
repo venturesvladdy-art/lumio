@@ -18,7 +18,7 @@ import type {
 import { dayDiff, todayKey } from "@/lib/utils";
 import { comboBonus, evaluateBadges, levelInfo } from "@/lib/gamification";
 
-const STORAGE_KEY = "lumio.state.v1";
+const STORAGE_KEY = "skillsprinter.state.v1";
 
 const INITIAL: UserState = {
   tier: "basic",
@@ -47,6 +47,8 @@ interface StoreValue {
   recordAnswer: (skillId: string, item: QAItem, correct: boolean) => AnswerResult;
   resetAll: () => void;
   hasSkill: (skillId: string) => boolean;
+  /** DB mode: replace the whole state with the server's authoritative copy. */
+  hydrateServerState: (next: UserState) => void;
 }
 
 const StoreContext = createContext<StoreValue | null>(null);
@@ -60,14 +62,25 @@ function normalizeDaily(s: UserState): UserState {
   return s;
 }
 
-export function AppProvider({ children }: { children: React.ReactNode }) {
+export function AppProvider({
+  children,
+  dbMode = false,
+}: {
+  children: React.ReactNode;
+  /** When true the database is the source of truth: skip localStorage and wait
+   *  for the server state (via `hydrateServerState`) before marking hydrated. */
+  dbMode?: boolean;
+}) {
   const [state, setState] = useState<UserState>(INITIAL);
   const [hydrated, setHydrated] = useState(false);
   const ref = useRef<UserState>(state);
   ref.current = state;
 
-  // Hydrate from localStorage once on mount.
+  // Hydrate from localStorage once on mount (demo mode only). In DB mode the
+  // session bridge fetches /api/state and calls hydrateServerState instead, so
+  // progress is tied to the account, never to this browser.
   useEffect(() => {
+    if (dbMode) return;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -80,21 +93,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       /* ignore corrupt storage */
     }
     setHydrated(true);
-  }, []);
+  }, [dbMode]);
 
-  // Persist on change (after hydration, to avoid clobbering saved state).
+  // Persist on change to localStorage (demo mode only; DB mode persists to the
+  // server through the API routes the individual actions already call).
   useEffect(() => {
-    if (!hydrated) return;
+    if (dbMode || !hydrated) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       /* ignore */
     }
-  }, [state, hydrated]);
+  }, [state, hydrated, dbMode]);
 
   const commit = useCallback((next: UserState) => {
     ref.current = next;
     setState(next);
+  }, []);
+
+  const hydrateServerState = useCallback((next: UserState) => {
+    const merged = normalizeDaily(next);
+    ref.current = merged;
+    setState(merged);
+    setHydrated(true);
   }, []);
 
   const setTier = useCallback(
@@ -225,6 +246,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     recordAnswer,
     resetAll,
     hasSkill,
+    hydrateServerState,
   };
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

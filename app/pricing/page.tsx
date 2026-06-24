@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n";
 import { USE_DB } from "@/lib/flags";
+import { useCurrentUser } from "@/lib/session";
 import { PlanCards } from "@/components/PlanCards";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
@@ -90,7 +90,7 @@ export default function PricingPage() {
 }
 
 function PromoCodeSection() {
-  const { data: session } = useSession();
+  const { user, refresh } = useCurrentUser();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
@@ -111,7 +111,12 @@ function PromoCodeSection() {
       const data = await res.json() as { ok?: boolean; error?: string };
       if (data.ok) {
         setMsg({ ok: true, text: "🎉 Guru plan activated — enjoy!" });
-        setTimeout(() => router.push("/dashboard"), 1800);
+        // Refresh the session JWT + DB state so the new tier sticks, then go.
+        await refresh();
+        setTimeout(() => {
+          router.push("/dashboard");
+          router.refresh();
+        }, 1400);
       } else {
         setMsg({ ok: false, text: data.error ?? "Something went wrong." });
       }
@@ -132,7 +137,7 @@ function PromoCodeSection() {
       ) : (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft text-left">
           <p className="mb-3 text-sm font-medium text-slate-700">Enter promo code</p>
-          {!session ? (
+          {!user ? (
             <p className="text-sm text-slate-500">
               Please{" "}
               <a href="/login?next=/pricing" className="font-medium text-brand-600 hover:underline">

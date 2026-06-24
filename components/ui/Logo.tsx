@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-/** The Lumio mark: a rounded gradient tile with a spark cut into it. */
+/** The SkillSprinter mark: a rounded gradient tile with a spark cut into it. */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <span
@@ -34,11 +34,11 @@ export function Logo({
         "group inline-flex items-center gap-2.5 focusable rounded-full",
         className
       )}
-      aria-label="Lumio home"
+      aria-label="SkillSprinter home"
     >
       <LogoMark className="h-9 w-9 transition-transform duration-300 group-hover:rotate-[8deg]" />
       <span className="font-display text-xl font-semibold tracking-tight text-ink">
-        Lumio
+        SkillSprinter
       </span>
     </Link>
   );

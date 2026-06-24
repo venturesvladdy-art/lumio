@@ -10,7 +10,7 @@ import React, {
 import type { Locale } from "@/lib/types";
 import { dictionary } from "./dictionary";
 
-const STORAGE_KEY = "lumio.locale";
+const STORAGE_KEY = "skillsprinter.locale";
 
 type Vars = Record<string, string | number>;
 

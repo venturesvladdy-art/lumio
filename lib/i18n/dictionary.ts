@@ -7,7 +7,7 @@
 export const dictionary = {
   en: {
     common: {
-      appName: "Lumio",
+      appName: "SkillSprinter",
       getStarted: "Get started",
       startLearning: "Start learning",
       continue: "Continue",
@@ -36,6 +36,16 @@ export const dictionary = {
       signIn: "Sign in",
       signOut: "Sign out",
       account: "Account",
+    },
+    profile: {
+      delete: "Delete my profile",
+      deleteTitle: "Delete your profile?",
+      deleteBody:
+        "This permanently erases your account, plan, progress and history. This cannot be undone.",
+      deleteConfirm: "Delete forever",
+      deleting: "Deleting…",
+      cancel: "Cancel",
+      deleteError: "Couldn't delete your profile. Please try again.",
     },
     lang: {
       label: "Language",
@@ -83,19 +93,19 @@ export const dictionary = {
         "Switch the entire experience between English and Polish in one click.",
       gamifyTitle: "Progress you can feel",
       gamifySubtitle:
-        "Small wins, every day. Lumio turns practice into momentum.",
+        "Small wins, every day. SkillSprinter turns practice into momentum.",
       gamifyXp: "Earn XP for every correct answer",
       gamifyStreak: "Build daily streaks that keep you going",
       gamifyBadges: "Unlock badges for milestones",
       gamifyLevels: "Climb from Novice to Luminary",
       skillsTitle: "Popular skills to start with",
-      skillsSubtitle: "Or bring your own — Lumio teaches anything.",
+      skillsSubtitle: "Or bring your own — SkillSprinter teaches anything.",
       skillsCta: "Browse all skills",
       pricingTitle: "Simple plans that grow with you",
       pricingSubtitle: "Start free. Upgrade only when you're ready.",
       pricingCta: "Compare plans",
       ctaTitle: "Your next skill is one question away.",
-      ctaSubtitle: "Join thousands learning smarter with Lumio — free to start.",
+      ctaSubtitle: "Join thousands learning smarter with SkillSprinter — free to start.",
       ctaButton: "Create your free plan",
     },
     skills: {
@@ -210,7 +220,7 @@ export const dictionary = {
       choose: "Choose {plan}",
       current: "Your plan",
       faqTitle: "Questions, answered",
-      q1: "Can I really use Lumio for free?",
+      q1: "Can I really use SkillSprinter for free?",
       a1: "Yes. The Basic plan is free forever and includes 5 questions a day across up to 3 skills.",
       q2: "What does the AI actually do?",
       a2: "It reads your onboarding answers, gauges your level, and assembles a personalized plan of up to 100 questions — then adapts as you learn.",
@@ -220,7 +230,7 @@ export const dictionary = {
       a4: "Your XP, streaks and badges are saved to your profile so you can pick up right where you left off.",
     },
     auth: {
-      title: "Sign in to Lumio",
+      title: "Sign in to SkillSprinter",
       subtitle: "Continue your learning — your progress, plan and streak follow you.",
       emailLabel: "Email",
       emailPlaceholder: "you@example.com",
@@ -298,7 +308,7 @@ export const dictionary = {
 
   pl: {
     common: {
-      appName: "Lumio",
+      appName: "SkillSprinter",
       getStarted: "Zacznij teraz",
       startLearning: "Zacznij naukę",
       continue: "Kontynuuj",
@@ -327,6 +337,16 @@ export const dictionary = {
       signIn: "Zaloguj się",
       signOut: "Wyloguj się",
       account: "Konto",
+    },
+    profile: {
+      delete: "Usuń moje konto",
+      deleteTitle: "Usunąć Twoje konto?",
+      deleteBody:
+        "To trwale usunie Twoje konto, plan, postępy i historię. Tej operacji nie można cofnąć.",
+      deleteConfirm: "Usuń na zawsze",
+      deleting: "Usuwanie…",
+      cancel: "Anuluj",
+      deleteError: "Nie udało się usunąć konta. Spróbuj ponownie.",
     },
     lang: {
       label: "Język",
@@ -374,20 +394,20 @@ export const dictionary = {
         "Przełącz całą aplikację między angielskim a polskim jednym kliknięciem.",
       gamifyTitle: "Postęp, który czujesz",
       gamifySubtitle:
-        "Małe zwycięstwa każdego dnia. Lumio zamienia ćwiczenia w rozpęd.",
+        "Małe zwycięstwa każdego dnia. SkillSprinter zamienia ćwiczenia w rozpęd.",
       gamifyXp: "Zdobywaj PD za każdą poprawną odpowiedź",
       gamifyStreak: "Buduj codzienne passy, które Cię napędzają",
       gamifyBadges: "Odblokowuj odznaki za kamienie milowe",
       gamifyLevels: "Wspinaj się od Nowicjusza do Luminarza",
       skillsTitle: "Popularne umiejętności na start",
-      skillsSubtitle: "Albo dodaj własną — Lumio uczy wszystkiego.",
+      skillsSubtitle: "Albo dodaj własną — SkillSprinter uczy wszystkiego.",
       skillsCta: "Przeglądaj umiejętności",
       pricingTitle: "Proste plany, które rosną z Tobą",
       pricingSubtitle: "Zacznij za darmo. Ulepsz, gdy będziesz gotowy.",
       pricingCta: "Porównaj plany",
       ctaTitle: "Twoja kolejna umiejętność jest o jedno pytanie stąd.",
       ctaSubtitle:
-        "Dołącz do tysięcy osób uczących się mądrzej z Lumio — start za darmo.",
+        "Dołącz do tysięcy osób uczących się mądrzej z SkillSprinter — start za darmo.",
       ctaButton: "Stwórz darmowy plan",
     },
     skills: {
@@ -504,7 +524,7 @@ export const dictionary = {
       choose: "Wybierz {plan}",
       current: "Twój plan",
       faqTitle: "Odpowiedzi na pytania",
-      q1: "Czy naprawdę mogę korzystać z Lumio za darmo?",
+      q1: "Czy naprawdę mogę korzystać z SkillSprinter za darmo?",
       a1: "Tak. Plan Basic jest darmowy na zawsze i obejmuje 5 pytań dziennie w maksymalnie 3 umiejętnościach.",
       q2: "Co właściwie robi AI?",
       a2: "Czyta Twoje odpowiedzi z onboardingu, ocenia poziom i układa spersonalizowany plan do 100 pytań — a potem dopasowuje go w trakcie nauki.",
@@ -514,7 +534,7 @@ export const dictionary = {
       a4: "Twoje PD, passy i odznaki są zapisane w profilu, więc wrócisz dokładnie tam, gdzie skończyłeś.",
     },
     auth: {
-      title: "Zaloguj się do Lumio",
+      title: "Zaloguj się do SkillSprinter",
       subtitle: "Kontynuuj naukę — Twoje postępy, plan i passa są zawsze z Tobą.",
       emailLabel: "E-mail",
       emailPlaceholder: "ty@przyklad.com",

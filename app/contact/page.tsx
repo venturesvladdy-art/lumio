@@ -148,7 +148,7 @@ export default function ContactPage() {
           <InfoRow
             icon="MessageSquare"
             label={t("contact.emailUs")}
-            value="hello@lumio.app"
+            value="hello@skillsprinter.com"
           />
           <InfoRow
             icon="Calendar"

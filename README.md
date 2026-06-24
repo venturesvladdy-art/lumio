@@ -1,4 +1,4 @@
-# Lumio
+# SkillSprinter
 
 **Master any skill, one question at a time.** An AI-personalized, gamified
 micro-learning platform. Pick a skill, answer a few quick questions, and an
@@ -117,8 +117,8 @@ npm run dev
 With a key, [`app/api/generate-plan/route.ts`](app/api/generate-plan/route.ts)
 asks `claude-opus-4-8` for personalized, bilingual questions (structured JSON
 output, key kept server-side). Without a key it falls back to the curated bank,
-so nothing breaks. Override the model with `LUMIO_MODEL` (e.g.
-`claude-sonnet-4-6` / `claude-haiku-4-5` for lower cost at scale).
+so nothing breaks. The model is chosen by tier (Sonnet for free, Opus for
+smart/guru); override with `SKILLSPRINTER_MODEL` to force one everywhere.
 
 ---
 
@@ -153,7 +153,7 @@ Cache plan generation by `(skill, level, focus)` profile (Redis/KV), and cache
 - **OneDrive + `node_modules`:** this folder syncs to OneDrive. Consider
   excluding `node_modules` and `.next` from sync (right-click → *Always keep on
   this device* off, or move the project outside OneDrive) to avoid slow syncs.
-- **Branding:** "Lumio" is a working name — rename in `lib/i18n/dictionary.ts`
+- **Branding:** the app name "SkillSprinter" lives in `lib/i18n/dictionary.ts`
   (`common.appName`), `components/ui/Logo.tsx`, and `app/layout.tsx` metadata.
 - Tailwind v3 with a custom brand palette and design tokens in
   `tailwind.config.ts`; global utilities in `app/globals.css`.

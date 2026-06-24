@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { useT, useTx } from "@/lib/i18n";
+import { USE_DB } from "@/lib/flags";
 import { useStore } from "@/lib/store";
-import { useRequireAuth } from "@/lib/session";
+import { useRequireAuth, useCurrentUser } from "@/lib/session";
 import { resolveSkill } from "@/lib/skills";
 import { planItemIds } from "@/lib/agent";
 import {
@@ -37,7 +39,18 @@ export default function DashboardPage() {
   const t = useT();
   const tx = useTx();
   const { state, hydrated, resetAll } = useStore();
-  const { ready: authReady, user } = useRequireAuth();
+  const { ready: authReady, user, refresh } = useCurrentUser();
+  useRequireAuth();
+
+  // On arrival (e.g. returning from Stripe checkout) re-sync tier + progress
+  // from the server once, so an upgrade made elsewhere shows up immediately.
+  const refreshedRef = useRef(false);
+  useEffect(() => {
+    if (USE_DB && authReady && user && !refreshedRef.current) {
+      refreshedRef.current = true;
+      void refresh();
+    }
+  }, [authReady, user, refresh]);
 
   if (!authReady || !user || !hydrated) {
     return (
@@ -76,7 +89,7 @@ export default function DashboardPage() {
             <Icon name="Sparkles" className="h-3.5 w-3.5" />
             {t("dashboard.planLabel")}: {tier.name}
           </Pill>
-          {!empty && (
+          {!empty && !USE_DB && (
             <Button
               variant="ghost"
               size="sm"

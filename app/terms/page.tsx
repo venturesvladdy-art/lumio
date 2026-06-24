@@ -7,7 +7,7 @@ const SECTIONS: LegalSection[] = [
   {
     heading: "Acceptance of Terms",
     body: [
-      "These Terms of Service (\"Terms\") govern your access to and use of Lumio (the \"Service\"). By creating an account or using the Service, you agree to be bound by these Terms. If you do not agree, do not use the Service.",
+      "These Terms of Service (\"Terms\") govern your access to and use of SkillSprinter (the \"Service\"). By creating an account or using the Service, you agree to be bound by these Terms. If you do not agree, do not use the Service.",
     ],
   },
   {
@@ -39,7 +39,7 @@ const SECTIONS: LegalSection[] = [
   {
     heading: "Intellectual Property",
     body: [
-      "The Service, including its design, software, and original content, is owned by Lumio or its licensors and protected by intellectual-property laws. We grant you a limited, non-exclusive, non-transferable license to use the Service for personal, non-commercial learning.",
+      "The Service, including its design, software, and original content, is owned by SkillSprinter or its licensors and protected by intellectual-property laws. We grant you a limited, non-exclusive, non-transferable license to use the Service for personal, non-commercial learning.",
     ],
   },
   {
@@ -57,7 +57,7 @@ const SECTIONS: LegalSection[] = [
   {
     heading: "Limitation of Liability",
     body: [
-      "To the maximum extent permitted by law, Lumio will not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, use, or profits, arising from your use of the Service.",
+      "To the maximum extent permitted by law, SkillSprinter will not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, use, or profits, arising from your use of the Service.",
     ],
   },
   {
@@ -69,7 +69,7 @@ const SECTIONS: LegalSection[] = [
   {
     heading: "Governing Law",
     body: [
-      "These Terms are governed by the laws of the jurisdiction in which Lumio operates, without regard to its conflict-of-laws rules. Disputes will be resolved in the competent courts of that jurisdiction, unless otherwise required by applicable law.",
+      "These Terms are governed by the laws of the jurisdiction in which SkillSprinter operates, without regard to its conflict-of-laws rules. Disputes will be resolved in the competent courts of that jurisdiction, unless otherwise required by applicable law.",
     ],
   },
   {

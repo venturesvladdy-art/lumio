@@ -1,6 +1,6 @@
-# Lumio — Real Backend Setup
+# SkillSprinter — Real Backend Setup
 
-Lumio runs in two modes:
+SkillSprinter runs in two modes:
 
 - **Demo mode (default):** zero setup. Auth, progress and plan are simulated in
   the browser (`localStorage`). Great for clicking through the product.

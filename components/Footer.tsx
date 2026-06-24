@@ -74,7 +74,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-slate-200 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center">
           <span>
-            © {year} Lumio. {t("footer.rights")}
+            © {year} SkillSprinter. {t("footer.rights")}
           </span>
           <span>{t("footer.builtWith")}</span>
         </div>

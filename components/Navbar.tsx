@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useT } from "@/lib/i18n";
 import { useCurrentUser } from "@/lib/session";
 import { useStore } from "@/lib/store";
+import { USE_DB } from "@/lib/flags";
 import { PLANS } from "@/lib/plans";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/Logo";
@@ -151,6 +152,7 @@ function AccountMenu() {
   const { user, signOut } = useCurrentUser();
   const { state } = useStore();
   const [open, setOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -202,8 +204,93 @@ function AccountMenu() {
             <Icon name="ArrowLeft" className="h-4 w-4" />
             {t("nav.signOut")}
           </button>
+          {USE_DB && (
+            <>
+              <div className="my-1 h-px bg-slate-100" />
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  setConfirmDelete(true);
+                }}
+                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-rose-600 hover:bg-rose-50"
+              >
+                <Icon name="Trash2" className="h-4 w-4" />
+                {t("profile.delete")}
+              </button>
+            </>
+          )}
         </div>
       )}
+
+      {confirmDelete && (
+        <DeleteProfileModal onClose={() => setConfirmDelete(false)} />
+      )}
+    </div>
+  );
+}
+
+/** Confirm + perform permanent account deletion, then sign out. */
+function DeleteProfileModal({ onClose }: { onClose: () => void }) {
+  const t = useT();
+  const { signOut } = useCurrentUser();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const run = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      const res = await fetch("/api/account", { method: "DELETE" });
+      if (!res.ok) throw new Error("delete failed");
+      // Clears the session and redirects home.
+      signOut();
+    } catch {
+      setError(t("profile.deleteError"));
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] grid place-items-center bg-ink/40 p-4 backdrop-blur-sm animate-fade-in"
+      onClick={busy ? undefined : onClose}
+    >
+      <div
+        className="w-full max-w-sm animate-pop rounded-3xl border border-slate-200 bg-white p-7 shadow-lift"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-rose-50 text-rose-600">
+            <Icon name="Trash2" className="h-5 w-5" />
+          </span>
+          <h2 className="font-display text-lg font-semibold text-ink">
+            {t("profile.deleteTitle")}
+          </h2>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-slate-600">
+          {t("profile.deleteBody")}
+        </p>
+        {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
+        <div className="mt-6 flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={onClose}
+            disabled={busy}
+          >
+            {t("profile.cancel")}
+          </Button>
+          <button
+            type="button"
+            onClick={run}
+            disabled={busy}
+            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-rose-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:opacity-60 focusable"
+          >
+            {busy ? t("profile.deleting") : t("profile.deleteConfirm")}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -225,6 +312,7 @@ function MobileAccount() {
   const router = useRouter();
   const { user, signOut } = useCurrentUser();
   const { state } = useStore();
+  const [confirmDelete, setConfirmDelete] = useState(false);
   if (!user) return null;
 
   return (
@@ -254,6 +342,18 @@ function MobileAccount() {
       >
         {t("nav.signOut")}
       </Button>
+      {USE_DB && (
+        <button
+          onClick={() => setConfirmDelete(true)}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50"
+        >
+          <Icon name="Trash2" className="h-4 w-4" />
+          {t("profile.delete")}
+        </button>
+      )}
+      {confirmDelete && (
+        <DeleteProfileModal onClose={() => setConfirmDelete(false)} />
+      )}
     </div>
   );
 }
