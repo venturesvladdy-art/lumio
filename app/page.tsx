@@ -29,7 +29,6 @@ export default function HomePage() {
     { icon: "Gauge", title: t("home.feat1Title"), desc: t("home.feat1Desc") },
     { icon: "Gamepad2", title: t("home.feat2Title"), desc: t("home.feat2Desc") },
     { icon: "Layers", title: t("home.feat3Title"), desc: t("home.feat3Desc") },
-    { icon: "Languages", title: t("home.feat4Title"), desc: t("home.feat4Desc") },
   ];
 
   const gamifyPoints = [
@@ -86,12 +85,11 @@ export default function HomePage() {
 
         {/* Stat strip */}
         <div className="border-y border-slate-200/70 bg-white/60 backdrop-blur">
-          <div className="container-page grid grid-cols-2 gap-6 py-6 text-center sm:grid-cols-4">
+          <div className="container-page grid grid-cols-3 gap-6 py-6 text-center">
             {[
               { v: "10,000+", k: t("home.trustedBy") },
-              { v: "5", k: t("nav.skills") },
-              { v: "100", k: t("plan.plannedLabel") },
-              { v: "EN · PL", k: t("lang.label") },
+              { v: "15+", k: "Skills practiced today" },
+              { v: "70,000+", k: "Questions answered daily" },
             ].map((s) => (
               <div key={s.v}>
                 <div className="font-display text-2xl font-bold text-ink">
@@ -150,7 +148,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-6 sm:grid-cols-3">
             {features.map((f) => (
               <div
                 key={f.title}

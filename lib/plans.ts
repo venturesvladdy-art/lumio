@@ -33,7 +33,6 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
       { en: "Up to 3 skills", pl: "Do 3 umiejętności" },
       { en: "AI-personalized plans", pl: "Plany personalizowane przez AI" },
       { en: "XP, levels & streaks", pl: "PD, poziomy i passy" },
-      { en: "English & Polish", pl: "Angielski i polski" },
     ],
   },
   smart: {

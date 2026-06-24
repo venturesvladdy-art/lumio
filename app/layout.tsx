@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://skillsprinter.com"),
   title: "SkillSprinter — Master any skill, one question at a time",
   description:
-    "AI-personalized, gamified learning. Choose a skill, answer a few quick questions, and get a custom plan that adapts as you learn. English & Polish.",
+    "AI-personalized, gamified learning. Choose a skill, answer a few quick questions, and get a custom plan that adapts as you learn.",
 };
 
 export default function RootLayout({
