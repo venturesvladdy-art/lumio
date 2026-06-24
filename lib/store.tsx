@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import type {
+  Brief,
   LearningPlan,
   PlanTier,
   QAItem,
@@ -43,7 +44,7 @@ interface StoreValue {
   hydrated: boolean;
   state: UserState;
   setTier: (t: PlanTier) => void;
-  startSkill: (plan: LearningPlan, items?: QAItem[]) => void;
+  startSkill: (plan: LearningPlan, items?: QAItem[], briefs?: Brief[]) => void;
   recordAnswer: (skillId: string, item: QAItem, correct: boolean) => AnswerResult;
   resetAll: () => void;
   hasSkill: (skillId: string) => boolean;
@@ -126,7 +127,7 @@ export function AppProvider({
   const hasSkill = useCallback((skillId: string) => Boolean(ref.current.skills[skillId]), []);
 
   const startSkill = useCallback(
-    (plan: LearningPlan, items: QAItem[] = []) => {
+    (plan: LearningPlan, items: QAItem[] = [], briefs: Brief[] = []) => {
       const s = ref.current;
       const existing = s.skills[plan.skillId];
       if (existing) {
@@ -135,7 +136,7 @@ export function AppProvider({
           onboarded: true,
           skills: {
             ...s.skills,
-            [plan.skillId]: { ...existing, plan, generatedItems: items },
+            [plan.skillId]: { ...existing, plan, generatedItems: items, briefs },
           },
         });
         return;
@@ -149,6 +150,7 @@ export function AppProvider({
         combo: 0,
         bestCombo: 0,
         generatedItems: items,
+        briefs,
       };
       commit({
         ...s,

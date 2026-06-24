@@ -1,4 +1,5 @@
 import type {
+  Brief,
   Difficulty,
   I18nText,
   LearningPlan,
@@ -176,6 +177,7 @@ export interface GeneratePlanInput {
 export interface PlanResult {
   plan: LearningPlan;
   items: QAItem[];
+  briefs?: Brief[];
 }
 
 /** Build a plan from the hand-authored bank (no network, no delay). */

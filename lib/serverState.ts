@@ -4,8 +4,10 @@ import { assemblePlan, assembleDrill } from "@/lib/agent";
 import { evaluateBadges } from "@/lib/gamification";
 import { todayKey, dayDiff } from "@/lib/utils";
 import type {
+  Brief,
   Difficulty,
   PlanTier,
+  QAFormat,
   QAItem,
   SkillProgress,
   UserState,
@@ -43,7 +45,10 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
     prisma.curriculum.findMany({
       where: { userId },
       orderBy: { createdAt: "asc" },
-      include: { questions: { orderBy: { orderIndex: "asc" } } },
+      include: {
+        questions: { orderBy: { orderIndex: "asc" } },
+        briefs: { orderBy: { orderIndex: "asc" } },
+      },
     }),
     prisma.attempt.findMany({
       where: { userId },
@@ -63,12 +68,22 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
       id: q.clientId,
       skillId: q.skillId,
       difficulty: q.difficulty as Difficulty,
-      format: "mcq",
+      format: (q.type as QAFormat) ?? "mcq",
       question: { en: q.questionEn, pl: q.questionPl },
       options: { en: q.optionsEn, pl: q.optionsPl },
       correctIndex: q.correctIndex,
+      answerText: q.answerText ?? undefined,
+      rubric: q.rubric ?? undefined,
+      briefClientId: q.briefClientId ?? undefined,
       explanation: { en: q.explanationEn, pl: q.explanationPl },
       xp: q.xp,
+    }));
+
+    const briefs: Brief[] = c.briefs.map((b) => ({
+      clientId: b.clientId,
+      title: b.title,
+      body: b.body,
+      orderIndex: b.orderIndex,
     }));
 
     const plan = c.areaName
@@ -99,6 +114,7 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
       combo: 0,
       bestCombo: 0,
       generatedItems: items,
+      briefs,
     };
   }
 

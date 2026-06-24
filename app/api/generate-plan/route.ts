@@ -54,6 +54,6 @@ export async function POST(req: Request) {
       : undefined;
 
   const built = await buildPlanForUser({ userId, tier, skill, answers, area });
-  const { plan, items, source, curriculumId } = built;
-  return NextResponse.json({ plan, items, source, curriculumId });
+  const { plan, items, briefs, source, curriculumId } = built;
+  return NextResponse.json({ plan, items, briefs, source, curriculumId });
 }

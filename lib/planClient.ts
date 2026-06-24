@@ -37,9 +37,9 @@ export async function requestPlan({
     if (!res.ok) throw new Error(`status ${res.status}`);
     const data = (await res.json()) as Partial<PlanResult>;
     if (!data?.plan) throw new Error("malformed plan response");
-    return { plan: data.plan, items: data.items ?? [] };
+    return { plan: data.plan, items: data.items ?? [], briefs: data.briefs ?? [] };
   } catch {
     const plan = await generatePlan({ skill, answers });
-    return { plan, items: [] };
+    return { plan, items: [], briefs: [] };
   }
 }

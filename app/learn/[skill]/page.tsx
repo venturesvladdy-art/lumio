@@ -92,8 +92,8 @@ function Onboarding() {
   const runBuild = useCallback(
     async (area: Area) => {
       setPhase("building");
-      const { plan: generated, items } = await requestPlan({ skill, answers, area });
-      startSkill(generated, items);
+      const { plan: generated, items, briefs } = await requestPlan({ skill, answers, area });
+      startSkill(generated, items, briefs);
       setPlan(generated);
       setPhase("plan");
     },

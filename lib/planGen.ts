@@ -4,10 +4,12 @@ import { assemblePlan, assembleDrill, buildBankPlan } from "@/lib/agent";
 import { modelForTier } from "@/lib/aiModel";
 import { prisma } from "@/lib/db";
 import type {
+  Brief,
   Difficulty,
   LearningPlan,
   OnboardingAnswers,
   PlanTier,
+  QAFormat,
   QAItem,
   SkillDef,
 } from "@/lib/types";
@@ -39,45 +41,66 @@ const PLAN_JSON_SCHEMA = {
   additionalProperties: false,
   properties: {
     summary: { type: "string" },
+    briefs: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          title: { type: "string" },
+          body: { type: "string" },
+        },
+        required: ["title", "body"],
+      },
+    },
     questions: {
       type: "array",
       items: {
         type: "object",
         additionalProperties: false,
         properties: {
+          type: {
+            type: "string",
+            enum: ["mcq", "truefalse", "numeric", "free"],
+          },
           difficulty: {
             type: "string",
             enum: ["beginner", "intermediate", "advanced"],
           },
+          briefIndex: { type: "integer" },
           question: { type: "string" },
           options: { type: "array", items: { type: "string" } },
           correctIndex: { type: "integer" },
+          answer: { type: "string" },
+          rubric: { type: "string" },
           explanation: { type: "string" },
         },
-        required: [
-          "difficulty",
-          "question",
-          "options",
-          "correctIndex",
-          "explanation",
-        ],
+        required: ["type", "difficulty", "briefIndex", "question", "explanation"],
       },
     },
   },
-  required: ["summary", "questions"],
+  required: ["summary", "briefs", "questions"],
 };
 
-const SYSTEM_PROMPT = `You are SkillSprinter's master tutor and curriculum designer. You create short, high-quality multiple-choice practice questions tailored to a learner's skill, level, and interests.
+const SYSTEM_PROMPT = `You are SkillSprinter's master tutor and curriculum designer. You teach a single skill area through short learning briefs followed by varied practice questions, tailored to a learner's level and goals.
 
-Rules:
-- Write everything in clear, natural English.
-- Every question has EXACTLY 4 options. "options" is an array of 4 strings; "correctIndex" is the 0-based index of the correct option.
-- For numeric/math options, use plain digits.
-- Write a concise, helpful "explanation" (1–2 sentences) for why the correct answer is right.
-- Order questions so difficulty ramps up gently from the learner's level.
-- Keep questions accurate, unambiguous, and genuinely useful. No trick questions.
-- Write a warm 2–3 sentence "summary" addressed to the learner describing the plan you built.
-Return your answer strictly in the requested structured format.`;
+Write everything in clear, natural English.
+
+BRIEFS
+- Break the area into a sequence of small concepts. For each, write a brief: a short "title" and a "body" of 2–4 sentences that teaches just enough to answer the next questions.
+- Each brief primes the 2–3 questions that follow it. Aim for one brief per 2–3 questions.
+
+QUESTIONS — vary the "type":
+- "mcq": EXACTLY 4 "options"; "correctIndex" is the 0-based index of the correct one.
+- "truefalse": "options" is ["True","False"]; "correctIndex" is 0 or 1.
+- "numeric": no options. "answer" is the exact numeric answer as a string (plain digits).
+- "free": short open response. No options. Provide a model "answer" and a concise "rubric" (1–2 sentences naming what a full-credit answer must include). Keep it answerable in under 200 characters.
+- Use mostly mcq, a few truefalse and numeric where they fit naturally, and 2–4 "free" questions across the set.
+- Every question sets "briefIndex" to the 0-based index of the brief it belongs to.
+- Write a concise "explanation" (1–2 sentences) of the correct answer for every question.
+- Order questions so difficulty ramps up gently from the learner's level. Be accurate and unambiguous.
+
+Write a warm 2–3 sentence "summary" addressed to the learner describing the drill you built. Return your answer strictly in the requested structured format.`;
 
 const GOAL_TEXT: Record<string, string> = {
   exam: "pass an exam or test",
@@ -144,16 +167,38 @@ Time available per day: ~${time} minutes
 Generate ${count} multiple-choice questions tuned to a ${level} learner, ${concentration}, with difficulty ramping up gradually. Return them (and the summary) in the structured format.`;
 }
 
+function normalizeBriefs(raw: unknown): Brief[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((b, i) => {
+      const o = b as Record<string, unknown>;
+      return {
+        clientId: `brief-${i}`,
+        title: typeof o.title === "string" ? o.title : `Concept ${i + 1}`,
+        body: typeof o.body === "string" ? o.body : "",
+        orderIndex: i,
+      };
+    })
+    .filter((b) => b.body.trim().length > 0);
+}
+
 function normalizeQuestion(
   raw: unknown,
   skillId: string,
   index: number
 ): QAItem | null {
   const q = raw as Record<string, unknown>;
-  const opts = Array.isArray(q.options)
-    ? (q.options as unknown[]).map(String).slice(0, 4)
-    : [];
-  if (opts.length < 2) return null;
+  const type: QAFormat = (["mcq", "truefalse", "numeric", "free"] as const).includes(
+    q.type as QAFormat
+  )
+    ? (q.type as QAFormat)
+    : "mcq";
+
+  const question = typeof q.question === "string" ? q.question : "";
+  if (!question) return null;
+  const explanation = typeof q.explanation === "string" ? q.explanation : "";
+  const answer = typeof q.answer === "string" ? q.answer : undefined;
+  const rubric = typeof q.rubric === "string" ? q.rubric : undefined;
 
   const difficulty: Difficulty = (["beginner", "intermediate", "advanced"] as const).includes(
     q.difficulty as Difficulty
@@ -161,25 +206,37 @@ function normalizeQuestion(
     ? (q.difficulty as Difficulty)
     : "intermediate";
 
-  const ci = Number(q.correctIndex);
-  const correctIndex = Number.isInteger(ci)
-    ? Math.min(Math.max(0, ci), opts.length - 1)
-    : 0;
+  const briefIndex = Number.isInteger(q.briefIndex) ? Number(q.briefIndex) : -1;
+  const briefClientId = briefIndex >= 0 ? `brief-${briefIndex}` : undefined;
 
-  const question = typeof q.question === "string" ? q.question : "";
-  const explanation = typeof q.explanation === "string" ? q.explanation : "";
+  let options: string[] = [];
+  let correctIndex = 0;
+  if (type === "mcq" || type === "truefalse") {
+    options = Array.isArray(q.options) ? (q.options as unknown[]).map(String) : [];
+    if (type === "truefalse" && options.length < 2) options = ["True", "False"];
+    if (options.length < 2) return null;
+    options = options.slice(0, type === "truefalse" ? 2 : 4);
+    const ci = Number(q.correctIndex);
+    correctIndex = Number.isInteger(ci)
+      ? Math.min(Math.max(0, ci), options.length - 1)
+      : 0;
+  } else if (type === "numeric" && !answer) {
+    return null; // numeric needs a checkable answer
+  }
 
   // English-only content. The {en,pl} shape is kept (pl mirrors en) so the
-  // existing data model and NOT NULL Pl columns keep working until Stage B
-  // drops them.
+  // existing NOT NULL Pl columns keep working until they're dropped.
   return {
     id: `gen-${skillId}-${index}`,
     skillId,
     difficulty,
-    format: "mcq",
+    format: type,
     question: { en: question, pl: question },
-    options: { en: opts, pl: opts },
+    options: { en: options, pl: options },
     correctIndex,
+    answerText: answer,
+    rubric,
+    briefClientId,
     explanation: { en: explanation, pl: explanation },
     xp: XP_BY_DIFFICULTY[difficulty],
   };
@@ -192,7 +249,7 @@ export async function generateWithClaude(
   answers: OnboardingAnswers,
   model: string,
   opts?: { area?: DrillArea; count?: number }
-): Promise<{ plan: LearningPlan; items: QAItem[] }> {
+): Promise<{ plan: LearningPlan; items: QAItem[]; briefs: Brief[] }> {
   const client = new Anthropic({ apiKey });
   const area = opts?.area;
   const count = opts?.count ?? (area ? DRILL_COUNT : QUESTION_COUNT);
@@ -205,7 +262,7 @@ export async function generateWithClaude(
   // output is requested via output_config.format (json_schema).
   const params = {
     model,
-    max_tokens: 8000,
+    max_tokens: 16000,
     system: [
       {
         type: "text",
@@ -236,9 +293,11 @@ export async function generateWithClaude(
 
   const parsed = JSON.parse(text) as {
     summary?: string;
+    briefs?: unknown[];
     questions?: unknown[];
   };
 
+  const briefs = normalizeBriefs(parsed.briefs);
   const items = (parsed.questions ?? [])
     .map((q, i) => normalizeQuestion(q, skill.id, i))
     .filter((x): x is QAItem => x !== null);
@@ -267,14 +326,14 @@ export async function generateWithClaude(
         createdAt: Date.now(),
       });
 
-  return { plan, items };
+  return { plan, items, briefs };
 }
 
 /** Persist a curriculum + its Q&A for a user (best-effort; returns its id). */
 export async function persistCurriculum(opts: {
   userId: string;
   skill: SkillDef;
-  result: { plan: LearningPlan; items: QAItem[] };
+  result: { plan: LearningPlan; items: QAItem[]; briefs?: Brief[] };
   source: string;
   model: string | null;
   answers: OnboardingAnswers;
@@ -283,6 +342,7 @@ export async function persistCurriculum(opts: {
   if (!prisma) return undefined;
   const { userId, skill, result, source, model, answers, area } = opts;
   const plan = result.plan;
+  const briefs = result.briefs ?? [];
 
   // Built without `answers` so we can retry without it if that column is
   // missing from an older database (otherwise a single missing column would
@@ -300,16 +360,28 @@ export async function persistCurriculum(opts: {
     model: source === "claude" ? model : null,
     areaId: area?.id ?? null,
     areaName: area?.name ?? null,
+    briefs: {
+      create: briefs.map((b) => ({
+        clientId: b.clientId,
+        title: b.title,
+        body: b.body,
+        orderIndex: b.orderIndex,
+      })),
+    },
     questions: {
       create: result.items.map((it, i) => ({
         clientId: it.id,
         skillId: it.skillId,
         difficulty: it.difficulty,
+        type: it.format,
+        briefClientId: it.briefClientId ?? null,
         questionEn: it.question.en,
         questionPl: it.question.pl,
         optionsEn: it.options.en,
         optionsPl: it.options.pl,
         correctIndex: it.correctIndex,
+        answerText: it.answerText ?? null,
+        rubric: it.rubric ?? null,
         explanationEn: it.explanation.en,
         explanationPl: it.explanation.pl,
         xp: it.xp,
@@ -354,6 +426,7 @@ export async function persistCurriculum(opts: {
 export interface BuildResult {
   plan: LearningPlan;
   items: QAItem[];
+  briefs: Brief[];
   source: string;
   model: string | null;
   curriculumId?: string;
@@ -375,11 +448,11 @@ export async function buildPlanForUser(opts: {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   const model = modelForTier(tier);
 
-  let result: { plan: LearningPlan; items: QAItem[] };
+  let result: { plan: LearningPlan; items: QAItem[]; briefs: Brief[] };
   let source: string;
 
   if (!apiKey) {
-    result = buildBankPlan({ skill, answers });
+    result = { ...buildBankPlan({ skill, answers }), briefs: [] };
     source = "bank";
   } else {
     try {
@@ -387,7 +460,7 @@ export async function buildPlanForUser(opts: {
       source = "claude";
     } catch (err) {
       console.error("[planGen] Claude generation failed; using bank:", err);
-      result = buildBankPlan({ skill, answers });
+      result = { ...buildBankPlan({ skill, answers }), briefs: [] };
       source = "bank-fallback";
     }
   }

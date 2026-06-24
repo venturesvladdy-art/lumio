@@ -60,7 +60,7 @@ export type OnboardingAnswers = Record<string, string[]>;
 
 /** ---- Learning content (Q&A) ---- */
 
-export type QAFormat = "mcq" | "truefalse";
+export type QAFormat = "mcq" | "truefalse" | "numeric" | "free";
 
 export interface QAItem {
   id: string;
@@ -68,12 +68,26 @@ export interface QAItem {
   difficulty: Difficulty;
   format: QAFormat;
   question: I18nText;
-  /** options for mcq / truefalse, parallel arrays per locale */
+  /** options for mcq / truefalse, parallel arrays per locale (empty for numeric/free) */
   options: I18nList;
   correctIndex: number;
+  /** numeric: canonical answer · free: model answer (kept server-side ideally) */
+  answerText?: string;
+  /** free: grading rubric used by the AI grader */
+  rubric?: string;
+  /** the learning brief (clientId) this question belongs to, if any */
+  briefClientId?: string;
   explanation: I18nText;
   hint?: I18nText;
   xp: number;
+}
+
+/** Stage B: a short learning brief shown before the questions it primes. */
+export interface Brief {
+  clientId: string;
+  title: string;
+  body: string;
+  orderIndex: number;
 }
 
 /** ---- Generated plan ---- */
@@ -111,6 +125,8 @@ export interface SkillProgress {
   bestCombo: number;
   /** AI-generated Q&A items for this plan; empty when using the static bank */
   generatedItems: QAItem[];
+  /** Stage B: learning briefs that prime groups of questions */
+  briefs?: Brief[];
 }
 
 export interface UserState {

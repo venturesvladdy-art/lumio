@@ -8,7 +8,10 @@ export const runtime = "nodejs";
 const Schema = z.object({
   skillId: z.string().min(1),
   questionClientId: z.string().min(1),
-  selectedIndex: z.number().int(),
+  type: z.enum(["mcq", "truefalse", "numeric", "free"]).default("mcq"),
+  selectedIndex: z.number().int().optional(),
+  responseText: z.string().max(400).optional(),
+  score: z.number().int().min(0).max(5).optional(),
   correct: z.boolean(),
   xpGained: z.number().int().min(0),
 });
@@ -32,7 +35,7 @@ export async function POST(req: Request) {
     const latest = await prisma.curriculum.findFirst({
       where: { userId, skillId: body.skillId },
       orderBy: { createdAt: "desc" },
-      select: { id: true },
+      select: { id: true, areaId: true },
     });
 
     await prisma.attempt.create({
@@ -40,8 +43,12 @@ export async function POST(req: Request) {
         userId,
         curriculumId: latest?.id ?? null,
         skillId: body.skillId,
+        areaId: latest?.areaId ?? null,
         questionClientId: body.questionClientId,
-        selectedIndex: body.selectedIndex,
+        type: body.type,
+        selectedIndex: body.selectedIndex ?? null,
+        responseText: body.responseText ?? null,
+        score: body.score ?? null,
         correct: body.correct,
         xpGained: body.xpGained,
       },
