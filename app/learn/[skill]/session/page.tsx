@@ -148,6 +148,11 @@ function SessionInner() {
         limited={!canAnswerMore(state)}
         moreLeft={cursor < queue.length}
         skillId={skill.id}
+        area={
+          progress.plan.areaId
+            ? { id: progress.plan.areaId, name: progress.plan.areaName ?? "this area" }
+            : undefined
+        }
       />
     );
   }
@@ -649,6 +654,7 @@ function CompletionView({
   limited,
   moreLeft,
   skillId,
+  area,
 }: {
   xp: number;
   correct: number;
@@ -656,9 +662,15 @@ function CompletionView({
   limited: boolean;
   moreLeft: boolean;
   skillId: string;
+  area?: { id: string; name: string };
 }) {
   const t = useT();
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+  const continueHref =
+    area &&
+    `/learn/${skillId}?area=${encodeURIComponent(area.id)}&areaName=${encodeURIComponent(
+      area.name
+    )}&continue=1`;
   return (
     <div className="container-page grid min-h-[70vh] max-w-lg place-items-center py-16 text-center">
       <div className="animate-fade-up">
@@ -689,14 +701,24 @@ function CompletionView({
         )}
 
         <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-          {moreLeft && !limited ? (
+          {limited ? (
+            <ButtonLink href="/pricing" size="lg">
+              {t("session.seePlans")}
+            </ButtonLink>
+          ) : area && continueHref ? (
+            <>
+              <ButtonLink href={continueHref} size="lg">
+                <Icon name="PlayCircle" className="h-5 w-5" />
+                Keep going on {area.name}
+              </ButtonLink>
+              <ButtonLink href={`/learn/${skillId}?pick=1`} size="lg" variant="outline">
+                Try another area
+              </ButtonLink>
+            </>
+          ) : moreLeft ? (
             <ButtonLink href={`/learn/${skillId}/session`} size="lg">
               <Icon name="PlayCircle" className="h-5 w-5" />
               {t("session.keepGoing")}
-            </ButtonLink>
-          ) : limited ? (
-            <ButtonLink href="/pricing" size="lg">
-              {t("session.seePlans")}
             </ButtonLink>
           ) : null}
           <ButtonLink href="/dashboard" size="lg" variant="outline">

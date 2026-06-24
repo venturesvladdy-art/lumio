@@ -66,6 +66,12 @@ function Onboarding() {
   const id = String(params.skill);
   const name = search.get("name") ?? undefined;
   const skill = useMemo(() => resolveSkill(id, name), [id, name]);
+
+  // Stage B continuation / switch-area entry points.
+  const forcePick = search.get("pick") === "1";
+  const contAreaId = search.get("area") ?? undefined;
+  const contAreaName = search.get("areaName") ?? undefined;
+  const isContinue = search.get("continue") === "1";
   const questions = useMemo(() => buildOnboarding(skill), [skill]);
 
   const [phase, setPhase] = useState<Phase>("loading");
@@ -74,10 +80,36 @@ function Onboarding() {
   const [plan, setPlan] = useState<LearningPlan | null>(null);
   const didInit = useRef(false);
 
+  const runBuild = useCallback(
+    async (area: Area, continueDrill = false) => {
+      setPhase("building");
+      const { plan: generated, items, briefs } = await requestPlan({
+        skill,
+        answers,
+        area,
+        continueDrill,
+      });
+      startSkill(generated, items, briefs);
+      setPlan(generated);
+      setPhase("plan");
+    },
+    [skill, answers, startSkill]
+  );
+
   // Decide the starting phase once state has hydrated.
   useEffect(() => {
     if (!hydrated || didInit.current) return;
     didInit.current = true;
+    // Continuation drill on a known area — build it straight away.
+    if (isContinue && contAreaId && contAreaName) {
+      void runBuild({ id: contAreaId, name: contAreaName }, true);
+      return;
+    }
+    // Explicit "switch area" — always show the area picker.
+    if (forcePick) {
+      setPhase("area");
+      return;
+    }
     const existing = state.skills[skill.id];
     if (existing) {
       setPlan(existing.plan);
@@ -87,18 +119,7 @@ function Onboarding() {
     } else {
       setPhase("questions");
     }
-  }, [hydrated, skill.id, state]);
-
-  const runBuild = useCallback(
-    async (area: Area) => {
-      setPhase("building");
-      const { plan: generated, items, briefs } = await requestPlan({ skill, answers, area });
-      startSkill(generated, items, briefs);
-      setPlan(generated);
-      setPhase("plan");
-    },
-    [skill, answers, startSkill]
-  );
+  }, [hydrated, skill.id, state, forcePick, isContinue, contAreaId, contAreaName, runBuild]);
 
   if (!authReady || !user) return <CenteredLoader />;
   if (phase === "loading") return <CenteredLoader />;
@@ -319,6 +340,15 @@ function ScaleInput({
 }
 
 /* ---------- Area selection (Stage B) ---------- */
+function clientSlugArea(name: string): string {
+  const s = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+  return `area-${s || "x"}`;
+}
+
 function AreaSelect({
   skill,
   onPick,
@@ -329,11 +359,31 @@ function AreaSelect({
   onBack: () => void;
 }) {
   const tx = useTx();
-  const areas = skill.topics.en.map((name, i) => ({
-    id: `area-${i}`,
-    name,
-    label: { en: name, pl: skill.topics.pl[i] ?? name },
-  }));
+  const [areas, setAreas] = useState<Area[] | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const fallback: Area[] = skill.topics.en.map((name) => ({
+      id: clientSlugArea(name),
+      name,
+    }));
+    fetch("/api/areas", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ skillId: skill.id, skillName: skill.name.en }),
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d: { areas?: Area[] }) => {
+        if (!active) return;
+        setAreas(Array.isArray(d.areas) && d.areas.length ? d.areas : fallback);
+      })
+      .catch(() => {
+        if (active) setAreas(fallback);
+      });
+    return () => {
+      active = false;
+    };
+  }, [skill.id, skill.name.en, skill.topics.en]);
 
   return (
     <div className="container-page max-w-2xl py-12 lg:py-16">
@@ -359,26 +409,34 @@ function AreaSelect({
         just for it. You can cover the rest afterwards.
       </p>
 
-      <div className="mt-8 grid gap-3 sm:grid-cols-2">
-        {areas.map((a) => (
-          <button
-            key={a.id}
-            onClick={() => onPick({ id: a.id, name: a.name })}
-            className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left transition-all hover:border-brand-300 hover:bg-brand-50/40 focusable"
-          >
-            <span className="font-medium text-ink">{tx(a.label)}</span>
-            <Icon
-              name="ArrowRight"
-              className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5"
-            />
-          </button>
-        ))}
-      </div>
+      {areas === null ? (
+        <div className="mt-10 grid place-items-center py-8 text-center">
+          <div className="h-9 w-9 animate-spin rounded-full border-2 border-slate-200 border-t-brand-500" />
+          <p className="mt-3 text-sm text-slate-500">
+            Finding the best areas to practice…
+          </p>
+        </div>
+      ) : (
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          {areas.map((a) => (
+            <button
+              key={a.id}
+              onClick={() => onPick(a)}
+              className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left transition-all hover:border-brand-300 hover:bg-brand-50/40 focusable"
+            >
+              <span className="font-medium text-ink">{a.name}</span>
+              <Icon
+                name="ArrowRight"
+                className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5"
+              />
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="mt-8">
         <Button variant="ghost" onClick={onBack}>
           <Icon name="ChevronLeft" className="h-4 w-4" />
-          {/* back to the questionnaire */}
           Back
         </Button>
       </div>

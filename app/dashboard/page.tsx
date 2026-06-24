@@ -8,6 +8,7 @@ import { useStore } from "@/lib/store";
 import { useRequireAuth, useCurrentUser } from "@/lib/session";
 import { resolveSkill } from "@/lib/skills";
 import { planItemIds } from "@/lib/agent";
+import type { AreaCoverage, SkillDef } from "@/lib/types";
 import {
   aggregate,
   BADGES,
@@ -262,6 +263,11 @@ export default function DashboardPage() {
                               </>
                             )}
                           </div>
+
+                          <AreaCoverageRow
+                            skill={skill}
+                            covered={state.coverage?.[sid] ?? []}
+                          />
                         </div>
                       </div>
                     </Card>
@@ -373,6 +379,54 @@ export default function DashboardPage() {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+/** Stage B: areas drilled (with accuracy) vs not-yet-covered, per skill. */
+function AreaCoverageRow({
+  skill,
+  covered,
+}: {
+  skill: SkillDef;
+  covered: AreaCoverage[];
+}) {
+  const coveredNames = new Set(covered.map((c) => c.areaName.toLowerCase()));
+  const uncovered = skill.topics.en.filter(
+    (t) => !coveredNames.has(t.toLowerCase())
+  );
+  if (covered.length === 0 && uncovered.length === 0) return null;
+
+  return (
+    <div className="mt-4 border-t border-slate-100 pt-3">
+      <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        Areas covered
+      </div>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {covered.map((c) => {
+          const acc =
+            c.answered > 0 ? Math.round((c.correct / c.answered) * 100) : 0;
+          return (
+            <span
+              key={c.areaId}
+              className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"
+            >
+              <Icon name="CheckCircle2" className="h-3 w-3" />
+              {c.areaName}
+              {c.answered > 0 && ` · ${acc}%`}
+            </span>
+          );
+        })}
+        {uncovered.map((name) => (
+          <span
+            key={name}
+            className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-400"
+          >
+            <Icon name="Lock" className="h-3 w-3" />
+            {name}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

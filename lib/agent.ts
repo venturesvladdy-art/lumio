@@ -133,10 +133,11 @@ export function assembleDrill(opts: {
   focusValues: string[];
   summary: I18nText;
   items: QAItem[];
+  areaId?: string;
   areaName: string;
   createdAt: number;
 }): LearningPlan {
-  const { skillId, level, focusValues, summary, items, areaName, createdAt } = opts;
+  const { skillId, level, focusValues, summary, items, areaId, areaName, createdAt } = opts;
   const half = Math.max(1, Math.ceil(items.length / 2));
   const m1 = items.slice(0, half);
   const m2 = items.slice(half);
@@ -166,6 +167,8 @@ export function assembleDrill(opts: {
     totalPlanned: items.length,
     modules,
     summary,
+    areaId,
+    areaName,
   };
 }
 

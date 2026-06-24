@@ -11,10 +11,12 @@ export async function requestPlan({
   skill,
   answers,
   area,
+  continueDrill,
 }: {
   skill: SkillDef;
   answers: OnboardingAnswers;
   area?: { id: string; name: string };
+  continueDrill?: boolean;
 }): Promise<PlanResult> {
   try {
     const controller = new AbortController();
@@ -31,6 +33,7 @@ export async function requestPlan({
         answers,
         areaId: area?.id,
         areaName: area?.name,
+        continue: continueDrill,
       }),
     });
     clearTimeout(timeout);

@@ -109,6 +109,9 @@ export interface LearningPlan {
   totalPlanned: number; // up to 100
   modules: PlanModule[];
   summary: I18nText; // the agent's personalized note
+  /** Stage B: set when this plan is a single-area drill */
+  areaId?: string;
+  areaName?: string;
 }
 
 /** ---- Progress & user state ---- */
@@ -129,6 +132,15 @@ export interface SkillProgress {
   briefs?: Brief[];
 }
 
+/** Stage B: per-area progress used for the dashboard coverage map. */
+export interface AreaCoverage {
+  areaId: string;
+  areaName: string;
+  total: number;
+  answered: number;
+  correct: number;
+}
+
 export interface UserState {
   tier: PlanTier;
   xp: number;
@@ -139,4 +151,6 @@ export interface UserState {
   earnedBadges: string[];
   skills: Record<string, SkillProgress>;
   onboarded: boolean;
+  /** Stage B: areas drilled per skill (skillId → coverage list). */
+  coverage?: Record<string, AreaCoverage[]>;
 }

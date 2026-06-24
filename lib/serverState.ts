@@ -4,6 +4,7 @@ import { assemblePlan, assembleDrill } from "@/lib/agent";
 import { evaluateBadges } from "@/lib/gamification";
 import { todayKey, dayDiff } from "@/lib/utils";
 import type {
+  AreaCoverage,
   Brief,
   Difficulty,
   PlanTier,
@@ -93,6 +94,7 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
           focusValues: c.focus,
           summary: { en: c.summaryEn, pl: c.summaryPl },
           items,
+          areaId: c.areaId ?? undefined,
           areaName: c.areaName,
           createdAt: c.createdAt.getTime(),
         })
@@ -160,6 +162,55 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
     if (dayDiff(today, lastActiveDate) > 1) streakDays = 0;
   }
 
+  // ---- Area coverage (Stage B): group every drilled area across curricula ----
+  const currToArea = new Map<string, string>(); // curriculumId → "skill::area"
+  const areaInfo = new Map<
+    string,
+    { skillId: string; areaId: string; areaName: string; questionIds: Set<string> }
+  >();
+  for (const c of curricula) {
+    if (!c.areaId) continue;
+    const key = `${c.skillId}::${c.areaId}`;
+    currToArea.set(c.id, key);
+    let info = areaInfo.get(key);
+    if (!info) {
+      info = {
+        skillId: c.skillId,
+        areaId: c.areaId,
+        areaName: c.areaName ?? c.areaId,
+        questionIds: new Set(),
+      };
+      areaInfo.set(key, info);
+    }
+    info.areaName = c.areaName ?? info.areaName; // newest name wins
+    for (const q of c.questions) info.questionIds.add(q.clientId);
+  }
+
+  const areaAnswered = new Map<string, { answered: Set<string>; correct: Set<string> }>();
+  for (const a of attempts) {
+    const key = a.curriculumId ? currToArea.get(a.curriculumId) : undefined;
+    if (!key) continue;
+    let e = areaAnswered.get(key);
+    if (!e) {
+      e = { answered: new Set(), correct: new Set() };
+      areaAnswered.set(key, e);
+    }
+    e.answered.add(a.questionClientId);
+    if (a.correct) e.correct.add(a.questionClientId);
+  }
+
+  const coverage: Record<string, AreaCoverage[]> = {};
+  for (const [key, info] of areaInfo) {
+    const e = areaAnswered.get(key);
+    (coverage[info.skillId] ??= []).push({
+      areaId: info.areaId,
+      areaName: info.areaName,
+      total: info.questionIds.size,
+      answered: e?.answered.size ?? 0,
+      correct: e?.correct.size ?? 0,
+    });
+  }
+
   const state: UserState = {
     tier,
     xp: totalXp,
@@ -170,6 +221,7 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
     earnedBadges: [],
     skills,
     onboarded: Object.keys(skills).length > 0,
+    coverage,
   };
   state.earnedBadges = evaluateBadges(state);
 

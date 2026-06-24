@@ -136,7 +136,8 @@ function buildUserPrompt(
   focusEn: string[],
   answers: OnboardingAnswers,
   count: number,
-  area?: DrillArea
+  area?: DrillArea,
+  weakness?: string[]
 ): string {
   const goal = GOAL_TEXT[first(answers, "goal") ?? ""] ?? "general improvement";
   const exp = EXP_TEXT[first(answers, "experience") ?? ""] ?? "some experience";
@@ -153,6 +154,13 @@ function buildUserPrompt(
     ? `concentrated specifically on "${area.name}"`
     : "concentrated on the focus areas above";
 
+  const weaknessBlock =
+    weakness && weakness.length
+      ? `\n\nThis is a FOLLOW-UP drill. The learner recently missed questions on these points — include several fresh questions (reworded, not copies) that revisit these concepts, then extend with new material:\n${weakness
+          .map((w) => `- ${w}`)
+          .join("\n")}`
+      : "";
+
   return `Create a personalized practice set for this learner.
 
 Skill: ${skill.name.en}
@@ -162,9 +170,9 @@ Prior experience: ${exp}
 Main goal: ${goal}${areaLine}
 Preferred learning style: ${style}
 Preferred difficulty: ${challenge}
-Time available per day: ~${time} minutes
+Time available per day: ~${time} minutes${weaknessBlock}
 
-Generate ${count} multiple-choice questions tuned to a ${level} learner, ${concentration}, with difficulty ramping up gradually. Return them (and the summary) in the structured format.`;
+Generate ${count} questions (mixed types, with briefs) tuned to a ${level} learner, ${concentration}, with difficulty ramping up gradually. Return them (and the briefs and summary) in the structured format.`;
 }
 
 function normalizeBriefs(raw: unknown): Brief[] {
@@ -248,7 +256,7 @@ export async function generateWithClaude(
   skill: SkillDef,
   answers: OnboardingAnswers,
   model: string,
-  opts?: { area?: DrillArea; count?: number }
+  opts?: { area?: DrillArea; count?: number; weakness?: string[] }
 ): Promise<{ plan: LearningPlan; items: QAItem[]; briefs: Brief[] }> {
   const client = new Anthropic({ apiKey });
   const area = opts?.area;
@@ -273,7 +281,7 @@ export async function generateWithClaude(
     messages: [
       {
         role: "user",
-        content: buildUserPrompt(skill, level, focusEn, answers, count, area),
+        content: buildUserPrompt(skill, level, focusEn, answers, count, area, opts?.weakness),
       },
     ],
     output_config: {
@@ -314,6 +322,7 @@ export async function generateWithClaude(
         focusValues,
         summary,
         items,
+        areaId: area.id,
         areaName: area.name,
         createdAt: Date.now(),
       })
@@ -443,8 +452,9 @@ export async function buildPlanForUser(opts: {
   skill: SkillDef;
   answers: OnboardingAnswers;
   area?: DrillArea;
+  weakness?: string[];
 }): Promise<BuildResult> {
-  const { userId, tier, skill, answers, area } = opts;
+  const { userId, tier, skill, answers, area, weakness } = opts;
   const apiKey = process.env.ANTHROPIC_API_KEY;
   const model = modelForTier(tier);
 
@@ -456,7 +466,7 @@ export async function buildPlanForUser(opts: {
     source = "bank";
   } else {
     try {
-      result = await generateWithClaude(apiKey, skill, answers, model, { area });
+      result = await generateWithClaude(apiKey, skill, answers, model, { area, weakness });
       source = "claude";
     } catch (err) {
       console.error("[planGen] Claude generation failed; using bank:", err);

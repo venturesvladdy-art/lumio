@@ -20,6 +20,8 @@ const BodySchema = z.object({
   // Stage B: drill a single area (20 focused questions) when provided.
   areaId: z.string().optional(),
   areaName: z.string().optional(),
+  // Stage B: a follow-up drill on the same area (re-drill misses + new).
+  continue: z.boolean().optional(),
 });
 
 export async function POST(req: Request) {
@@ -31,7 +33,7 @@ export async function POST(req: Request) {
   }
 
   const skill = resolveSkill(body.skillId, body.skillName);
-  const answers = body.answers as OnboardingAnswers;
+  let answers = body.answers as OnboardingAnswers;
 
   // Resolve the signed-in user + their authoritative tier (drives model choice).
   let userId: string | undefined;
@@ -53,7 +55,35 @@ export async function POST(req: Request) {
       ? { id: body.areaId, name: body.areaName }
       : undefined;
 
-  const built = await buildPlanForUser({ userId, tier, skill, answers, area });
+  // Continuation: reuse the stored answers and target the questions the
+  // learner previously got wrong, so the next drill revisits weak spots.
+  let weakness: string[] | undefined;
+  if (body.continue && area && userId && prisma) {
+    const prev = await prisma.curriculum.findFirst({
+      where: { userId, skillId: skill.id, areaId: area.id },
+      orderBy: { createdAt: "desc" },
+      select: { answers: true },
+    });
+    if (prev?.answers) answers = prev.answers as OnboardingAnswers;
+
+    const wrong = await prisma.attempt.findMany({
+      where: { userId, skillId: skill.id, areaId: area.id, correct: false },
+      select: { questionClientId: true },
+    });
+    const wrongIds = Array.from(new Set(wrong.map((w) => w.questionClientId)));
+    if (wrongIds.length) {
+      const qs = await prisma.question.findMany({
+        where: {
+          clientId: { in: wrongIds },
+          curriculum: { userId, skillId: skill.id, areaId: area.id },
+        },
+        select: { questionEn: true },
+      });
+      weakness = Array.from(new Set(qs.map((q) => q.questionEn))).slice(0, 12);
+    }
+  }
+
+  const built = await buildPlanForUser({ userId, tier, skill, answers, area, weakness });
   const { plan, items, briefs, source, curriculumId } = built;
   return NextResponse.json({ plan, items, briefs, source, curriculumId });
 }
