@@ -12,9 +12,15 @@ export interface LegalSection {
 export function LegalPage({
   title,
   sections,
+  dateLabel,
+  showDraft = true,
 }: {
   title: string;
   sections: LegalSection[];
+  /** Overrides the default "Last updated" line (e.g. an effective date). */
+  dateLabel?: string;
+  /** Show the "draft / placeholder" banner. Off for finalized documents. */
+  showDraft?: boolean;
 }) {
   const t = useT();
   return (
@@ -30,12 +36,16 @@ export function LegalPage({
       <h1 className="mt-6 font-display text-4xl font-bold tracking-tight text-ink">
         {title}
       </h1>
-      <p className="mt-2 text-sm text-slate-400">{t("legal.lastUpdated")}</p>
+      <p className="mt-2 text-sm text-slate-400">
+        {dateLabel ?? t("legal.lastUpdated")}
+      </p>
 
-      <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-        <Icon name="Lightbulb" className="mt-0.5 h-5 w-5 shrink-0" />
-        <span>{t("legal.draft")}</span>
-      </div>
+      {showDraft && (
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          <Icon name="Lightbulb" className="mt-0.5 h-5 w-5 shrink-0" />
+          <span>{t("legal.draft")}</span>
+        </div>
+      )}
 
       <article className="mt-10 space-y-8">
         {sections.map((s, i) => (
