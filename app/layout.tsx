@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { VerifyBanner } from "@/components/VerifyBanner";
 
 // latin-ext is required for Polish glyphs (ł ś ż ć ą ę ó ń ź).
 const inter = Inter({
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col bg-white font-sans text-ink">
         <Providers>
           <Navbar />
+          <VerifyBanner />
           <main className="flex-1">{children}</main>
           <Footer />
         </Providers>

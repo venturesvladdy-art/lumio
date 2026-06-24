@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useT } from "@/lib/i18n";
 import { Logo } from "@/components/ui/Logo";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function Footer() {
   const t = useT();
@@ -46,9 +45,6 @@ export function Footer() {
             <p className="mt-4 max-w-xs text-sm text-slate-500">
               {t("footer.tagline")}
             </p>
-            <div className="mt-5">
-              <LanguageSwitcher />
-            </div>
           </div>
 
           {columns.map((col) => (

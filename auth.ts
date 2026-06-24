@@ -50,14 +50,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         (token as Record<string, unknown>).tier =
           (user as { tier?: string }).tier ?? "basic";
       }
-      // Keep tier fresh so Stripe webhook changes take effect without re-login.
+      // Keep tier + verification fresh so changes take effect without re-login.
       const uid = (token as Record<string, unknown>).uid as string | undefined;
       if (uid && prisma) {
         const u = await prisma.user.findUnique({
           where: { id: uid },
-          select: { tier: true },
+          select: { tier: true, emailVerified: true },
         });
-        if (u) (token as Record<string, unknown>).tier = u.tier;
+        if (u) {
+          (token as Record<string, unknown>).tier = u.tier;
+          (token as Record<string, unknown>).emailVerified = Boolean(u.emailVerified);
+        }
       }
       return token;
     },
@@ -67,6 +70,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const u = session.user as unknown as Record<string, unknown>;
         u.id = t.uid;
         u.tier = t.tier ?? "basic";
+        u.emailVerified = t.emailVerified ?? false;
       }
       return session;
     },

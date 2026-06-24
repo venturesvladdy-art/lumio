@@ -5,12 +5,9 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState,
 } from "react";
 import type { Locale } from "@/lib/types";
 import { dictionary } from "./dictionary";
-
-const STORAGE_KEY = "skillsprinter.locale";
 
 type Vars = Record<string, string | number>;
 
@@ -45,23 +42,11 @@ function interpolate(s: string, vars?: Vars): string {
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
-      if (saved === "en" || saved === "pl") {
-        setLocaleState(saved);
-      } else if (typeof navigator !== "undefined") {
-        const nav = navigator.language?.toLowerCase() ?? "";
-        if (nav.startsWith("pl")) setLocaleState("pl");
-      }
-    } catch {
-      /* ignore */
-    }
-    setReady(true);
-  }, []);
+  // The app is English-only for now. Locale is fixed; the toggles are kept as
+  // no-ops so the rest of the i18n API (useT/useTx/useLocale) stays stable and
+  // Polish can be re-enabled later by restoring the locale state.
+  const locale: Locale = "en";
+  const ready = true;
 
   useEffect(() => {
     try {
@@ -69,33 +54,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     } catch {
       /* ignore */
     }
-  }, [locale]);
-
-  const setLocale = useCallback((l: Locale) => {
-    setLocaleState(l);
-    try {
-      localStorage.setItem(STORAGE_KEY, l);
-    } catch {
-      /* ignore */
-    }
   }, []);
 
-  const toggleLocale = useCallback(() => {
-    setLocaleState((prev) => {
-      const next: Locale = prev === "en" ? "pl" : "en";
-      try {
-        localStorage.setItem(STORAGE_KEY, next);
-      } catch {
-        /* ignore */
-      }
-      return next;
-    });
-  }, []);
+  const setLocale = useCallback(() => {}, []);
+  const toggleLocale = useCallback(() => {}, []);
 
   const t = useCallback(
     (path: string, vars?: Vars) =>
       interpolate(resolvePath(dictionary[locale], path), vars),
-    [locale]
+    []
   );
 
   return (

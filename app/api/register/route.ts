@@ -3,6 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { tierForEmail } from "@/lib/allowlist";
+import { sendVerificationEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -59,6 +60,11 @@ export async function POST(req: Request) {
       },
     })
     .catch(() => {});
+
+  // Fire a confirmation email (best-effort; never blocks sign-up).
+  await sendVerificationEmail(email).catch((e) =>
+    console.error("[register] verification email failed:", e)
+  );
 
   return NextResponse.json({ ok: true });
 }

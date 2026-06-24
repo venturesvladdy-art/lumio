@@ -25,19 +25,12 @@ const XP_BY_DIFFICULTY: Record<Difficulty, number> = {
   advanced: 25,
 };
 
-/* ---- Structured-output schema for Claude ---- */
-const I18N = {
-  type: "object",
-  additionalProperties: false,
-  properties: { en: { type: "string" }, pl: { type: "string" } },
-  required: ["en", "pl"],
-};
-
+/* ---- Structured-output schema for Claude (English-only) ---- */
 const PLAN_JSON_SCHEMA = {
   type: "object",
   additionalProperties: false,
   properties: {
-    summary: I18N,
+    summary: { type: "string" },
     questions: {
       type: "array",
       items: {
@@ -48,17 +41,15 @@ const PLAN_JSON_SCHEMA = {
             type: "string",
             enum: ["beginner", "intermediate", "advanced"],
           },
-          question: I18N,
-          optionsEn: { type: "array", items: { type: "string" } },
-          optionsPl: { type: "array", items: { type: "string" } },
+          question: { type: "string" },
+          options: { type: "array", items: { type: "string" } },
           correctIndex: { type: "integer" },
-          explanation: I18N,
+          explanation: { type: "string" },
         },
         required: [
           "difficulty",
           "question",
-          "optionsEn",
-          "optionsPl",
+          "options",
           "correctIndex",
           "explanation",
         ],
@@ -71,13 +62,13 @@ const PLAN_JSON_SCHEMA = {
 const SYSTEM_PROMPT = `You are SkillSprinter's master tutor and curriculum designer. You create short, high-quality multiple-choice practice questions tailored to a learner's skill, level, and interests.
 
 Rules:
-- Produce questions in BOTH English and Polish. The Polish must be a natural, fluent translation — not literal. Keep meaning and the correct answer identical across languages.
-- Every question has EXACTLY 4 options. "optionsEn" and "optionsPl" are parallel arrays in the same order; "correctIndex" is the 0-based index of the correct option (same index in both languages).
-- For numeric/math options, the same digits may be used in both languages.
-- Write a concise, helpful "explanation" (1–2 sentences) for why the correct answer is right, in both languages.
+- Write everything in clear, natural English.
+- Every question has EXACTLY 4 options. "options" is an array of 4 strings; "correctIndex" is the 0-based index of the correct option.
+- For numeric/math options, use plain digits.
+- Write a concise, helpful "explanation" (1–2 sentences) for why the correct answer is right.
 - Order questions so difficulty ramps up gently from the learner's level.
 - Keep questions accurate, unambiguous, and genuinely useful. No trick questions.
-- Write a warm 2–3 sentence "summary" addressed to the learner (in both languages) describing the plan you built.
+- Write a warm 2–3 sentence "summary" addressed to the learner describing the plan you built.
 Return your answer strictly in the requested structured format.`;
 
 const GOAL_TEXT: Record<string, string> = {
@@ -143,14 +134,10 @@ function normalizeQuestion(
   index: number
 ): QAItem | null {
   const q = raw as Record<string, unknown>;
-  const en = Array.isArray(q.optionsEn)
-    ? (q.optionsEn as unknown[]).map(String).slice(0, 4)
+  const opts = Array.isArray(q.options)
+    ? (q.options as unknown[]).map(String).slice(0, 4)
     : [];
-  let pl = Array.isArray(q.optionsPl)
-    ? (q.optionsPl as unknown[]).map(String).slice(0, 4)
-    : [];
-  if (en.length < 2) return null;
-  if (pl.length !== en.length) pl = [...en];
+  if (opts.length < 2) return null;
 
   const difficulty: Difficulty = (["beginner", "intermediate", "advanced"] as const).includes(
     q.difficulty as Difficulty
@@ -160,24 +147,24 @@ function normalizeQuestion(
 
   const ci = Number(q.correctIndex);
   const correctIndex = Number.isInteger(ci)
-    ? Math.min(Math.max(0, ci), en.length - 1)
+    ? Math.min(Math.max(0, ci), opts.length - 1)
     : 0;
 
-  const question = q.question as { en?: string; pl?: string } | undefined;
-  const explanation = q.explanation as { en?: string; pl?: string } | undefined;
+  const question = typeof q.question === "string" ? q.question : "";
+  const explanation = typeof q.explanation === "string" ? q.explanation : "";
 
+  // English-only content. The {en,pl} shape is kept (pl mirrors en) so the
+  // existing data model and NOT NULL Pl columns keep working until Stage B
+  // drops them.
   return {
     id: `gen-${skillId}-${index}`,
     skillId,
     difficulty,
     format: "mcq",
-    question: { en: question?.en ?? "", pl: question?.pl ?? question?.en ?? "" },
-    options: { en, pl },
+    question: { en: question, pl: question },
+    options: { en: opts, pl: opts },
     correctIndex,
-    explanation: {
-      en: explanation?.en ?? "",
-      pl: explanation?.pl ?? explanation?.en ?? "",
-    },
+    explanation: { en: explanation, pl: explanation },
     xp: XP_BY_DIFFICULTY[difficulty],
   };
 }
@@ -229,7 +216,7 @@ export async function generateWithClaude(
     .join("");
 
   const parsed = JSON.parse(text) as {
-    summary?: { en?: string; pl?: string };
+    summary?: string;
     questions?: unknown[];
   };
 
@@ -239,10 +226,8 @@ export async function generateWithClaude(
 
   if (items.length === 0) throw new Error("Claude returned no usable questions");
 
-  const summary = {
-    en: parsed.summary?.en ?? "",
-    pl: parsed.summary?.pl ?? parsed.summary?.en ?? "",
-  };
+  const summaryText = typeof parsed.summary === "string" ? parsed.summary : "";
+  const summary = { en: summaryText, pl: summaryText };
 
   const plan = assemblePlan({
     skillId: skill.id,

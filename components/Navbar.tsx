@@ -11,7 +11,6 @@ import { PLANS } from "@/lib/plans";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/Logo";
 import { Button, ButtonLink } from "@/components/ui/Button";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Icon } from "@/components/ui/Icon";
 import { Pill } from "@/components/ui/primitives";
 
@@ -73,7 +72,6 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <LanguageSwitcher />
           {user ? (
             <AccountMenu />
           ) : (
@@ -93,7 +91,6 @@ export function Navbar() {
 
         {/* Mobile controls */}
         <div className="flex items-center gap-2 md:hidden">
-          <LanguageSwitcher />
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"

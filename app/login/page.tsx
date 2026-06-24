@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useT } from "@/lib/i18n";
@@ -162,6 +163,16 @@ function DbLogin() {
           onChange={setPassword}
           placeholder={t("auth.passwordPlaceholder")}
         />
+        {mode === "signin" && (
+          <div className="text-right">
+            <Link
+              href="/forgot"
+              className="text-sm font-medium text-brand-600 hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        )}
         {error && (
           <p className="flex items-center gap-1.5 text-sm text-rose-600">
             <Icon name="CircleHelp" className="h-4 w-4" />

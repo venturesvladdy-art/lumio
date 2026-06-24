@@ -15,6 +15,8 @@ import { useStore } from "@/lib/store";
 export interface CurrentUser {
   email: string;
   name: string;
+  /** Email confirmation status (always true in demo mode). */
+  emailVerified: boolean;
 }
 
 interface CurrentUserValue {
@@ -55,7 +57,9 @@ export function useRequireAuth(): { ready: boolean; user: CurrentUser | null } {
 export function DemoSessionBridge({ children }: { children: React.ReactNode }) {
   const { user, ready, signOut } = useAuth();
   const value: CurrentUserValue = {
-    user: user ? { email: user.email, name: user.name } : null,
+    user: user
+      ? { email: user.email, name: user.name, emailVerified: true }
+      : null,
     ready,
     signOut,
     refresh: async () => {},
@@ -78,7 +82,12 @@ export function DbSessionBridge({ children }: { children: React.ReactNode }) {
   const { setTier, hydrateServerState } = useStore();
 
   const sessionUser = data?.user as
-    | { email?: string | null; name?: string | null; tier?: PlanTier }
+    | {
+        email?: string | null;
+        name?: string | null;
+        tier?: PlanTier;
+        emailVerified?: boolean;
+      }
     | undefined;
   const tier = sessionUser?.tier;
 
@@ -130,7 +139,11 @@ export function DbSessionBridge({ children }: { children: React.ReactNode }) {
 
   const value: CurrentUserValue = {
     user: sessionUser?.email
-      ? { email: sessionUser.email, name: sessionUser.name ?? sessionUser.email }
+      ? {
+          email: sessionUser.email,
+          name: sessionUser.name ?? sessionUser.email,
+          emailVerified: Boolean(sessionUser.emailVerified),
+        }
       : null,
     ready: status !== "loading",
     signOut: () => {
