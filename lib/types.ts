@@ -1,0 +1,126 @@
+/** ---- Core shared types ---- */
+
+export type Locale = "en" | "pl";
+
+/** A piece of text available in both supported languages. */
+export interface I18nText {
+  en: string;
+  pl: string;
+}
+
+export interface I18nList {
+  en: string[];
+  pl: string[];
+}
+
+export type PlanTier = "basic" | "smart" | "guru";
+
+export type Difficulty = "beginner" | "intermediate" | "advanced";
+
+/** ---- Skills ---- */
+
+export interface SkillDef {
+  id: string;
+  predefined: boolean;
+  icon: string; // lucide-react icon name
+  accent: AccentColor;
+  name: I18nText;
+  tagline: I18nText;
+  description: I18nText;
+  topics: I18nList;
+}
+
+export type AccentColor =
+  | "brand"
+  | "amber"
+  | "emerald"
+  | "sky"
+  | "rose"
+  | "violet";
+
+/** ---- Onboarding questionnaire ---- */
+
+export interface OnboardingOption {
+  value: string;
+  label: I18nText;
+}
+
+export interface OnboardingQuestion {
+  id: string;
+  prompt: I18nText;
+  helper?: I18nText;
+  /** "single" — pick one, "multi" — pick several, "scale" — 1..5 self-rating */
+  type: "single" | "multi" | "scale";
+  options: OnboardingOption[];
+  /** marks the question that determines the learner level */
+  levelDriver?: boolean;
+}
+
+export type OnboardingAnswers = Record<string, string[]>;
+
+/** ---- Learning content (Q&A) ---- */
+
+export type QAFormat = "mcq" | "truefalse";
+
+export interface QAItem {
+  id: string;
+  skillId: string;
+  difficulty: Difficulty;
+  format: QAFormat;
+  question: I18nText;
+  /** options for mcq / truefalse, parallel arrays per locale */
+  options: I18nList;
+  correctIndex: number;
+  explanation: I18nText;
+  hint?: I18nText;
+  xp: number;
+}
+
+/** ---- Generated plan ---- */
+
+export interface PlanModule {
+  id: string;
+  title: I18nText;
+  /** ids of items we have real content for and can play now */
+  itemIds: string[];
+  /** total questions planned for this module (>= itemIds.length) */
+  plannedCount: number;
+}
+
+export interface LearningPlan {
+  skillId: string;
+  createdAt: number;
+  level: Difficulty;
+  focus: string[];
+  totalPlanned: number; // up to 100
+  modules: PlanModule[];
+  summary: I18nText; // the agent's personalized note
+}
+
+/** ---- Progress & user state ---- */
+
+export interface SkillProgress {
+  skillId: string;
+  plan: LearningPlan;
+  completedItemIds: string[];
+  correctItemIds: string[];
+  xp: number;
+  /** live consecutive-correct counter for this skill */
+  combo: number;
+  /** best consecutive-correct run achieved, for combo flair & badges */
+  bestCombo: number;
+  /** AI-generated Q&A items for this plan; empty when using the static bank */
+  generatedItems: QAItem[];
+}
+
+export interface UserState {
+  tier: PlanTier;
+  xp: number;
+  streakDays: number;
+  lastActiveDate: string | null;
+  dailyAnswered: number;
+  dailyDate: string | null;
+  earnedBadges: string[];
+  skills: Record<string, SkillProgress>;
+  onboarded: boolean;
+}

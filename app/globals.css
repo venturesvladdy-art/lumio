@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+@layer base {
+  * {
+    @apply border-slate-200;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-white text-ink antialiased;
+  }
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  /* Soft dotted backdrop used behind hero / section accents */
+  .bg-dotted {
+    background-image: radial-gradient(rgba(99, 102, 241, 0.16) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(13, 15, 20, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(13, 15, 20, 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Reusable focus treatment */
+  .focusable {
+    @apply outline-none ring-offset-2 ring-offset-white focus-visible:ring-2 focus-visible:ring-brand-500;
+  }
+
+  /* Container helper */
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  /* Subtle gradient text for emphasis words */
+  .text-gradient {
+    @apply bg-gradient-to-br from-brand-600 via-brand-500 to-violet-500 bg-clip-text text-transparent;
+  }
+
+  /* Shimmer skeleton used while the agent "thinks" */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/* Thin, modern scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 9999px;
+}
