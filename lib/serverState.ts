@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { resolveSkill } from "@/lib/skills";
 import { assemblePlan, assembleDrill } from "@/lib/agent";
 import { evaluateBadges } from "@/lib/gamification";
-import { todayKey, dayDiff } from "@/lib/utils";
+import { dayDiff } from "@/lib/utils";
 import type {
   AreaCoverage,
   Brief,
@@ -121,8 +121,9 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
   }
 
   // Replay attempts (chronological) into per-skill progress + totals.
+  // Use one consistent (UTC) day key for bucketing and "today".
   let totalXp = 0;
-  const today = todayKey();
+  const today = dayOf(new Date());
   let dailyAnswered = 0;
   const activeDays = new Set<string>();
 

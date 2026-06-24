@@ -391,11 +391,13 @@ function AreaCoverageRow({
   skill: SkillDef;
   covered: AreaCoverage[];
 }) {
+  // Only meaningful once at least one area is drilled (so it stays hidden in
+  // demo mode, where coverage isn't tracked).
+  if (covered.length === 0) return null;
   const coveredNames = new Set(covered.map((c) => c.areaName.toLowerCase()));
   const uncovered = skill.topics.en.filter(
     (t) => !coveredNames.has(t.toLowerCase())
   );
-  if (covered.length === 0 && uncovered.length === 0) return null;
 
   return (
     <div className="mt-4 border-t border-slate-100 pt-3">

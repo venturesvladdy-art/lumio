@@ -128,13 +128,33 @@ function SessionInner() {
   }
 
   if (queue.length === 0) {
+    const areaDone = progress.plan.areaId
+      ? { id: progress.plan.areaId, name: progress.plan.areaName ?? "this area" }
+      : undefined;
     return (
       <Centered
         icon="Trophy"
         title={t("session.completeTitle")}
         desc={t("session.keepGoing")}
       >
-        <ButtonLink href="/dashboard">{t("session.backToDashboard")}</ButtonLink>
+        {areaDone && (
+          <>
+            <ButtonLink
+              href={`/learn/${skill.id}?area=${encodeURIComponent(
+                areaDone.id
+              )}&areaName=${encodeURIComponent(areaDone.name)}&continue=1`}
+            >
+              <Icon name="PlayCircle" className="h-5 w-5" />
+              Keep going on {areaDone.name}
+            </ButtonLink>
+            <ButtonLink href={`/learn/${skill.id}?pick=1`} variant="outline">
+              Try another area
+            </ButtonLink>
+          </>
+        )}
+        <ButtonLink href="/dashboard" variant={areaDone ? "ghost" : "primary"}>
+          {t("session.backToDashboard")}
+        </ButtonLink>
       </Centered>
     );
   }

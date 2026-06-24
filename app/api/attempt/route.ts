@@ -53,9 +53,9 @@ export async function POST(req: Request) {
         xpGained: body.xpGained,
       },
     });
+    return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[attempt] log failed:", e);
+    return NextResponse.json({ ok: false }, { status: 500 });
   }
-
-  return NextResponse.json({ ok: true });
 }

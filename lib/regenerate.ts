@@ -18,17 +18,25 @@ export async function regenerateCurriculaForUser(
 ): Promise<number> {
   if (!prisma || !process.env.ANTHROPIC_API_KEY) return 0;
 
-  // Latest curriculum per skill.
+  // Latest curriculum per (skill, area) — so single-area drills are rebuilt as
+  // drills, not collapsed into one full plan per skill.
   const curricula = await prisma.curriculum.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-    select: { skillId: true, skillName: true, answers: true, model: true },
+    select: {
+      skillId: true,
+      skillName: true,
+      areaId: true,
+      areaName: true,
+      answers: true,
+    },
   });
 
   const seen = new Set<string>();
   const latest = curricula.filter((c) => {
-    if (seen.has(c.skillId)) return false;
-    seen.add(c.skillId);
+    const key = `${c.skillId}::${c.areaId ?? ""}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
     return true;
   });
 
@@ -38,7 +46,9 @@ export async function regenerateCurriculaForUser(
     if (!answers) continue; // can't faithfully rebuild without the answers
     try {
       const skill = resolveSkill(c.skillId, c.skillName);
-      await buildPlanForUser({ userId, tier, skill, answers });
+      const area =
+        c.areaId && c.areaName ? { id: c.areaId, name: c.areaName } : undefined;
+      await buildPlanForUser({ userId, tier, skill, answers, area });
       regenerated += 1;
     } catch (e) {
       console.error("[regenerate] failed for skill", c.skillId, e);

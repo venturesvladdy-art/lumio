@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import Anthropic from "@anthropic-ai/sdk";
 import { deriveLevel, focusLabels } from "@/lib/onboarding";
 import { assemblePlan, assembleDrill, buildBankPlan } from "@/lib/agent";
@@ -193,6 +194,7 @@ function normalizeBriefs(raw: unknown): Brief[] {
 function normalizeQuestion(
   raw: unknown,
   skillId: string,
+  runId: string,
   index: number
 ): QAItem | null {
   const q = raw as Record<string, unknown>;
@@ -228,14 +230,15 @@ function normalizeQuestion(
     correctIndex = Number.isInteger(ci)
       ? Math.min(Math.max(0, ci), options.length - 1)
       : 0;
-  } else if (type === "numeric" && !answer) {
-    return null; // numeric needs a checkable answer
+  } else if ((type === "numeric" || type === "free") && !answer) {
+    return null; // numeric/free need a checkable model answer to grade against
   }
 
   // English-only content. The {en,pl} shape is kept (pl mirrors en) so the
   // existing NOT NULL Pl columns keep working until they're dropped.
+  // The runId keeps clientIds unique per drill, so re-drills don't collide.
   return {
-    id: `gen-${skillId}-${index}`,
+    id: `gen-${skillId}-${runId}-${index}`,
     skillId,
     difficulty,
     format: type,
@@ -305,9 +308,10 @@ export async function generateWithClaude(
     questions?: unknown[];
   };
 
+  const runId = randomBytes(3).toString("hex"); // unique per drill
   const briefs = normalizeBriefs(parsed.briefs);
   const items = (parsed.questions ?? [])
-    .map((q, i) => normalizeQuestion(q, skill.id, i))
+    .map((q, i) => normalizeQuestion(q, skill.id, runId, i))
     .filter((x): x is QAItem => x !== null);
 
   if (items.length === 0) throw new Error("Claude returned no usable questions");
@@ -353,10 +357,9 @@ export async function persistCurriculum(opts: {
   const plan = result.plan;
   const briefs = result.briefs ?? [];
 
-  // Built without `answers` so we can retry without it if that column is
-  // missing from an older database (otherwise a single missing column would
-  // drop the whole curriculum and the skill would never reach the dashboard).
-  const baseData = {
+  // The pre-Stage-B columns every database has. Used as the last-resort
+  // fallback so a curriculum still saves even if newer columns are missing.
+  const legacyData = {
     userId,
     skillId: skill.id,
     skillName: skill.name.en,
@@ -367,6 +370,27 @@ export async function persistCurriculum(opts: {
     totalPlanned: plan.totalPlanned,
     source,
     model: source === "claude" ? model : null,
+    questions: {
+      create: result.items.map((it, i) => ({
+        clientId: it.id,
+        skillId: it.skillId,
+        difficulty: it.difficulty,
+        questionEn: it.question.en,
+        questionPl: it.question.pl,
+        optionsEn: it.options.en,
+        optionsPl: it.options.pl,
+        correctIndex: it.correctIndex,
+        explanationEn: it.explanation.en,
+        explanationPl: it.explanation.pl,
+        xp: it.xp,
+        orderIndex: i,
+      })),
+    },
+  };
+
+  // Stage B fields (area, briefs, question type/answer/rubric) on top.
+  const baseData = {
+    ...legacyData,
     areaId: area?.id ?? null,
     areaName: area?.name ?? null,
     briefs: {
@@ -399,24 +423,25 @@ export async function persistCurriculum(opts: {
     },
   };
 
+  // Persist with progressively fewer optional columns so an un-migrated DB
+  // still saves the curriculum rather than dropping it: full → no answers →
+  // legacy (pre-Stage-B) shape.
+  const create = (data: object) =>
+    prisma!.curriculum.create({ data: data as never, select: { id: true } });
+
   let created: { id: string };
   try {
-    created = await prisma.curriculum.create({
-      data: { ...baseData, answers: answers as object },
-      select: { id: true },
-    });
-  } catch (e) {
-    // Most likely the `answers` column doesn't exist yet on this DB. Persist
-    // the curriculum anyway (upgrade-regeneration just can't use stored answers
-    // until you run: ALTER TABLE "Curriculum" ADD COLUMN "answers" JSONB;).
-    console.warn(
-      "[planGen] curriculum insert with answers failed; retrying without it:",
-      e
-    );
-    created = await prisma.curriculum.create({
-      data: baseData,
-      select: { id: true },
-    });
+    created = await create({ ...baseData, answers: answers as object });
+  } catch {
+    try {
+      created = await create(baseData); // `answers` column missing
+    } catch (e2) {
+      console.warn(
+        "[planGen] Stage B columns missing; saving in legacy shape. Run skillsprinter-stage-b.sql.",
+        e2
+      );
+      created = await create(legacyData);
+    }
   }
 
   await prisma.auditEvent
