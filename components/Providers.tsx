@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/lib/i18n";
 import { AppProvider, useStore } from "@/lib/store";
 import { AuthProvider, tierForEmail, useAuth } from "@/lib/auth";
 import { DemoSessionBridge, DbSessionBridge } from "@/lib/session";
+import { ClaimBridge } from "@/components/ClaimBridge";
 import { USE_DB } from "@/lib/flags";
 
 /** Demo mode only: grant Guru to allowlisted accounts (mirrors a billing webhook). */
@@ -30,7 +31,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <LanguageProvider>
         <SessionProvider>
           <AppProvider dbMode>
-            <DbSessionBridge>{children}</DbSessionBridge>
+            <DbSessionBridge>
+              <ClaimBridge />
+              {children}
+            </DbSessionBridge>
           </AppProvider>
         </SessionProvider>
       </LanguageProvider>

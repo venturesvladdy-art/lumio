@@ -9,6 +9,7 @@ import {
   type TasteBank,
   type TasteQuestion,
 } from "@/lib/taste/banks";
+import { getAnonId, savePendingClaim } from "@/lib/anon";
 import type { Difficulty, SkillDef } from "@/lib/types";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -61,8 +62,17 @@ export default function TrySkillPage() {
       <Play
         skill={skill}
         queue={queue}
-        onDone={(c) => {
+        onDone={(c, correctIds) => {
           setCorrect(c);
+          // Stash the result so it can be claimed into a new account (Phase 3).
+          savePendingClaim({
+            anonId: getAnonId(),
+            skillId: id,
+            level,
+            correctIds,
+            xp: correctIds.length * 15,
+            streak: 1,
+          });
           setPhase("done");
         }}
       />
@@ -157,7 +167,7 @@ function Survey({
           <Icon name="ArrowRight" className="h-4 w-4" />
         </Button>
         <p className="mt-3 text-center text-xs text-slate-400">
-          5 questions · no account · nothing saved
+          5 questions · no account needed · create one after to keep your progress
         </p>
       </div>
     </div>
@@ -172,13 +182,14 @@ function Play({
 }: {
   skill: SkillDef;
   queue: TasteQuestion[];
-  onDone: (correct: number) => void;
+  onDone: (correct: number, correctIds: string[]) => void;
 }) {
   const [cursor, setCursor] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   const [showTheory, setShowTheory] = useState(false);
   const [correct, setCorrect] = useState(0);
+  const [correctIds, setCorrectIds] = useState<string[]>([]);
 
   const item = queue[cursor];
   const total = queue.length;
@@ -187,12 +198,15 @@ function Play({
   const check = () => {
     if (selected === null || checked) return;
     setChecked(true);
-    if (selected === item.correctIndex) setCorrect((c) => c + 1);
+    if (selected === item.correctIndex) {
+      setCorrect((c) => c + 1);
+      setCorrectIds((ids) => [...ids, item.id]);
+    }
   };
 
   const next = () => {
     if (isLast) {
-      onDone(correct);
+      onDone(correct, correctIds);
       return;
     }
     setCursor((c) => c + 1);
