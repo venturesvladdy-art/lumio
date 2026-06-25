@@ -2,6 +2,15 @@ import { prisma } from "@/lib/db";
 import { resolveSkill } from "@/lib/skills";
 import { assemblePlan, assembleDrill } from "@/lib/agent";
 import { evaluateBadges } from "@/lib/gamification";
+import { getCachedTaxonomy } from "@/lib/taxonomy";
+import {
+  clampTarget,
+  creditedConceptsFor,
+  levelForFraction,
+  standing,
+  startLevelFor,
+} from "@/lib/mastery";
+import { proficiencyFromAnswers } from "@/lib/survey/profile";
 import { dayDiff } from "@/lib/utils";
 import type {
   AreaCoverage,
@@ -10,9 +19,12 @@ import type {
   PlanTier,
   QAFormat,
   QAItem,
+  SkillMastery,
   SkillProgress,
+  SubareaMastery,
   UserState,
 } from "@/lib/types";
+import type { SurveyAnswers } from "@/lib/survey/types";
 
 const EMPTY_STATE: UserState = {
   tier: "basic",
@@ -230,6 +242,72 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
     coverage,
   };
   state.earnedBadges = evaluateBadges(state);
+
+  // ---- v2: subarea mastery levels (concept-deduped, survey-seeded) ----
+  // Distinct mastered concepts per (skill, subarea).
+  const masteredBySub = new Map<string, Set<string>>();
+  for (const a of attempts) {
+    if (!a.correct || !a.concept || !a.subareaKey) continue;
+    const key = `${a.skillId}::${a.subareaKey}`;
+    let set = masteredBySub.get(key);
+    if (!set) {
+      set = new Set();
+      masteredBySub.set(key, set);
+    }
+    set.add(a.concept);
+  }
+  // Starting proficiency per subarea from the first curriculum's stored answers.
+  const startProf = new Map<string, number>();
+  for (const c of curricula) {
+    const sk = c.subareaKey ?? c.areaId;
+    if (!sk) continue;
+    const key = `${c.skillId}::${sk}`;
+    if (!startProf.has(key) && c.answers) {
+      startProf.set(key, proficiencyFromAnswers(c.answers as SurveyAnswers));
+    }
+  }
+
+  const touchedSkills = new Set<string>([
+    ...Object.keys(skills),
+    ...attempts.map((a) => a.skillId),
+  ]);
+  const mastery: Record<string, SkillMastery> = {};
+  for (const skillId of touchedSkills) {
+    const tax = await getCachedTaxonomy(resolveSkill(skillId));
+    if (!tax) continue;
+    let sumEff = 0;
+    let sumTarget = 0;
+    const subList: SubareaMastery[] = [];
+    for (const area of tax.areas) {
+      for (const sub of area.subareas) {
+        const key = `${skillId}::${sub.subareaKey}`;
+        const masteredConcepts = masteredBySub.get(key)?.size ?? 0;
+        const startLevel = startLevelFor(startProf.get(key) ?? 0);
+        const target = clampTarget(sub.conceptTarget);
+        const st = standing(masteredConcepts, startLevel, target);
+        subList.push({
+          subareaKey: sub.subareaKey,
+          areaKey: area.areaKey,
+          name: sub.name,
+          masteredConcepts,
+          creditedConcepts: creditedConceptsFor(startLevel, target),
+          conceptTarget: target,
+          level: st.level,
+          pctToNext: st.pctToNext,
+        });
+        sumEff += st.effectiveMastered;
+        sumTarget += st.target;
+      }
+    }
+    const frac = sumTarget > 0 ? sumEff / sumTarget : 0;
+    mastery[skillId] = {
+      skillId,
+      level: levelForFraction(frac),
+      pct: Math.round(frac * 100),
+      subareas: subList,
+    };
+  }
+  state.mastery = mastery;
 
   return state;
 }

@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import type { Brief, QAItem, SkillDef } from "@/lib/types";
+import type { Brief, MasteryLevel, QAItem, SkillDef } from "@/lib/types";
 import { resolveSkill } from "@/lib/skills";
 import { getItem } from "@/lib/content";
 import { planItemIds } from "@/lib/agent";
@@ -18,6 +18,7 @@ import {
   remainingToday,
 } from "@/lib/plans";
 import { getBadge } from "@/lib/gamification";
+import { standingFromCounts, LEVEL_LABEL } from "@/lib/mastery";
 import { cn } from "@/lib/utils";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -90,6 +91,7 @@ function SessionInner() {
   const [orderPick, setOrderPick] = useState<number[]>([]); // order-type sequence
   const [theory, setTheory] = useState<string | null>(null);
   const [theoryLoading, setTheoryLoading] = useState(false);
+  const [masteredSet, setMasteredSet] = useState<Set<string>>(new Set()); // new concepts this session
   const [checked, setChecked] = useState(false);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXp, setLastXp] = useState(0);
@@ -213,6 +215,18 @@ function SessionInner() {
     ? orderPick.length === orderLen && orderLen > 0
     : text.trim().length > 0;
 
+  // Live dual progress: this subarea's level (updated as concepts are mastered
+  // this session) and the whole-skill level (seeded from the server).
+  const skillMastery = state.mastery?.[skill.id];
+  const subMastery = skillMastery?.subareas.find((s) => s.subareaKey === progress.plan.areaId);
+  const liveSub = subMastery
+    ? standingFromCounts(
+        subMastery.creditedConcepts,
+        subMastery.masteredConcepts + masteredSet.size,
+        subMastery.conceptTarget
+      )
+    : null;
+
   const finalize = (
     correct: boolean,
     payload: { selectedIndex?: number; responseText?: string; score?: number | null }
@@ -236,6 +250,9 @@ function SessionInner() {
           xpGained: res.xpGained,
         }),
       }).catch(() => {});
+    }
+    if (correct && item.concept) {
+      setMasteredSet((s) => new Set(s).add(item.concept!));
     }
     setChecked(true);
     setLastCorrect(correct);
@@ -389,6 +406,24 @@ function SessionInner() {
         </div>
         <ProgressBar value={(cursor / total) * 100} />
       </div>
+
+      {/* Live mastery (subarea + whole skill) */}
+      {liveSub && subMastery && skillMastery && (
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <MiniBar
+            label={subMastery.name}
+            level={liveSub.level}
+            pct={liveSub.level === "expert" ? 100 : liveSub.pctToNext}
+            caption={liveSub.level === "expert" ? "Mastered" : `${liveSub.pctToNext}% to next level`}
+          />
+          <MiniBar
+            label="Whole skill"
+            level={skillMastery.level}
+            pct={skillMastery.pct}
+            caption={`${skillMastery.pct}% overall`}
+          />
+        </div>
+      )}
 
       {/* Question card */}
       <div key={item.id} className="mt-7 animate-fade-up">
@@ -642,6 +677,32 @@ function difficultyTone(d: string) {
 function parseNum(s: string): number | null {
   const n = Number(String(s).replace(/[,\s]/g, ""));
   return Number.isFinite(n) ? n : null;
+}
+
+/* ---------- Live mastery mini-bar ---------- */
+function MiniBar({
+  label,
+  level,
+  pct,
+  caption,
+}: {
+  label: string;
+  level: MasteryLevel;
+  pct: number;
+  caption: string;
+}) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+      <div className="flex items-center justify-between gap-2">
+        <span className="truncate text-xs font-medium text-slate-600">{label}</span>
+        <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-brand-600">
+          {LEVEL_LABEL[level]}
+        </span>
+      </div>
+      <ProgressBar value={pct} className="mt-1.5 h-1.5" />
+      <div className="mt-1 text-[11px] text-slate-400">{caption}</div>
+    </div>
+  );
 }
 
 /* ---------- Order (tap-to-sequence) ---------- */

@@ -64,18 +64,14 @@ export interface LevelStanding {
   target: number;
 }
 
-/**
- * Resolve a learner's band + progress-to-next from credited floor + real
- * mastered concepts. `realMastered` is distinct concepts mastered via Q&A.
- */
-export function standing(
+/** Resolve band + progress-to-next from a credited floor + real mastered count. */
+export function standingFromCounts(
+  credited: number,
   realMastered: number,
-  startLevel: MasteryLevel,
   target: number
 ): LevelStanding {
   const t = clampTarget(target);
-  const credited = creditedConceptsFor(startLevel, t);
-  const effective = Math.min(t, credited + Math.max(0, realMastered));
+  const effective = Math.min(t, Math.max(0, credited) + Math.max(0, realMastered));
   const frac = t > 0 ? effective / t : 0;
 
   let level: MasteryLevel = "beginner";
@@ -88,6 +84,18 @@ export function standing(
   const pctToNext = Math.min(100, Math.max(0, Math.round(((frac - floor) / span) * 100)));
 
   return { level, pctToNext, effectiveMastered: effective, target: t };
+}
+
+/**
+ * Resolve a learner's band + progress-to-next from credited floor + real
+ * mastered concepts. `realMastered` is distinct concepts mastered via Q&A.
+ */
+export function standing(
+  realMastered: number,
+  startLevel: MasteryLevel,
+  target: number
+): LevelStanding {
+  return standingFromCounts(creditedConceptsFor(startLevel, clampTarget(target)), realMastered, target);
 }
 
 /** Overall band from an aggregate 0..1 fraction (for the whole-skill headline). */

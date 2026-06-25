@@ -346,6 +346,24 @@ export async function resolveTaxonomy(skill: SkillDef): Promise<Taxonomy> {
   return generated;
 }
 
+/** Curated or DB-cached taxonomy only — never generates (safe on hot read paths). */
+export async function getCachedTaxonomy(skill: SkillDef): Promise<Taxonomy | null> {
+  const curated = CURATED[skill.id];
+  if (curated) return curated;
+  if (!prisma) return null;
+  try {
+    const cached = await prisma.skillTaxonomy.findFirst({
+      where: { OR: [{ skillSlug: skill.id }, { matchKey: normalizeMatchKey(skill.name.en) }] },
+    });
+    if (cached) {
+      return { skillId: skill.id, kind: cached.kind as Taxonomy["kind"], areas: cached.areas as unknown as TaxArea[] };
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 /** Flat list of all subareas in a taxonomy (for pickers/mastery). */
 export function allSubareas(tax: Taxonomy): TaxSubarea[] {
   return tax.areas.flatMap((a) => a.subareas);

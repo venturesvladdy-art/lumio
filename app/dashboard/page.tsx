@@ -8,7 +8,8 @@ import { useStore } from "@/lib/store";
 import { useRequireAuth, useCurrentUser } from "@/lib/session";
 import { resolveSkill } from "@/lib/skills";
 import { planItemIds } from "@/lib/agent";
-import type { AreaCoverage, SkillDef } from "@/lib/types";
+import type { SkillMastery } from "@/lib/types";
+import { LEVEL_LABEL } from "@/lib/mastery";
 import {
   aggregate,
   BADGES,
@@ -264,10 +265,7 @@ export default function DashboardPage() {
                             )}
                           </div>
 
-                          <AreaCoverageRow
-                            skill={skill}
-                            covered={state.coverage?.[sid] ?? []}
-                          />
+                          <SubareaLevels mastery={state.mastery?.[sid]} skillId={sid} />
                         </div>
                       </div>
                     </Card>
@@ -383,50 +381,45 @@ export default function DashboardPage() {
   );
 }
 
-/** Stage B: areas drilled (with accuracy) vs not-yet-covered, per skill. */
-function AreaCoverageRow({
-  skill,
-  covered,
-}: {
-  skill: SkillDef;
-  covered: AreaCoverage[];
-}) {
-  // Only meaningful once at least one area is drilled (so it stays hidden in
-  // demo mode, where coverage isn't tracked).
-  if (covered.length === 0) return null;
-  const coveredNames = new Set(covered.map((c) => c.areaName.toLowerCase()));
-  const uncovered = skill.topics.en.filter(
-    (t) => !coveredNames.has(t.toLowerCase())
-  );
+const LEVEL_TONE: Record<string, "slate" | "sky" | "brand" | "violet"> = {
+  beginner: "slate",
+  intermediate: "sky",
+  advanced: "brand",
+  expert: "violet",
+};
 
+/** v2: per-subarea mastery levels with drill-in links + overall skill level. */
+function SubareaLevels({ mastery, skillId }: { mastery?: SkillMastery; skillId: string }) {
+  if (!mastery || mastery.subareas.length === 0) return null;
   return (
     <div className="mt-4 border-t border-slate-100 pt-3">
-      <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-        Areas covered
+      <div className="flex items-center justify-between">
+        <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Mastery
+        </div>
+        <Pill tone={LEVEL_TONE[mastery.level]}>
+          <Icon name="Gauge" className="h-3.5 w-3.5" />
+          {LEVEL_LABEL[mastery.level]} · {mastery.pct}%
+        </Pill>
       </div>
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        {covered.map((c) => {
-          const acc =
-            c.answered > 0 ? Math.round((c.correct / c.answered) * 100) : 0;
-          return (
-            <span
-              key={c.areaId}
-              className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"
-            >
-              <Icon name="CheckCircle2" className="h-3 w-3" />
-              {c.areaName}
-              {c.answered > 0 && ` · ${acc}%`}
-            </span>
-          );
-        })}
-        {uncovered.map((name) => (
-          <span
-            key={name}
-            className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-400"
+      <div className="mt-3 space-y-2.5">
+        {mastery.subareas.map((s) => (
+          <Link
+            key={s.subareaKey}
+            href={`/learn/${skillId}?area=${encodeURIComponent(s.subareaKey)}&areaName=${encodeURIComponent(s.name)}&continue=1`}
+            className="group block"
           >
-            <Icon name="Lock" className="h-3 w-3" />
-            {name}
-          </span>
+            <div className="flex items-center justify-between gap-2 text-sm">
+              <span className="truncate font-medium text-slate-700 group-hover:text-brand-700">
+                {s.name}
+              </span>
+              <span className="shrink-0 text-xs font-semibold text-slate-500">
+                {LEVEL_LABEL[s.level]}
+                {s.level !== "expert" ? ` · ${s.pctToNext}% to next` : ""}
+              </span>
+            </div>
+            <ProgressBar value={s.level === "expert" ? 100 : s.pctToNext} className="mt-1 h-1.5" />
+          </Link>
         ))}
       </div>
     </div>
