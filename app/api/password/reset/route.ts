@@ -41,7 +41,12 @@ export async function POST(req: Request) {
   const email = vt.identifier.slice(PREFIX.length);
   const passwordHash = await bcrypt.hash(body.password, 10);
 
-  await prisma.user.update({ where: { email }, data: { passwordHash } });
+  // Bump the token version so every JWT issued before this reset is rejected
+  // (Phase 6 session-revoke) — a stolen session can't outlive a password reset.
+  await prisma.user.update({
+    where: { email },
+    data: { passwordHash, pwTokenVersion: { increment: 1 } },
+  });
   await prisma.verificationToken.delete({ where: { token: body.token } }).catch(() => {});
 
   await prisma.auditEvent

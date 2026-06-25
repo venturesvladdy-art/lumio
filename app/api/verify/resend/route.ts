@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { sendVerificationEmail } from "@/lib/email";
+import { rateLimit } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 
@@ -15,6 +16,11 @@ export async function POST() {
   const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  // Throttle re-sends per account (anti mail-bombing).
+  if (!rateLimit(`resend:${userId}`, 3, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: "Please wait before requesting another email." }, { status: 429 });
   }
 
   const user = await prisma.user.findUnique({

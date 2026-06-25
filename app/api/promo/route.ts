@@ -2,15 +2,27 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { regenerateCurriculaForUser } from "@/lib/regenerate";
+import { rateLimit, clientIp } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 // Upgrading regenerates plans with Opus, which can take a while.
 export const maxDuration = 60;
 
-// Valid codes live server-side only — never reach the client bundle.
-const CODES: Record<string, "guru" | "smart"> = {
-  VLADDYXOXO: "guru",
-};
+/**
+ * Valid codes are configured via the PROMO_CODES env var (format
+ * "CODE:tier;CODE2:tier"), so they can be rotated or disabled without a deploy
+ * and never ship in source. Falls back to the original launch code if unset.
+ */
+function loadCodes(): Record<string, "guru" | "smart"> {
+  const raw = process.env.PROMO_CODES;
+  if (!raw) return { VLADDYXOXO: "guru" };
+  const map: Record<string, "guru" | "smart"> = {};
+  for (const pair of raw.split(/[;,]/)) {
+    const [code, tier] = pair.split(":").map((s) => s.trim());
+    if (code && (tier === "guru" || tier === "smart")) map[code.toUpperCase()] = tier;
+  }
+  return map;
+}
 
 export async function POST(req: Request) {
   if (!prisma) {
@@ -23,9 +35,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const body = await req.json().catch(() => ({})) as { code?: string };
+  // Throttle redemption attempts so codes can't be brute-forced.
+  if (!rateLimit(`promo:${userId}:${clientIp(req)}`, 8, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: "Too many attempts. Try again later." }, { status: 429 });
+  }
+
+  // A free paid tier is a paid action — require a confirmed email.
+  const verified = Boolean((session?.user as { emailVerified?: boolean } | undefined)?.emailVerified);
+  if (!verified) {
+    return NextResponse.json(
+      { error: "Confirm your email first, then redeem your code." },
+      { status: 403 }
+    );
+  }
+
+  const body = (await req.json().catch(() => ({}))) as { code?: string };
   const normalised = String(body.code ?? "").trim().toUpperCase();
-  const tier = CODES[normalised];
+  const tier = loadCodes()[normalised];
 
   if (!tier) {
     return NextResponse.json({ error: "Invalid promo code." }, { status: 400 });

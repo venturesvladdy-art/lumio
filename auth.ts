@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { tierForEmail } from "@/lib/allowlist";
+import { rateLimit } from "@/lib/ratelimit";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   // Adapter persists users/accounts; absent in demo mode (no DB) so it still builds.
@@ -28,6 +29,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const password = String(creds?.password ?? "");
         if (!email || !password) return null;
 
+        // Throttle password attempts per account (anti credential-stuffing).
+        if (!rateLimit(`login:${email}`, 10, 15 * 60 * 1000)) return null;
+
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user?.passwordHash) return null;
 
@@ -50,16 +54,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         (token as Record<string, unknown>).tier =
           (user as { tier?: string }).tier ?? "basic";
       }
-      // Keep tier + verification fresh so changes take effect without re-login.
+      // Keep tier + verification fresh so changes take effect without re-login,
+      // and revoke sessions issued before a password change (pwTokenVersion).
       const uid = (token as Record<string, unknown>).uid as string | undefined;
       if (uid && prisma) {
-        const u = await prisma.user.findUnique({
-          where: { id: uid },
-          select: { tier: true, emailVerified: true },
-        });
-        if (u) {
-          (token as Record<string, unknown>).tier = u.tier;
-          (token as Record<string, unknown>).emailVerified = Boolean(u.emailVerified);
+        try {
+          const u = await prisma.user.findUnique({
+            where: { id: uid },
+            select: { tier: true, emailVerified: true, pwTokenVersion: true },
+          });
+          if (u) {
+            const t = token as Record<string, unknown>;
+            t.tier = u.tier;
+            t.emailVerified = Boolean(u.emailVerified);
+            const dbPv = u.pwTokenVersion ?? 0;
+            if (t.pv === undefined) t.pv = dbPv;
+            else if (t.pv !== dbPv) return null; // password changed → revoke this JWT
+          }
+        } catch {
+          /* pwTokenVersion column may be absent pre-migration — keep the token. */
         }
       }
       return token;

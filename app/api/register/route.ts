@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { tierForEmail } from "@/lib/allowlist";
 import { sendVerificationEmail } from "@/lib/email";
+import { rateLimit, clientIp } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 
@@ -24,6 +25,11 @@ export async function POST(req: Request) {
     );
   }
 
+  // Throttle sign-ups per IP (anti credential-stuffing / mass-signup).
+  if (!rateLimit(`register:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: "Too many attempts. Try again later." }, { status: 429 });
+  }
+
   let body: z.infer<typeof Schema>;
   try {
     body = Schema.parse(await req.json());
@@ -36,12 +42,12 @@ export async function POST(req: Request) {
 
   const email = body.email.toLowerCase();
 
+  // Anti-enumeration: respond uniformly whether or not the email exists. If it's
+  // already registered we simply don't create a second account (and send no
+  // email), so an attacker can't distinguish registered emails from this route.
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return NextResponse.json(
-      { error: "An account with that email already exists." },
-      { status: 409 }
-    );
+    return NextResponse.json({ ok: true });
   }
 
   const passwordHash = await bcrypt.hash(body.password, 10);
