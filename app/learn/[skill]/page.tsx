@@ -3,17 +3,14 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import type {
-  Difficulty,
-  LearningPlan,
-  OnboardingAnswers,
-  OnboardingQuestion,
-  SkillDef,
-} from "@/lib/types";
+import type { Difficulty, LearningPlan, SkillDef } from "@/lib/types";
 import { resolveSkill } from "@/lib/skills";
-import { buildOnboarding, focusLabels } from "@/lib/onboarding";
+import { focusLabels } from "@/lib/onboarding";
 import { BUILD_STEPS } from "@/lib/agent";
 import { requestPlan } from "@/lib/planClient";
+import { SURVEY } from "@/lib/survey/skillsprinter.survey";
+import { nextQuestion, surveyProgress } from "@/lib/survey/runner";
+import type { SurveyAnswers } from "@/lib/survey/types";
 import { useStore } from "@/lib/store";
 import { useRequireAuth } from "@/lib/session";
 import { useT, useTx } from "@/lib/i18n";
@@ -25,11 +22,16 @@ import { LogoMark } from "@/components/ui/Logo";
 import { Pill, ProgressBar, SectionLabel } from "@/components/ui/primitives";
 import { ACCENT_TILE } from "@/components/ui/accent";
 
-type Phase = "loading" | "locked" | "questions" | "area" | "building" | "plan";
+type Phase = "loading" | "locked" | "survey" | "pick" | "building" | "plan";
 
-interface Area {
-  id: string;
+interface SubOption {
+  subareaKey: string;
   name: string;
+  area: string;
+}
+interface TaxArea {
+  name: string;
+  subareas: { subareaKey: string; name: string }[];
 }
 
 const LEVEL_LABEL: Record<Difficulty, { en: string; pl: string }> = {
@@ -58,8 +60,6 @@ function Onboarding() {
   const params = useParams();
   const search = useSearchParams();
   const router = useRouter();
-  const t = useT();
-  const tx = useTx();
   const { state, hydrated, startSkill } = useStore();
   const { ready: authReady, user } = useRequireAuth();
 
@@ -67,26 +67,56 @@ function Onboarding() {
   const name = search.get("name") ?? undefined;
   const skill = useMemo(() => resolveSkill(id, name), [id, name]);
 
-  // Stage B continuation / switch-area entry points.
   const forcePick = search.get("pick") === "1";
   const contAreaId = search.get("area") ?? undefined;
   const contAreaName = search.get("areaName") ?? undefined;
   const isContinue = search.get("continue") === "1";
-  const questions = useMemo(() => buildOnboarding(skill), [skill]);
 
   const [phase, setPhase] = useState<Phase>("loading");
-  const [index, setIndex] = useState(0);
-  const [answers, setAnswers] = useState<OnboardingAnswers>({});
+  const [answers, setAnswers] = useState<SurveyAnswers>({});
+  const [draft, setDraft] = useState<string[]>([]);
+  const [areas, setAreas] = useState<TaxArea[] | null>(null);
   const [plan, setPlan] = useState<LearningPlan | null>(null);
   const didInit = useRef(false);
 
+  const subOptions: SubOption[] = useMemo(
+    () =>
+      (areas ?? []).flatMap((a) =>
+        a.subareas.map((s) => ({ subareaKey: s.subareaKey, name: s.name, area: a.name }))
+      ),
+    [areas]
+  );
+
+  // Load the taxonomy (areas → subareas) for the picker / survey.
+  useEffect(() => {
+    let active = true;
+    fetch("/api/taxonomy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ skillId: skill.id, skillName: skill.name.en }),
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d: { taxonomy?: { areas?: TaxArea[] } }) => {
+        if (active) setAreas(d.taxonomy?.areas ?? []);
+      })
+      .catch(() => {
+        if (active)
+          setAreas([
+            { name: "Core Areas", subareas: skill.topics.en.map((t) => ({ subareaKey: `${skill.id}:core:${t.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, name: t })) },
+          ]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [skill.id, skill.name.en, skill.topics.en]);
+
   const runBuild = useCallback(
-    async (area: Area, continueDrill = false) => {
+    async (subareaKey: string, subareaName: string, continueDrill = false) => {
       setPhase("building");
       const { plan: generated, items, briefs } = await requestPlan({
         skill,
         answers,
-        area,
+        area: { id: subareaKey, name: subareaName },
         continueDrill,
       });
       startSkill(generated, items, briefs);
@@ -96,18 +126,16 @@ function Onboarding() {
     [skill, answers, startSkill]
   );
 
-  // Decide the starting phase once state has hydrated.
+  // Decide the starting phase once state + taxonomy are ready.
   useEffect(() => {
-    if (!hydrated || didInit.current) return;
+    if (!hydrated || areas === null || didInit.current) return;
     didInit.current = true;
-    // Continuation drill on a known area — build it straight away.
     if (isContinue && contAreaId && contAreaName) {
-      void runBuild({ id: contAreaId, name: contAreaName }, true);
+      void runBuild(contAreaId, contAreaName, true);
       return;
     }
-    // Explicit "switch area" — always show the area picker.
     if (forcePick) {
-      setPhase("area");
+      setPhase("pick");
       return;
     }
     const existing = state.skills[skill.id];
@@ -117,328 +145,257 @@ function Onboarding() {
     } else if (!canAddSkill(state, skill.id)) {
       setPhase("locked");
     } else {
-      setPhase("questions");
+      setPhase("survey");
     }
-  }, [hydrated, skill.id, state, forcePick, isContinue, contAreaId, contAreaName, runBuild]);
+  }, [hydrated, areas, skill.id, state, forcePick, isContinue, contAreaId, contAreaName, runBuild]);
 
-  if (!authReady || !user) return <CenteredLoader />;
-  if (phase === "loading") return <CenteredLoader />;
+  const current = nextQuestion(SURVEY, answers);
+
+  // Seed the multi-select draft when the question changes.
+  useEffect(() => {
+    setDraft(current ? answers[current.id] ?? [] : []);
+  }, [current?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!authReady || !user || phase === "loading") return <CenteredLoader />;
   if (phase === "locked") return <LockedView skill={skill} />;
-  if (phase === "area")
+  if (phase === "building") return <BuildingView skill={skill} />;
+  if (phase === "plan" && plan) return <PlanView skill={skill} plan={plan} />;
+  if (phase === "pick")
     return (
-      <AreaSelect
+      <SubareaPicker
         skill={skill}
-        onPick={(area) => void runBuild(area)}
-        onBack={() => setPhase("questions")}
+        areas={areas ?? []}
+        onPick={(s) => void runBuild(s.subareaKey, s.name)}
       />
     );
-  if (phase === "building") return <BuildingView skill={skill} />;
-  if (phase === "plan" && plan)
-    return <PlanView skill={skill} plan={plan} />;
 
-  // questions
-  const q = questions[index];
-  const value = answers[q.id] ?? [];
-  const isMulti = q.type === "multi";
-  const canProceed = value.length > 0;
-  const isLast = index === questions.length - 1;
-  const progress = Math.round(((index + (canProceed ? 1 : 0)) / questions.length) * 100);
-
-  const setValue = (vals: string[]) =>
-    setAnswers((a) => ({ ...a, [q.id]: vals }));
-
-  const pick = (optValue: string) => {
-    if (isMulti) {
-      setValue(
-        value.includes(optValue)
-          ? value.filter((v) => v !== optValue)
-          : [...value, optValue]
-      );
+  // ---- survey ----
+  if (!current) {
+    // Survey complete → build the first chosen subarea.
+    const firstKey = (answers["subareas"] ?? [])[0];
+    const firstSub = subOptions.find((s) => s.subareaKey === firstKey);
+    if (firstSub) {
+      void runBuild(firstSub.subareaKey, firstSub.name);
     } else {
-      setValue([optValue]);
+      setPhase("pick");
     }
-  };
+    return <CenteredLoader />;
+  }
 
-  const next = () => {
+  const progress = surveyProgress(SURVEY, answers);
+
+  const commitSingle = (value: string) => {
+    setAnswers((a) => ({ ...a, [current.id]: [value] }));
+  };
+  const toggleDraft = (value: string) => {
+    setDraft((d) =>
+      d.includes(value) ? d.filter((v) => v !== value) : [...d, value]
+    );
+  };
+  const isMulti = current.type === "multi" || current.type === "subareas";
+  const min = current.minSelect ?? 1;
+  const max = current.maxSelect ?? 99;
+  const canProceed = !isMulti || (draft.length >= min && draft.length <= max);
+  const confirmMulti = () => {
     if (!canProceed) return;
-    if (isLast) setPhase("area");
-    else setIndex((i) => i + 1);
+    setAnswers((a) => ({ ...a, [current.id]: draft }));
   };
 
   const back = () => {
-    if (index === 0) router.push("/skills");
-    else setIndex((i) => i - 1);
+    const answeredIds = Object.keys(answers);
+    if (answeredIds.length === 0) {
+      router.push("/skills");
+      return;
+    }
+    const lastId = answeredIds[answeredIds.length - 1];
+    setAnswers((a) => {
+      const copy = { ...a };
+      delete copy[lastId];
+      return copy;
+    });
   };
 
   return (
     <div className="container-page max-w-2xl py-12 lg:py-16">
-      {/* Header */}
       <div className="flex items-center gap-3">
-        <span
-          className={cn(
-            "grid h-11 w-11 place-items-center rounded-2xl",
-            ACCENT_TILE[skill.accent]
-          )}
-        >
+        <span className={cn("grid h-11 w-11 place-items-center rounded-2xl", ACCENT_TILE[skill.accent])}>
           <Icon name={skill.icon} className="h-6 w-6" />
         </span>
         <div>
-          <SectionLabel>{t("onboarding.personalizing")}</SectionLabel>
-          <h1 className="font-display text-xl font-semibold text-ink">
-            {tx(skill.name)}
-          </h1>
+          <SectionLabel>Personalizing {skill.name.en}</SectionLabel>
+          <h1 className="font-display text-xl font-semibold text-ink">A few quick questions</h1>
         </div>
       </div>
 
-      {/* Progress */}
       <div className="mt-7">
         <div className="mb-2 flex items-center justify-between text-sm text-slate-500">
-          <span>{t("onboarding.questionOf", { n: index + 1, total: questions.length })}</span>
+          <span>Tailoring your plan</span>
           <span>{progress}%</span>
         </div>
         <ProgressBar value={progress} />
       </div>
 
-      {/* Question */}
-      <div key={q.id} className="mt-9 animate-fade-up">
+      <div key={current.id} className="mt-9 animate-fade-up">
         <h2 className="font-display text-2xl font-semibold leading-tight text-ink">
-          {tx(q.prompt)}
+          {current.prompt}
         </h2>
-        <p className="mt-2 text-sm text-slate-500">
-          {q.helper
-            ? tx(q.helper)
-            : isMulti
-            ? t("onboarding.pickMany")
-            : q.type === "scale"
-            ? t("onboarding.rate")
-            : t("onboarding.pickOne")}
-        </p>
+        {current.helper && <p className="mt-2 text-sm text-slate-500">{current.helper}</p>}
 
         <div className="mt-6">
-          {q.type === "scale" ? (
-            <ScaleInput
-              options={q.options.map((o) => o.value)}
-              value={value[0]}
-              onPick={pick}
-              lowLabel={t("onboarding.scaleLow")}
-              highLabel={t("onboarding.scaleHigh")}
+          {current.type === "subareas" ? (
+            <SubareaChecklist
+              areas={areas ?? []}
+              selected={draft}
+              max={max}
+              onToggle={toggleDraft}
             />
           ) : (
-            <OptionList
-              question={q}
-              value={value}
-              isMulti={isMulti}
-              onPick={pick}
-            />
+            <div className="grid gap-3">
+              {(current.options ?? []).map((o) => {
+                const selected = isMulti ? draft.includes(o.value) : false;
+                return (
+                  <button
+                    key={o.value}
+                    onClick={() => (isMulti ? toggleDraft(o.value) : commitSingle(o.value))}
+                    className={cn(
+                      "flex items-center justify-between rounded-2xl border px-5 py-4 text-left text-[15px] font-medium transition-all focusable",
+                      selected
+                        ? "border-brand-500 bg-brand-50 text-brand-900 shadow-ring"
+                        : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                    )}
+                  >
+                    {o.label}
+                    {isMulti && (
+                      <span
+                        className={cn(
+                          "grid h-5 w-5 shrink-0 place-items-center rounded-md border transition-colors",
+                          selected
+                            ? "border-brand-500 bg-brand-500 text-white"
+                            : "border-slate-300 bg-white text-transparent"
+                        )}
+                      >
+                        <Icon name="Check" className="h-3.5 w-3.5" strokeWidth={3} />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
 
-      {/* Footer nav */}
       <div className="mt-9 flex items-center justify-between">
         <Button variant="ghost" onClick={back}>
           <Icon name="ChevronLeft" className="h-4 w-4" />
-          {t("common.back")}
+          Back
         </Button>
-        <Button onClick={next} disabled={!canProceed} size="lg">
-          {t("common.next")}
-          <Icon name="ChevronRight" className="h-4 w-4" />
-        </Button>
+        {isMulti && (
+          <Button onClick={confirmMulti} disabled={!canProceed} size="lg">
+            Next
+            <Icon name="ChevronRight" className="h-4 w-4" />
+          </Button>
+        )}
       </div>
     </div>
   );
 }
 
-/* ---------- Option list (single / multi) ---------- */
-function OptionList({
-  question,
-  value,
-  isMulti,
-  onPick,
+/* ---------- Subarea selection (survey question + standalone picker) ---------- */
+function SubareaChecklist({
+  areas,
+  selected,
+  max,
+  onToggle,
 }: {
-  question: OnboardingQuestion;
-  value: string[];
-  isMulti: boolean;
-  onPick: (v: string) => void;
-}) {
-  const tx = useTx();
-  return (
-    <div className="grid gap-3">
-      {question.options.map((o) => {
-        const selected = value.includes(o.value);
-        return (
-          <button
-            key={o.value}
-            onClick={() => onPick(o.value)}
-            className={cn(
-              "flex items-center justify-between rounded-2xl border px-5 py-4 text-left text-[15px] font-medium transition-all focusable",
-              selected
-                ? "border-brand-500 bg-brand-50 text-brand-900 shadow-ring"
-                : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-            )}
-          >
-            {tx(o.label)}
-            <span
-              className={cn(
-                "grid h-5 w-5 shrink-0 place-items-center border transition-colors",
-                isMulti ? "rounded-md" : "rounded-full",
-                selected
-                  ? "border-brand-500 bg-brand-500 text-white"
-                  : "border-slate-300 bg-white text-transparent"
-              )}
-            >
-              <Icon name="Check" className="h-3.5 w-3.5" strokeWidth={3} />
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-/* ---------- Scale (1..5) ---------- */
-function ScaleInput({
-  options,
-  value,
-  onPick,
-  lowLabel,
-  highLabel,
-}: {
-  options: string[];
-  value?: string;
-  onPick: (v: string) => void;
-  lowLabel: string;
-  highLabel: string;
+  areas: TaxArea[];
+  selected: string[];
+  max: number;
+  onToggle: (key: string) => void;
 }) {
   return (
-    <div>
-      <div className="grid grid-cols-5 gap-2.5">
-        {options.map((o) => {
-          const selected = value === o;
-          return (
-            <button
-              key={o}
-              onClick={() => onPick(o)}
-              className={cn(
-                "grid h-16 place-items-center rounded-2xl border font-display text-xl font-semibold transition-all focusable",
-                selected
-                  ? "border-brand-500 bg-brand-500 text-white shadow-lift"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-brand-50"
-              )}
-            >
-              {o}
-            </button>
-          );
-        })}
-      </div>
-      <div className="mt-2 flex justify-between text-xs text-slate-400">
-        <span>{lowLabel}</span>
-        <span>{highLabel}</span>
-      </div>
+    <div className="space-y-5">
+      {areas.map((a) => (
+        <div key={a.name}>
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+            {a.name}
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {a.subareas.map((s) => {
+              const on = selected.includes(s.subareaKey);
+              const disabled = !on && selected.length >= max;
+              return (
+                <button
+                  key={s.subareaKey}
+                  onClick={() => onToggle(s.subareaKey)}
+                  disabled={disabled}
+                  className={cn(
+                    "flex items-center justify-between gap-2 rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all focusable",
+                    on
+                      ? "border-brand-500 bg-brand-50 text-brand-900 shadow-ring"
+                      : disabled
+                      ? "cursor-not-allowed border-slate-100 bg-slate-50 text-slate-300"
+                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                  )}
+                >
+                  {s.name}
+                  {on && <Icon name="Check" className="h-4 w-4 shrink-0 text-brand-600" strokeWidth={3} />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-/* ---------- Area selection (Stage B) ---------- */
-function clientSlugArea(name: string): string {
-  const s = name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 40);
-  return `area-${s || "x"}`;
-}
-
-function AreaSelect({
+function SubareaPicker({
   skill,
+  areas,
   onPick,
-  onBack,
 }: {
   skill: SkillDef;
-  onPick: (area: Area) => void;
-  onBack: () => void;
+  areas: TaxArea[];
+  onPick: (s: { subareaKey: string; name: string }) => void;
 }) {
-  const tx = useTx();
-  const [areas, setAreas] = useState<Area[] | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    const fallback: Area[] = skill.topics.en.map((name) => ({
-      id: clientSlugArea(name),
-      name,
-    }));
-    fetch("/api/areas", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ skillId: skill.id, skillName: skill.name.en }),
-    })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((d: { areas?: Area[] }) => {
-        if (!active) return;
-        setAreas(Array.isArray(d.areas) && d.areas.length ? d.areas : fallback);
-      })
-      .catch(() => {
-        if (active) setAreas(fallback);
-      });
-    return () => {
-      active = false;
-    };
-  }, [skill.id, skill.name.en, skill.topics.en]);
-
   return (
     <div className="container-page max-w-2xl py-12 lg:py-16">
       <div className="flex items-center gap-3">
-        <span
-          className={cn(
-            "grid h-11 w-11 place-items-center rounded-2xl",
-            ACCENT_TILE[skill.accent]
-          )}
-        >
+        <span className={cn("grid h-11 w-11 place-items-center rounded-2xl", ACCENT_TILE[skill.accent])}>
           <Icon name={skill.icon} className="h-6 w-6" />
         </span>
         <div>
-          <SectionLabel>{tx(skill.name)}</SectionLabel>
-          <h1 className="font-display text-xl font-semibold text-ink">
-            Where would you like to start?
-          </h1>
+          <SectionLabel>{skill.name.en}</SectionLabel>
+          <h1 className="font-display text-xl font-semibold text-ink">Pick a subarea to drill</h1>
         </div>
       </div>
-
       <p className="mt-4 text-slate-600">
-        Pick an area to drill — we&apos;ll build a focused set of 20 questions
-        just for it. You can cover the rest afterwards.
+        We&apos;ll build a focused set of questions for it and track your level.
       </p>
-
-      {areas === null ? (
-        <div className="mt-10 grid place-items-center py-8 text-center">
-          <div className="h-9 w-9 animate-spin rounded-full border-2 border-slate-200 border-t-brand-500" />
-          <p className="mt-3 text-sm text-slate-500">
-            Finding the best areas to practice…
-          </p>
-        </div>
-      ) : (
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
-          {areas.map((a) => (
-            <button
-              key={a.id}
-              onClick={() => onPick(a)}
-              className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left transition-all hover:border-brand-300 hover:bg-brand-50/40 focusable"
-            >
-              <span className="font-medium text-ink">{a.name}</span>
-              <Icon
-                name="ArrowRight"
-                className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5"
-              />
-            </button>
-          ))}
-        </div>
-      )}
-
-      <div className="mt-8">
-        <Button variant="ghost" onClick={onBack}>
-          <Icon name="ChevronLeft" className="h-4 w-4" />
-          Back
-        </Button>
+      <div className="mt-8 space-y-5">
+        {areas.map((a) => (
+          <div key={a.name}>
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+              {a.name}
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {a.subareas.map((s) => (
+                <button
+                  key={s.subareaKey}
+                  onClick={() => onPick(s)}
+                  className="group flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium text-ink transition-all hover:border-brand-300 hover:bg-brand-50/40 focusable"
+                >
+                  {s.name}
+                  <Icon
+                    name="ArrowRight"
+                    className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -448,14 +405,10 @@ function AreaSelect({
 function BuildingView({ skill }: { skill: SkillDef }) {
   const t = useT();
   const [step, setStep] = useState(0);
-
   useEffect(() => {
-    const id = setInterval(() => {
-      setStep((s) => (s + 1) % BUILD_STEPS.length);
-    }, 480);
+    const id = setInterval(() => setStep((s) => (s + 1) % BUILD_STEPS.length), 480);
     return () => clearInterval(id);
   }, []);
-
   return (
     <div className="container-page grid min-h-[70vh] max-w-xl place-items-center py-16 text-center">
       <div>
@@ -469,14 +422,9 @@ function BuildingView({ skill }: { skill: SkillDef }) {
         <p className="mt-2 h-6 text-brand-600 transition-all">
           {t(`onboarding.${BUILD_STEPS[step]}`)}
         </p>
-
-        {/* skeleton plan */}
         <div className="mt-10 space-y-3 text-left">
           {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="shimmer rounded-2xl border border-slate-200 bg-white p-4"
-            >
+            <div key={i} className="shimmer rounded-2xl border border-slate-200 bg-white p-4">
               <div className="h-3 w-1/3 rounded-full bg-slate-100" />
               <div className="mt-3 h-2 w-2/3 rounded-full bg-slate-100" />
             </div>
@@ -497,9 +445,7 @@ function LockedView({ skill }: { skill: SkillDef }) {
         <div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-slate-100 text-slate-400">
           <Icon name="Lock" className="h-8 w-8" />
         </div>
-        <h1 className="mt-6 font-display text-2xl font-bold text-ink">
-          {t("skills.lockedSkill")}
-        </h1>
+        <h1 className="mt-6 font-display text-2xl font-bold text-ink">{t("skills.lockedSkill")}</h1>
         <p className="mt-3 text-slate-600">{t("skills.lockedSkillDesc")}</p>
         <p className="mt-1 text-sm text-slate-400">{tx(skill.name)}</p>
         <div className="mt-7 flex justify-center gap-3">
@@ -540,7 +486,6 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
         </h1>
       </div>
 
-      {/* Coach summary */}
       <div className="mt-8 rounded-3xl border border-brand-100 bg-brand-50/50 p-6">
         <div className="flex items-start gap-3">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white text-brand-600 shadow-sm">
@@ -550,26 +495,18 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
             <div className="text-xs font-semibold uppercase tracking-wide text-brand-500">
               {t("plan.summaryLabel")}
             </div>
-            <p className="mt-1 text-[15px] leading-relaxed text-slate-700">
-              {tx(plan.summary)}
-            </p>
+            <p className="mt-1 text-[15px] leading-relaxed text-slate-700">{tx(plan.summary)}</p>
           </div>
         </div>
       </div>
 
-      {/* Meta */}
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <MetaTile label={t("plan.levelLabel")} value={tx(LEVEL_LABEL[plan.level])} icon="Gauge" />
         <MetaTile label={t("plan.plannedLabel")} value={String(plan.totalPlanned)} icon="Layers" />
         <MetaTile label={t("plan.modulesLabel")} value={String(plan.modules.length)} icon="BookOpen" />
-        <MetaTile
-          label={t("plan.focusLabel")}
-          value={String(focuses.length || 1)}
-          icon="Target"
-        />
+        <MetaTile label={t("plan.focusLabel")} value={String(focuses.length || 1)} icon="Target" />
       </div>
 
-      {/* Focus chips */}
       {focuses.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
           {focuses.map((f) => (
@@ -580,7 +517,6 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
         </div>
       )}
 
-      {/* Modules */}
       <div className="mt-8 space-y-3">
         {plan.modules.map((m, i) => {
           const playable = m.itemIds.length > 0;
@@ -593,17 +529,11 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
               <span
                 className={cn(
                   "grid h-10 w-10 shrink-0 place-items-center rounded-xl text-sm font-bold",
-                  playable
-                    ? "bg-brand-50 text-brand-600"
-                    : "bg-slate-100 text-slate-400"
+                  playable ? "bg-brand-50 text-brand-600" : "bg-slate-100 text-slate-400"
                 )}
               >
                 {playable ? (
-                  allDone ? (
-                    <Icon name="CheckCircle2" className="h-5 w-5 text-emerald-500" />
-                  ) : (
-                    i + 1
-                  )
+                  allDone ? <Icon name="CheckCircle2" className="h-5 w-5 text-emerald-500" /> : i + 1
                 ) : (
                   <Icon name="Lock" className="h-4 w-4" />
                 )}
@@ -620,10 +550,7 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
                     <ProgressBar value={pct} className="h-1.5" />
                     <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-brand-600">
                       {allDone ? t("dashboard.review") : t("dashboard.continue")}
-                      <Icon
-                        name="ChevronRight"
-                        className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-                      />
+                      <Icon name="ChevronRight" className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </span>
                   </div>
                 ) : (
@@ -634,9 +561,7 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
           );
 
           if (playable) {
-            const href = `/learn/${skill.id}/session?module=${m.id}${
-              allDone ? "&review=1" : ""
-            }`;
+            const href = `/learn/${skill.id}/session?module=${m.id}${allDone ? "&review=1" : ""}`;
             return (
               <Link
                 key={m.id}
@@ -647,19 +572,14 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
               </Link>
             );
           }
-
           return (
-            <div
-              key={m.id}
-              className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-paper p-4"
-            >
+            <div key={m.id} className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-paper p-4">
               {rowBody}
             </div>
           );
         })}
       </div>
 
-      {/* CTAs */}
       <div className="mt-9 flex flex-col gap-3 sm:flex-row">
         <ButtonLink href={`/learn/${skill.id}/session`} size="lg" className="flex-1">
           <Icon name="PlayCircle" className="h-5 w-5" />
@@ -673,21 +593,11 @@ function PlanView({ skill, plan }: { skill: SkillDef; plan: LearningPlan }) {
   );
 }
 
-function MetaTile({
-  label,
-  value,
-  icon,
-}: {
-  label: string;
-  value: string;
-  icon: string;
-}) {
+function MetaTile({ label, value, icon }: { label: string; value: string; icon: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4">
       <Icon name={icon} className="h-5 w-5 text-brand-500" />
-      <div className="mt-2 font-display text-lg font-semibold text-ink">
-        {value}
-      </div>
+      <div className="mt-2 font-display text-lg font-semibold text-ink">{value}</div>
       <div className="text-xs text-slate-500">{label}</div>
     </div>
   );
