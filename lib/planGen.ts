@@ -4,6 +4,7 @@ import { assembleDrill, buildBankPlan } from "@/lib/agent";
 import { modelForTier, effortForTier } from "@/lib/aiModel";
 import { deriveProfile } from "@/lib/survey/profile";
 import { recordUsage, usageFromResponse, type TokenUsage } from "@/lib/budget";
+import { selectBankQuestions, bankRowsToItems } from "@/lib/bank";
 import { prisma } from "@/lib/db";
 import type {
   Difficulty,
@@ -334,9 +335,11 @@ export async function persistCurriculum(opts: {
   model: string | null;
   answers: OnboardingAnswers;
   area?: DrillArea;
+  /** Pre-built theory to cache on the Question rows (bank-sourced drills). */
+  theoryByClientId?: Record<string, string>;
 }): Promise<string | undefined> {
   if (!prisma) return undefined;
-  const { userId, skill, result, source, model, answers, area } = opts;
+  const { userId, skill, result, source, model, answers, area, theoryByClientId } = opts;
   const plan = result.plan;
 
   const legacyData = {
@@ -392,6 +395,7 @@ export async function persistCurriculum(opts: {
         orderItems: it.orderItems ?? [],
         correctOrder: it.correctOrder ?? [],
         rubric: it.rubric ?? null,
+        theory: theoryByClientId?.[it.id] ?? null,
         explanationEn: it.explanation.en,
         explanationPl: it.explanation.pl,
         xp: it.xp,
@@ -467,9 +471,39 @@ export async function buildPlanForUser(opts: {
 
   let result: { plan: LearningPlan; items: QAItem[]; usage?: TokenUsage };
   let source: string;
+  // Pre-built theory to cache onto persisted Questions (bank-sourced drills).
+  let theoryByClientId: Record<string, string> = {};
 
   if (!apiKey || !area || !live) {
-    result = buildBankPlan({ skill, answers });
+    // Prefer the shared Content Bank for this subarea/level (Phase 2); fall back
+    // to the legacy hand-authored bank only when the Content Bank is empty.
+    const bankRows = area
+      ? await selectBankQuestions(skill.id, {
+          subareaKey: area.id,
+          level: profile.level,
+          n: COUNT,
+          excludeConcepts: ctx.coveredConcepts,
+        })
+      : [];
+    if (area && bankRows.length > 0) {
+      const runId = randomBytes(3).toString("hex");
+      const mapped = bankRowsToItems(bankRows, skill.id, runId);
+      theoryByClientId = mapped.theoryByClientId;
+      const summaryText = `A focused ${profile.level} set on ${area.name}. Work through it and tap "Show the background & theory" any time.`;
+      const plan = assembleDrill({
+        skillId: skill.id,
+        level: profile.level,
+        focusValues: profile.subareaKeys,
+        summary: { en: summaryText, pl: summaryText },
+        items: mapped.items,
+        areaId: area.id,
+        areaName: area.name,
+        createdAt: Date.now(),
+      });
+      result = { plan, items: mapped.items };
+    } else {
+      result = buildBankPlan({ skill, answers });
+    }
     source = "bank";
   } else {
     try {
@@ -496,6 +530,7 @@ export async function buildPlanForUser(opts: {
       model: source === "claude" ? model : null,
       answers,
       area,
+      theoryByClientId,
     }).catch((e) => {
       console.error("[planGen] persist failed:", e);
       return undefined;
