@@ -36,3 +36,16 @@ export function tierForPriceId(priceId: string | null | undefined): PlanTier | n
   if (priceId === PRICE_IDS.guru.month || priceId === PRICE_IDS.guru.year) return "guru";
   return null;
 }
+
+/** Ordinal rank of a tier — drives upgrade (higher) vs downgrade (lower) logic. */
+export function tierRank(tier: PlanTier): number {
+  return tier === "guru" ? 2 : tier === "smart" ? 1 : 0;
+}
+
+/** Which interval a configured price id belongs to (so we can keep it on change). */
+export function intervalForPriceId(priceId: string | null | undefined): Interval | null {
+  if (!priceId) return null;
+  if (priceId === PRICE_IDS.smart.month || priceId === PRICE_IDS.guru.month) return "month";
+  if (priceId === PRICE_IDS.smart.year || priceId === PRICE_IDS.guru.year) return "year";
+  return null;
+}

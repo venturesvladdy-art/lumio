@@ -54,7 +54,15 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
   if (!prisma) return EMPTY_STATE;
 
   const [user, curricula, attempts] = await Promise.all([
-    prisma.user.findUnique({ where: { id: userId }, select: { tier: true, subareaLevels: true } }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        tier: true,
+        subareaLevels: true,
+        pendingTier: true,
+        currentPeriodEnd: true,
+      },
+    }),
     prisma.curriculum.findMany({
       where: { userId },
       orderBy: { createdAt: "asc" },
@@ -240,6 +248,10 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
     skills,
     onboarded: Object.keys(skills).length > 0,
     coverage,
+    billing: {
+      pendingTier: (user?.pendingTier as PlanTier | null) ?? null,
+      periodEnd: user?.currentPeriodEnd ? user.currentPeriodEnd.toISOString() : null,
+    },
   };
   state.earnedBadges = evaluateBadges(state);
 

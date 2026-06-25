@@ -32,6 +32,9 @@ model User {
   stripeSubscriptionId String?
   stripePriceId        String?
   currentPeriodEnd     DateTime?
+  /// A scheduled plan change that applies at currentPeriodEnd (downgrade/cancel).
+  /// null = no pending change; "basic" = cancel at period end; else the lower tier.
+  pendingTier          String?
 
   createdAt DateTime @default(now())
 

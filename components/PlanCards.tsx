@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT, useTx } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
+import { useCurrentUser } from "@/lib/session";
 import { USE_DB } from "@/lib/flags";
 import { PLANS, PLAN_ORDER, yearlySavingPct } from "@/lib/plans";
 import type { PlanTier } from "@/lib/types";
@@ -11,6 +12,16 @@ import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
+
+const RANK: Record<PlanTier, number> = { basic: 0, smart: 1, guru: 2 };
+
+function formatDate(iso: string | null | undefined): string {
+  if (!iso) return "the end of your billing period";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? "the end of your billing period"
+    : d.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+}
 
 export function PlanCards({
   billing = "monthly",
@@ -20,44 +31,96 @@ export function PlanCards({
   const t = useT();
   const tx = useTx();
   const { state, setTier } = useStore();
+  const { refresh } = useCurrentUser();
   const router = useRouter();
   const [busy, setBusy] = useState<PlanTier | null>(null);
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
 
   const choose = async (tier: PlanTier) => {
-    if (USE_DB) {
-      if (tier === "basic") {
-        router.push("/dashboard");
-        return;
-      }
-      setBusy(tier);
-      try {
-        const res = await fetch("/api/stripe/checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tier, billing }),
-        });
-        if (res.status === 401) {
-          router.push("/login?next=/pricing");
-          return;
-        }
-        const j = await res.json().catch(() => ({}));
-        if (j.url) {
-          window.location.href = j.url;
-          return;
-        }
-      } catch {
-        /* ignore */
-      }
-      setBusy(null);
+    if (!USE_DB) {
+      // demo mode: switch instantly
+      setTier(tier);
+      router.push("/skills");
       return;
     }
-    // demo mode: switch instantly
-    setTier(tier);
-    router.push("/skills");
+
+    // Already free and choosing free → nothing to bill.
+    if (tier === "basic" && state.tier === "basic") {
+      router.push("/dashboard");
+      return;
+    }
+
+    setBusy(tier);
+    setNotice(null);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier, billing }),
+      });
+      if (res.status === 401) {
+        router.push("/login?next=/pricing");
+        return;
+      }
+      const j = await res.json().catch(() => ({}));
+
+      // New subscription → Stripe-hosted payment page.
+      if (j.url) {
+        window.location.href = j.url;
+        return;
+      }
+
+      if (j.action === "upgraded") {
+        // Immediate upgrade — prorated charge taken from the card on file.
+        await refresh();
+        setNotice({ ok: true, text: `You're on ${PLANS[tier].name} now — enjoy!` });
+        setTimeout(() => {
+          router.push("/dashboard");
+          router.refresh();
+        }, 1300);
+      } else if (j.action === "scheduled") {
+        // Downgrade / cancel — takes effect at the end of the current period.
+        await refresh();
+        const dest = PLANS[(j.tier as PlanTier) ?? tier].name;
+        setNotice({
+          ok: true,
+          text: `Your plan switches to ${dest} on ${formatDate(j.effectiveDate)}. You keep ${
+            PLANS[state.tier].name
+          } until then.`,
+        });
+      } else if (j.action === "none") {
+        router.push("/dashboard");
+      } else if (j.error) {
+        setNotice({ ok: false, text: j.error });
+      }
+    } catch {
+      setNotice({ ok: false, text: "Something went wrong. Please try again." });
+    } finally {
+      setBusy(null);
+    }
   };
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-3">
+    <>
+      {notice && (
+        <div
+          className={cn(
+            "mx-auto mb-6 max-w-2xl rounded-2xl border px-5 py-4 text-sm",
+            notice.ok
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+              : "border-rose-200 bg-rose-50 text-rose-700"
+          )}
+        >
+          <div className="flex items-start gap-2">
+            <Icon
+              name={notice.ok ? "CheckCircle2" : "CircleHelp"}
+              className="mt-0.5 h-4 w-4 shrink-0"
+            />
+            <span>{notice.text}</span>
+          </div>
+        </div>
+      )}
+      <div className="grid items-start gap-6 lg:grid-cols-3">
       {PLAN_ORDER.map((tier) => {
         const p = PLANS[tier];
         const price = billing === "monthly" ? p.priceMonthly : p.priceYearly;
@@ -133,7 +196,11 @@ export function PlanCards({
                 ? t("common.loading")
                 : isCurrent
                 ? t("pricing.current")
-                : t("pricing.choose", { plan: p.name })}
+                : !USE_DB || RANK[tier] > RANK[state.tier]
+                ? t("pricing.choose", { plan: p.name })
+                : tier === "basic"
+                ? "Cancel plan"
+                : `Switch to ${p.name}`}
             </Button>
 
             <ul className="mt-7 space-y-3">
@@ -152,6 +219,7 @@ export function PlanCards({
           </div>
         );
       })}
-    </div>
+      </div>
+    </>
   );
 }

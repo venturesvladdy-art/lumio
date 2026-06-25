@@ -317,6 +317,20 @@ export default function DashboardPage() {
                   {t("dashboard.planLabel")}: {tier.name}
                 </h2>
 
+                {state.billing?.pendingTier && (
+                  <div className="mt-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-800">
+                    <Icon name="Calendar" className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span>
+                      Scheduled: your plan switches to{" "}
+                      <span className="font-semibold">
+                        {PLANS[state.billing.pendingTier].name}
+                      </span>{" "}
+                      on {formatPlanDate(state.billing.periodEnd)}. You keep {tier.name}{" "}
+                      until then — manage or undo this in billing.
+                    </span>
+                  </div>
+                )}
+
                 {/* skills usage */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-sm text-slate-500">
@@ -383,6 +397,14 @@ export default function DashboardPage() {
       )}
     </div>
   );
+}
+
+function formatPlanDate(iso: string | null | undefined): string {
+  if (!iso) return "the end of your billing period";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? "the end of your billing period"
+    : d.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
 }
 
 const LEVEL_TONE: Record<string, "slate" | "sky" | "brand" | "violet"> = {

@@ -5,6 +5,28 @@ import { prisma } from "@/lib/db";
 import { regenerateCurriculaForUser } from "@/lib/regenerate";
 import type { PlanTier } from "@/lib/types";
 
+/**
+ * What plan change (if any) is scheduled to apply at the end of the period.
+ * Returns "basic" for a pending cancellation, a lower paid tier for a scheduled
+ * downgrade, or null when nothing is pending.
+ */
+async function pendingTierFor(sub: Stripe.Subscription): Promise<PlanTier | null> {
+  if (sub.cancel_at_period_end) return "basic";
+  if (!sub.schedule || !stripe) return null;
+  try {
+    const id = typeof sub.schedule === "string" ? sub.schedule : sub.schedule.id;
+    const sched = await stripe.subscriptionSchedules.retrieve(id);
+    if (sched.status !== "active" && sched.status !== "not_started") return null;
+    const nowSec = Date.now() / 1000;
+    const future = sched.phases.find((p) => p.start_date > nowSec);
+    const priceRef = future?.items[0]?.price;
+    const priceId = typeof priceRef === "string" ? priceRef : priceRef?.id;
+    return tierForPriceId(priceId);
+  } catch {
+    return null;
+  }
+}
+
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
@@ -63,6 +85,7 @@ async function syncSubscription(sub: Stripe.Subscription) {
   const tier = active ? tierForPriceId(priceId) ?? "basic" : "basic";
   const periodEndSec = (sub as unknown as { current_period_end?: number })
     .current_period_end;
+  const pendingTier = active ? await pendingTierFor(sub) : null;
 
   // Find the affected users first so we can detect a tier upgrade.
   const before = await prisma.user.findMany({
@@ -77,6 +100,7 @@ async function syncSubscription(sub: Stripe.Subscription) {
       stripeSubscriptionId: sub.status === "canceled" ? null : sub.id,
       stripePriceId: active ? priceId ?? null : null,
       currentPeriodEnd: periodEndSec ? new Date(periodEndSec * 1000) : null,
+      pendingTier,
     },
   });
 

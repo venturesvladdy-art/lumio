@@ -208,4 +208,11 @@ export interface UserState {
   coverage?: Record<string, AreaCoverage[]>;
   /** v2: per-skill subarea mastery levels (skillId → mastery). */
   mastery?: Record<string, SkillMastery>;
+  /** Billing: a scheduled plan change applying at the end of the period. */
+  billing?: {
+    /** The lower tier we'll move to at periodEnd ("basic" = cancellation). */
+    pendingTier: PlanTier | null;
+    /** ISO date the pending change takes effect (the current period end). */
+    periodEnd: string | null;
+  };
 }
