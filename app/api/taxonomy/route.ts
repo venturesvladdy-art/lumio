@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { auth } from "@/auth";
 import { resolveSkill } from "@/lib/skills";
 import { resolveTaxonomy } from "@/lib/taxonomy";
 
@@ -15,6 +16,14 @@ const Schema = z.object({
 
 /** The reusable area → subarea catalogue for a skill (curated / cached / AI). */
 export async function POST(req: Request) {
+  // Require auth: a cold/custom skill triggers live Opus generation, so leaving
+  // this open is an unauthenticated AI cost-amplification vector. (Guests use
+  // the static taste banks, which never hit this route.)
+  const session = await auth();
+  if (!(session?.user as { id?: string } | undefined)?.id) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
   let body: z.infer<typeof Schema>;
   try {
     body = Schema.parse(await req.json());

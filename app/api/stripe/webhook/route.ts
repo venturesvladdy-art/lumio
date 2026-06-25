@@ -37,14 +37,22 @@ export async function POST(req: Request) {
 
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const sig = req.headers.get("stripe-signature");
-  const raw = await req.text();
 
+  // Never process unsigned events. Without a configured secret we cannot verify
+  // authenticity, so we hard-fail rather than trusting raw JSON (which would let
+  // anyone forge a subscription upgrade by POSTing a fake event).
+  if (!secret) {
+    console.error("[stripe webhook] STRIPE_WEBHOOK_SECRET is not set — refusing to process events");
+    return NextResponse.json({ error: "Webhook secret not configured" }, { status: 400 });
+  }
+  if (!sig) {
+    return NextResponse.json({ error: "Missing stripe-signature" }, { status: 400 });
+  }
+
+  const raw = await req.text();
   let event: Stripe.Event;
   try {
-    event =
-      secret && sig
-        ? stripe.webhooks.constructEvent(raw, sig, secret)
-        : (JSON.parse(raw) as Stripe.Event);
+    event = stripe.webhooks.constructEvent(raw, sig, secret);
   } catch (err) {
     console.error("[stripe webhook] signature verification failed:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });

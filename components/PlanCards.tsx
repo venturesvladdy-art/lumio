@@ -62,6 +62,15 @@ export function PlanCards({
         router.push("/login?next=/pricing");
         return;
       }
+      if (res.status === 503) {
+        // Billing not configured yet — show a friendly waitlist message, never a
+        // raw "Billing not configured" error on a live pay button.
+        setNotice({
+          ok: true,
+          text: "Paid plans are coming soon — you can keep learning on the free plan in the meantime, and we'll switch them on shortly.",
+        });
+        return;
+      }
       const j = await res.json().catch(() => ({}));
 
       // New subscription → Stripe-hosted payment page.
