@@ -33,6 +33,7 @@ export function Navbar() {
   }, [pathname]);
 
   const links = [
+    ...(!user ? [{ label: "Try free", href: "/try" }] : []),
     { label: t("nav.skills"), href: "/skills" },
     { label: t("nav.howItWorks"), href: "/#how" },
     { label: t("nav.pricing"), href: "/pricing" },

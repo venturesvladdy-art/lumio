@@ -23,6 +23,7 @@ export async function POST(req: Request) {
 
   const session = await auth();
   const userId = (session?.user as { id?: string } | undefined)?.id;
+  const tier = (session?.user as { tier?: string } | undefined)?.tier ?? "basic";
   if (!userId) return NextResponse.json({ ok: false }, { status: 401 });
 
   let body: z.infer<typeof Schema>;
@@ -30,6 +31,19 @@ export async function POST(req: Request) {
     body = Schema.parse(await req.json());
   } catch {
     return NextResponse.json({ ok: false }, { status: 400 });
+  }
+
+  // Server-side daily cap: Basic (free) tier is limited to 5 answers per UTC day.
+  // The UI already gates this; here we enforce it authoritatively before logging.
+  if (tier === "basic") {
+    const dayStart = new Date();
+    dayStart.setUTCHours(0, 0, 0, 0);
+    const todayCount = await prisma.attempt.count({
+      where: { userId, answeredAt: { gte: dayStart } },
+    });
+    if (todayCount >= 5) {
+      return NextResponse.json({ ok: false, limit: "daily" }, { status: 200 });
+    }
   }
 
   try {

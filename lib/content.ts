@@ -12,7 +12,7 @@ export const CONTENT: QAItem[] = [
   /* ---------------- SAT ---------------- */
   {
     id: "sat-1",
-    skillId: "sat",
+    skillId: "exam",
     difficulty: "beginner",
     format: "mcq",
     question: { en: "If 3x + 5 = 20, what is x?", pl: "Jeśli 3x + 5 = 20, ile wynosi x?" },
@@ -27,7 +27,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "sat-2",
-    skillId: "sat",
+    skillId: "exam",
     difficulty: "beginner",
     format: "mcq",
     question: {
@@ -57,7 +57,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "sat-3",
-    skillId: "sat",
+    skillId: "exam",
     difficulty: "intermediate",
     format: "mcq",
     question: { en: "If f(x) = 2x² − 3x + 1, what is f(2)?", pl: "Jeśli f(x) = 2x² − 3x + 1, ile wynosi f(2)?" },
@@ -71,7 +71,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "sat-4",
-    skillId: "sat",
+    skillId: "exam",
     difficulty: "intermediate",
     format: "mcq",
     question: {
@@ -91,7 +91,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "sat-5",
-    skillId: "sat",
+    skillId: "exam",
     difficulty: "advanced",
     format: "mcq",
     question: {
@@ -109,7 +109,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "sat-6",
-    skillId: "sat",
+    skillId: "exam",
     difficulty: "advanced",
     format: "mcq",
     question: {
@@ -128,7 +128,7 @@ export const CONTENT: QAItem[] = [
   /* ---------------- GMAT ---------------- */
   {
     id: "gmat-1",
-    skillId: "gmat",
+    skillId: "exam",
     difficulty: "beginner",
     format: "mcq",
     question: {
@@ -145,7 +145,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "gmat-2",
-    skillId: "gmat",
+    skillId: "exam",
     difficulty: "beginner",
     format: "mcq",
     question: {
@@ -159,7 +159,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "gmat-3",
-    skillId: "gmat",
+    skillId: "exam",
     difficulty: "intermediate",
     format: "mcq",
     question: {
@@ -173,7 +173,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "gmat-4",
-    skillId: "gmat",
+    skillId: "exam",
     difficulty: "intermediate",
     format: "mcq",
     question: {
@@ -203,7 +203,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "gmat-5",
-    skillId: "gmat",
+    skillId: "exam",
     difficulty: "advanced",
     format: "mcq",
     question: {
@@ -221,7 +221,7 @@ export const CONTENT: QAItem[] = [
   },
   {
     id: "gmat-6",
-    skillId: "gmat",
+    skillId: "exam",
     difficulty: "advanced",
     format: "mcq",
     question: {

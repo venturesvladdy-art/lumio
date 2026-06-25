@@ -1,0 +1,143 @@
+{
+  "skillId": "python",
+  "areas": [
+    {"key": "syntax", "name": "Syntax & Variables"},
+    {"key": "structures", "name": "Lists, Dicts & Strings"},
+    {"key": "flow", "name": "Control Flow & Loops"},
+    {"key": "functions", "name": "Functions & Errors"}
+  ],
+  "questions": [
+    {
+      "id": "python-syntax-1",
+      "areaKey": "syntax",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which symbol assigns a value to a variable in Python?\nx ? 5",
+      "options": ["=", "==", ":=", "=>"],
+      "correctIndex": 0,
+      "explanation": "A single equals sign (=) assigns the value on its right to the variable on its left.",
+      "theory": "In Python, = is the assignment operator: it binds a name to a value, like x = 5. The double equals == is a different operator used to compare two values for equality. Mixing them up is one of the most common beginner mistakes."
+    },
+    {
+      "id": "python-syntax-2",
+      "areaKey": "syntax",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the data type of the value bound to y?\ny = 3 / 2",
+      "options": ["float", "int", "str", "bool"],
+      "correctIndex": 0,
+      "explanation": "The / operator always performs true division and returns a float, so 3 / 2 is 1.5, a float.",
+      "theory": "In Python 3 the / operator always yields a float, even when the result is a whole number (4 / 2 gives 2.0). To get integer division that discards the remainder, use the // operator instead. You can always check a value's type at runtime with the built-in type() function."
+    },
+    {
+      "id": "python-syntax-3",
+      "areaKey": "syntax",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this print?\na = [1, 2]\nb = a\nb.append(3)\nprint(a)",
+      "options": ["[1, 2, 3]", "[1, 2]", "[3]", "[1, 2, 3, 3]"],
+      "correctIndex": 0,
+      "explanation": "b = a makes b refer to the same list object as a, so appending through b also changes a.",
+      "theory": "Variables in Python are names that refer to objects, not boxes that hold copies. Assigning b = a binds both names to the very same list, so a mutation through either name is visible through the other. To get an independent copy, use a.copy() or list(a)."
+    },
+    {
+      "id": "python-structures-1",
+      "areaKey": "structures",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does this print?\nfruits = ['apple', 'banana', 'cherry']\nprint(fruits[1])",
+      "options": ["banana", "apple", "cherry", "['banana']"],
+      "correctIndex": 0,
+      "explanation": "List indexing starts at 0, so index 1 refers to the second element, 'banana'.",
+      "theory": "Python sequences like lists and strings are zero-indexed: the first element is at index 0, the second at index 1, and so on. You can also count from the end using negative indices, where -1 is the last element. Accessing an index that does not exist raises an IndexError."
+    },
+    {
+      "id": "python-structures-2",
+      "areaKey": "structures",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this print?\ns = 'hello world'\nprint(s[6:].upper())",
+      "options": ["WORLD", "HELLO", "world", "HELLO WORLD"],
+      "correctIndex": 0,
+      "explanation": "The slice s[6:] takes characters from index 6 to the end ('world'), and .upper() converts them to uppercase.",
+      "theory": "Slicing with [start:stop] returns a substring from start up to but not including stop; omitting stop runs to the end of the string. Strings are immutable, so methods like .upper() return a new string rather than changing the original. You can chain methods because each one returns a value you can call the next method on."
+    },
+    {
+      "id": "python-structures-3",
+      "areaKey": "structures",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this print?\nd = {'a': 1, 'b': 2}\nprint(d.get('c', 0))",
+      "options": ["0", "None", "KeyError", "'c'"],
+      "correctIndex": 0,
+      "explanation": "The key 'c' is missing, so .get() returns its second argument, the default value 0, instead of raising an error.",
+      "theory": "Indexing a dictionary with a missing key (d['c']) raises a KeyError, but the .get() method returns None for a missing key by default. Passing a second argument to .get() lets you choose what default value to return instead. This makes .get() a safe way to read keys that may or may not be present."
+    },
+    {
+      "id": "python-flow-1",
+      "areaKey": "flow",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does this print?\nx = 7\nif x > 5:\n    print('big')\nelse:\n    print('small')",
+      "options": ["big", "small", "7", "True"],
+      "correctIndex": 0,
+      "explanation": "Since 7 is greater than 5, the condition is True and the if branch runs, printing 'big'.",
+      "theory": "An if statement runs its indented block only when the condition evaluates to True, otherwise the else block runs. Python uses indentation, not braces, to define which lines belong to each branch. Consistent indentation is required syntax, not just a style choice."
+    },
+    {
+      "id": "python-flow-2",
+      "areaKey": "flow",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this print?\ntotal = 0\nfor i in range(1, 4):\n    total += i\nprint(total)",
+      "options": ["6", "10", "3", "4"],
+      "correctIndex": 0,
+      "explanation": "range(1, 4) yields 1, 2, and 3, and adding them gives 1 + 2 + 3 = 6.",
+      "theory": "range(start, stop) produces numbers from start up to but not including stop. A for loop iterates over each value, and += accumulates the running total. Because the stop value is excluded, range(1, 4) covers 1, 2, and 3 but not 4."
+    },
+    {
+      "id": "python-flow-3",
+      "areaKey": "flow",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this print?\nfor n in range(2, 10):\n    if n == 4:\n        continue\n    if n == 6:\n        break\n    print(n, end=' ')",
+      "options": ["2 3 5", "2 3 4 5", "2 3 5 7", "2 3 4 5 7"],
+      "correctIndex": 0,
+      "explanation": "continue skips printing 4, then printing proceeds for 5, and break stops the loop entirely when n reaches 6.",
+      "theory": "continue skips the rest of the current iteration and moves to the next value, while break exits the loop immediately. Here 2 and 3 print normally, 4 is skipped by continue, 5 prints, and the loop ends at 6 via break. Knowing the difference between these two statements is key to controlling loop behavior precisely."
+    },
+    {
+      "id": "python-functions-1",
+      "areaKey": "functions",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does this print?\ndef greet(name):\n    return 'Hi ' + name\nprint(greet('Sam'))",
+      "options": ["Hi Sam", "Hi name", "greet('Sam')", "Sam"],
+      "correctIndex": 0,
+      "explanation": "Calling greet('Sam') passes 'Sam' as the argument name, and the function returns the concatenated string 'Hi Sam'.",
+      "theory": "A function is defined with def and can take parameters that act as placeholders for the values you pass in when calling it. The return statement sends a value back to the caller, which here is then printed. Parameters like name only exist inside the function while it runs."
+    },
+    {
+      "id": "python-functions-2",
+      "areaKey": "functions",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this print?\ndef power(base, exp=2):\n    return base ** exp\nprint(power(3))",
+      "options": ["9", "6", "3", "8"],
+      "correctIndex": 0,
+      "explanation": "Only base is given, so exp uses its default of 2, and 3 ** 2 equals 9.",
+      "theory": "A default parameter value is used whenever the caller does not supply that argument, making it optional. Here power(3) leaves exp at its default of 2, computing 3 squared. The ** operator raises the left operand to the power of the right operand."
+    },
+    {
+      "id": "python-functions-3",
+      "areaKey": "functions",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this print?\ntry:\n    print(int('12x'))\nexcept ValueError:\n    print('bad number')",
+      "options": ["bad number", "12", "0", "ValueError"],
+      "correctIndex": 0,
+      "explanation": "int('12x') cannot parse the non-numeric string and raises a ValueError, which the except block catches and handles by printing 'bad number'.",
+      "theory": "When code inside a try block raises an exception, Python jumps to a matching except block instead of crashing the program. int() raises a ValueError when given a string it cannot convert to a number. Catching specific exception types lets you handle predictable errors gracefully while letting unexpected ones surface."
+    }
+  ]
+}

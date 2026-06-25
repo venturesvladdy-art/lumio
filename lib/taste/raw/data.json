@@ -1,0 +1,143 @@
+{
+  "skillId": "data",
+  "areas": [
+    {"key": "averages", "name": "Averages & Spread"},
+    {"key": "probability", "name": "Probability"},
+    {"key": "charts", "name": "Charts & Graphs"},
+    {"key": "studies", "name": "Interpreting Studies"}
+  ],
+  "questions": [
+    {
+      "id": "data-averages-1",
+      "areaKey": "averages",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A student scores 4, 8, and 9 on three quizzes. What is the mean (average) of these scores?",
+      "options": ["7", "8", "9", "21"],
+      "correctIndex": 0,
+      "explanation": "The mean is the sum divided by the count: (4 + 8 + 9) / 3 = 21 / 3 = 7.",
+      "theory": "The mean is found by adding all values together and dividing by how many values there are. It gives a single number that represents the typical size of the values. Because every value contributes to the total, the mean can be pulled up or down by unusually large or small numbers."
+    },
+    {
+      "id": "data-averages-2",
+      "areaKey": "averages",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Five houses on a street sold for $200k, $210k, $220k, $230k, and $5,000k (a mansion). Which measure best describes a 'typical' house price on this street?",
+      "options": ["The median, because it is not distorted by the one extreme value", "The mean, because it uses every value", "The range, because it shows the full spread", "The mode, because prices repeat"],
+      "correctIndex": 0,
+      "explanation": "The single $5,000k mansion is an outlier that inflates the mean to over $1,000k, while the median of $220k stays close to the cluster of ordinary homes.",
+      "theory": "The median is the middle value when data is sorted in order, so it ignores how far away extreme values are. The mean, by contrast, is sensitive to outliers because every value is added into the total. When data is skewed by a few extreme points, the median usually describes the 'typical' case more honestly."
+    },
+    {
+      "id": "data-averages-3",
+      "areaKey": "averages",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Two classes both have a mean test score of 70. Class A's scores are all between 68 and 72, while Class B's scores range from 40 to 100. Which statement is correct?",
+      "options": ["Class B has a larger standard deviation because its scores are more spread out", "Class A has a larger standard deviation because it has more students near the mean", "Both classes must have the same standard deviation because the means are equal", "Standard deviation cannot be compared unless the medians are equal"],
+      "correctIndex": 0,
+      "explanation": "Standard deviation measures spread around the mean, and Class B's scores deviate much further from 70 than Class A's tightly clustered scores, so Class B's standard deviation is larger.",
+      "theory": "Standard deviation summarizes how far, on average, values sit from the mean. A small standard deviation means values cluster tightly around the mean; a large one means they are widely scattered. Two data sets can share the same mean yet have very different standard deviations, which is why spread matters as much as the average."
+    },
+    {
+      "id": "data-probability-1",
+      "areaKey": "probability",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "You roll a single fair six-sided die. What is the probability of rolling a 4?",
+      "options": ["1/6", "1/4", "4/6", "1/2"],
+      "correctIndex": 0,
+      "explanation": "There is exactly one face showing a 4 out of six equally likely faces, so the probability is 1/6.",
+      "theory": "For equally likely outcomes, probability equals the number of favorable outcomes divided by the total number of outcomes. A fair die has six faces that are all equally likely, so each single value has a probability of one in six. Probabilities always fall between 0 (impossible) and 1 (certain)."
+    },
+    {
+      "id": "data-probability-2",
+      "areaKey": "probability",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You flip a fair coin twice. What is the probability of getting heads on both flips?",
+      "options": ["1/4", "1/2", "2/4 plus 1", "3/4"],
+      "correctIndex": 0,
+      "explanation": "The flips are independent, so you multiply the probabilities: (1/2) x (1/2) = 1/4.",
+      "theory": "When two events are independent, meaning one does not affect the other, the probability that both happen is the product of their individual probabilities. Each coin flip has a 1/2 chance of heads, so two heads in a row is 1/2 times 1/2. Listing all outcomes (HH, HT, TH, TT) confirms that only one of four equally likely results is two heads."
+    },
+    {
+      "id": "data-probability-3",
+      "areaKey": "probability",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A bag has 3 red and 2 blue marbles. You draw two marbles without replacement. What is the probability that both are red?",
+      "options": ["3/10", "9/25", "3/5", "1/2"],
+      "correctIndex": 0,
+      "explanation": "The first red has probability 3/5; after removing it, the second red has probability 2/4, so (3/5) x (2/4) = 6/20 = 3/10.",
+      "theory": "Drawing without replacement makes events dependent, because removing a marble changes what remains for the next draw. You multiply the probability of the first event by the conditional probability of the second given the first. This differs from drawing with replacement, where the counts reset and the draws stay independent."
+    },
+    {
+      "id": "data-charts-1",
+      "areaKey": "charts",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A bar chart shows weekly sales: Monday 10, Tuesday 25, Wednesday 15, and Thursday 30. Which day had the highest sales?",
+      "options": ["Thursday", "Tuesday", "Monday", "Wednesday"],
+      "correctIndex": 0,
+      "explanation": "Thursday's value of 30 is larger than 10, 25, and 15, so it has the tallest bar and the highest sales.",
+      "theory": "In a bar chart, the height (or length) of each bar represents its value, so taller bars mean larger quantities. To compare categories you simply compare bar heights. Bar charts are best for comparing distinct, separate categories rather than showing continuous change over time."
+    },
+    {
+      "id": "data-charts-2",
+      "areaKey": "charts",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A pie chart of a budget shows Rent at 50%, Food at 25%, and Transport at 25%. If the total monthly budget is $2,000, how much is spent on Food?",
+      "options": ["$500", "$1,000", "$250", "$750"],
+      "correctIndex": 0,
+      "explanation": "Food is 25% of the budget, and 25% of $2,000 is 0.25 x 2,000 = $500.",
+      "theory": "A pie chart divides a whole into slices, where each slice's share of the circle equals its percentage of the total. To find an actual amount, convert the percentage to a decimal and multiply by the whole. Pie charts work well when parts add up to a meaningful 100% but become hard to read with many small slices."
+    },
+    {
+      "id": "data-charts-3",
+      "areaKey": "charts",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A bar chart compares two products. Their actual sales are 100 and 110 units, but the vertical axis starts at 95 instead of 0, making the second bar look about three times taller. Why is this chart misleading?",
+      "options": ["A truncated axis that does not start at zero exaggerates small differences", "Bar charts can never be used to compare two products", "The bars should be replaced with a pie chart", "The difference of 10 units is too large to show accurately"],
+      "correctIndex": 0,
+      "explanation": "Starting the axis at 95 rather than 0 cuts off most of each bar, so a real difference of only 10 units appears visually enormous.",
+      "theory": "When a bar chart's value axis does not begin at zero, the visible bar heights no longer represent the true proportions between values. A small real difference can be stretched to look dramatic, which is a common way charts mislead. A careful reader always checks where the axis starts before trusting how big a difference looks."
+    },
+    {
+      "id": "data-studies-1",
+      "areaKey": "studies",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or False: If two things are correlated (they tend to rise and fall together), that proves one of them causes the other.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "explanation": "Correlation alone does not prove causation, because a third factor or pure coincidence could explain why two things move together.",
+      "theory": "Correlation means two variables tend to change together, but it does not reveal why. The link could run in either direction, be caused by a hidden third variable, or be coincidence. Establishing causation usually requires a controlled experiment, not just an observed pattern."
+    },
+    {
+      "id": "data-studies-2",
+      "areaKey": "studies",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A researcher surveys people leaving a luxury gym about their income and concludes the whole city is wealthy. What is the main flaw in this study?",
+      "options": ["The sample is not representative of the whole city", "The sample size of a gym is always too small", "Income cannot be measured by a survey", "Surveys are never valid research tools"],
+      "correctIndex": 0,
+      "explanation": "People at a luxury gym are not a random cross-section of the city, so the sample is biased toward wealthier residents and cannot represent everyone.",
+      "theory": "A study's conclusions are only as trustworthy as its sample. When the sample is drawn from a group that differs systematically from the whole population, this is called sampling bias. To generalize to a population, you need a sample that is representative, ideally chosen at random."
+    },
+    {
+      "id": "data-studies-3",
+      "areaKey": "studies",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A study finds towns with more ice cream sales also have more drownings, and concludes ice cream causes drowning. What is the most likely real explanation?",
+      "options": ["Hot summer weather is a confounding variable that increases both ice cream sales and swimming", "Ice cream genuinely makes people more likely to drown", "Drowning makes people crave ice cream", "The two variables are completely unrelated by chance alone"],
+      "correctIndex": 0,
+      "explanation": "Warm weather independently drives both more ice cream purchases and more swimming (and thus drownings), creating a correlation without any direct causal link between the two.",
+      "theory": "A confounding variable is a hidden third factor that influences both of the variables you are comparing, creating a misleading correlation between them. Failing to account for confounders is a classic source of false causal claims. Good studies try to control for or randomize away such hidden factors so the true relationship can be seen."
+    }
+  ]
+}

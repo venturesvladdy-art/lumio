@@ -1,0 +1,143 @@
+{
+  "skillId": "engineering",
+  "areas": [
+    {"key": "mechanics", "name": "Mechanics & Forces"},
+    {"key": "circuits", "name": "Circuits & Electronics"},
+    {"key": "algorithms", "name": "Algorithms & Computing"},
+    {"key": "reliability", "name": "Units & Reliability"}
+  ],
+  "questions": [
+    {
+      "id": "engineering-mechanics-1",
+      "areaKey": "mechanics",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A crate sits still on a flat floor. According to Newton's first law, what is the net force acting on the crate?",
+      "options": ["Zero", "Equal to its weight, pointing down", "Equal to its weight, pointing up", "Equal to the friction force, pointing sideways"],
+      "correctIndex": 0,
+      "explanation": "An object at rest has zero acceleration, so by Newton's first law the net force on it must be zero.",
+      "theory": "Newton's first law says an object stays at rest or in uniform motion unless a net force acts on it. When a crate sits still, the downward weight and the upward normal force from the floor are equal and opposite, so they cancel. The net force is the vector sum of all forces, and here that sum is zero."
+    },
+    {
+      "id": "engineering-mechanics-2",
+      "areaKey": "mechanics",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A net force of 12 N is applied to a 4 kg object on a frictionless surface. Using Newton's second law, what is the object's acceleration?",
+      "options": ["3 m/s^2", "48 m/s^2", "8 m/s^2", "0.33 m/s^2"],
+      "correctIndex": 0,
+      "explanation": "Newton's second law gives a = F/m = 12 N / 4 kg = 3 m/s^2.",
+      "theory": "Newton's second law states that net force equals mass times acceleration (F = ma). Rearranged, acceleration is force divided by mass (a = F/m). A larger force produces more acceleration, while a larger mass resists acceleration, which is why heavier objects are harder to speed up."
+    },
+    {
+      "id": "engineering-mechanics-3",
+      "areaKey": "mechanics",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A cable is rated to break at 6000 N and is used to support a static load of 1500 N. What is the factor of safety?",
+      "options": ["4", "0.25", "4500", "2"],
+      "correctIndex": 0,
+      "explanation": "Factor of safety = breaking (ultimate) load / applied load = 6000 N / 1500 N = 4.",
+      "theory": "The factor of safety compares a component's failure capacity to the load it actually carries, computed as ultimate strength divided by working load. A value greater than 1 means the part can withstand more than is demanded, giving a margin against overloads, defects, and uncertainty. Engineers choose higher factors for critical or unpredictable applications and lower ones where weight or cost matters and conditions are well understood."
+    },
+    {
+      "id": "engineering-circuits-1",
+      "areaKey": "circuits",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "In a simple circuit, a 12 V source drives a current through a 6 ohm resistor. Using Ohm's law, what current flows?",
+      "options": ["2 A", "72 A", "0.5 A", "18 A"],
+      "correctIndex": 0,
+      "explanation": "Ohm's law gives I = V / R = 12 V / 6 ohm = 2 A.",
+      "theory": "Ohm's law relates voltage, current, and resistance as V = IR. Rearranged, current equals voltage divided by resistance (I = V/R). Higher voltage pushes more current, while higher resistance restricts it, much like water pressure and pipe width affect flow."
+    },
+    {
+      "id": "engineering-circuits-2",
+      "areaKey": "circuits",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Two resistors of 4 ohm and 6 ohm are connected in series across a battery. What is their total resistance?",
+      "options": ["10 ohm", "2.4 ohm", "24 ohm", "5 ohm"],
+      "correctIndex": 0,
+      "explanation": "Resistances in series simply add: 4 ohm + 6 ohm = 10 ohm.",
+      "theory": "When resistors are connected in series, the same current flows through each one and their resistances add to give the total. This is because the current must pass through every resistor in turn, so each adds its own opposition. In contrast, resistors in parallel give a total resistance smaller than the smallest individual resistor."
+    },
+    {
+      "id": "engineering-circuits-3",
+      "areaKey": "circuits",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A resistor carries 0.5 A of current with 8 V across it. Using P = VI, how much power does it dissipate?",
+      "options": ["4 W", "16 W", "8.5 W", "0.0625 W"],
+      "correctIndex": 0,
+      "explanation": "Power equals voltage times current: P = VI = 8 V x 0.5 A = 4 W.",
+      "theory": "Electrical power is the rate at which energy is delivered or dissipated, given by P = VI for a component. For a resistor this energy turns into heat, which is why resistors and wires warm up under load. Using Ohm's law you can also write this as P = I^2 R or P = V^2 / R, which all give the same result."
+    },
+    {
+      "id": "engineering-algorithms-1",
+      "areaKey": "algorithms",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "A linear search scans a list one element at a time from the start until it finds the target or reaches the end. Its worst-case time complexity is O(n).",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "In the worst case the target is last or absent, so a linear search must check all n elements, giving O(n).",
+      "theory": "Big-O notation describes how an algorithm's running time grows as the input size n increases, focusing on the dominant term. Linear search examines each element once, so in the worst case it does work proportional to n, written O(n). Algorithms that grow more slowly, like O(log n), become much faster than linear search for large inputs."
+    },
+    {
+      "id": "engineering-algorithms-2",
+      "areaKey": "algorithms",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the worst-case time complexity of binary search on a sorted array of n elements?",
+      "options": ["O(log n)", "O(n)", "O(n log n)", "O(1)"],
+      "correctIndex": 0,
+      "explanation": "Binary search halves the remaining range each step, so it takes about log base 2 of n comparisons, giving O(log n).",
+      "theory": "Binary search works only on sorted data and repeatedly compares the target to the middle element, discarding half the remaining elements each time. Because the search space halves every step, the number of comparisons grows like the logarithm of n. This makes it dramatically faster than linear search for large sorted collections."
+    },
+    {
+      "id": "engineering-algorithms-3",
+      "areaKey": "algorithms",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "An algorithm uses two nested loops, each iterating over all n elements of an input, doing constant work inside. What is its time complexity?",
+      "options": ["O(n^2)", "O(n)", "O(2n)", "O(log n)"],
+      "correctIndex": 0,
+      "explanation": "An inner loop of n iterations runs for each of the n outer iterations, giving n x n = n^2 operations, or O(n^2).",
+      "theory": "Nested loops multiply their iteration counts, so two loops each running n times perform on the order of n^2 operations. Quadratic algorithms scale poorly: doubling the input roughly quadruples the work. Recognizing nested-loop patterns helps engineers spot performance bottlenecks and seek more efficient approaches for large inputs."
+    },
+    {
+      "id": "engineering-reliability-1",
+      "areaKey": "reliability",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "In SI units, which unit measures force?",
+      "options": ["Newton", "Joule", "Watt", "Pascal"],
+      "correctIndex": 0,
+      "explanation": "The newton (N) is the SI unit of force, defined as the force that accelerates 1 kg at 1 m/s^2.",
+      "theory": "The International System of Units (SI) defines standard units so engineers worldwide can communicate measurements unambiguously. The newton measures force, the joule measures energy, the watt measures power, and the pascal measures pressure. Each derived unit is built from the base units like the kilogram, meter, and second."
+    },
+    {
+      "id": "engineering-reliability-2",
+      "areaKey": "reliability",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A service is available 99% of the time over a 30-day month. Approximately how much total downtime does that allow?",
+      "options": ["About 7.2 hours", "About 43 minutes", "About 3 days", "About 22 minutes"],
+      "correctIndex": 0,
+      "explanation": "A 30-day month is 720 hours, and 1% of 720 hours is 7.2 hours of allowed downtime.",
+      "theory": "Availability is the fraction of time a system is operational, often quoted as a percentage like 99% ('two nines'). Downtime is the remaining fraction multiplied by the total time period. Adding more nines shrinks allowed downtime sharply: 99.9% over the same 30 days allows only about 43 minutes."
+    },
+    {
+      "id": "engineering-reliability-3",
+      "areaKey": "reliability",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Two independent components are in series, each with a reliability (probability of working) of 0.9. What is the overall reliability of the system?",
+      "options": ["0.81", "0.9", "0.99", "1.8"],
+      "correctIndex": 0,
+      "explanation": "For independent components in series, reliabilities multiply: 0.9 x 0.9 = 0.81.",
+      "theory": "In a series reliability model, the system works only if every component works, so the overall reliability is the product of the individual reliabilities. Because each value is less than 1, adding more series components always lowers total reliability. Designers improve reliability by adding redundancy in parallel, where the system survives as long as at least one path works."
+    }
+  ]
+}

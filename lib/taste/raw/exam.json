@@ -1,0 +1,178 @@
+{
+  "skillId": "exam",
+  "areas": [
+    {"key": "math", "name": "Math (SAT/GMAT/GRE)"},
+    {"key": "reading", "name": "Reading & Comprehension"},
+    {"key": "grammar", "name": "Grammar & Writing"},
+    {"key": "reasoning", "name": "Logic & Critical Reasoning"}
+  ],
+  "questions": [
+    {
+      "id": "exam-math-1",
+      "areaKey": "math",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "If 3x = 18, what is the value of x?",
+      "options": ["3", "6", "9", "15"],
+      "correctIndex": 1,
+      "explanation": "Dividing both sides of 3x = 18 by 3 gives x = 6.",
+      "theory": "To solve a one-step linear equation, isolate the variable by performing the inverse operation on both sides. Here the variable is multiplied by 3, so you divide both sides by 3. Keeping both sides balanced is the core rule of equation solving."
+    },
+    {
+      "id": "exam-math-2",
+      "areaKey": "math",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A shirt originally priced at $40 is discounted by 25%. What is the sale price?",
+      "options": ["$10", "$15", "$30", "$35"],
+      "correctIndex": 2,
+      "explanation": "A 25% discount removes 0.25 x $40 = $10, leaving $40 - $10 = $30.",
+      "theory": "A percent discount is a fraction of the original amount that is subtracted. You can find the result either by computing the discount and subtracting, or by multiplying the original by (1 minus the discount rate). For a 25% discount that means multiplying by 0.75."
+    },
+    {
+      "id": "exam-math-3",
+      "areaKey": "math",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "If f(x) = 2x^2 - 3x + 1, what is the value of f(3)?",
+      "options": ["8", "10", "13", "19"],
+      "correctIndex": 1,
+      "explanation": "Substituting x = 3 gives 2(9) - 3(3) + 1 = 18 - 9 + 1 = 10.",
+      "theory": "Evaluating a function means substituting the given input for the variable everywhere it appears, then simplifying using order of operations. Exponents are computed before multiplication, and multiplication before addition or subtraction. Careful sign handling on each term prevents common errors."
+    },
+    {
+      "id": "exam-reading-1",
+      "areaKey": "reading",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "In the sentence \"The hikers were elated when they finally reached the summit,\" the word \"elated\" most nearly means:",
+      "options": ["exhausted", "overjoyed", "confused", "frightened"],
+      "correctIndex": 1,
+      "explanation": "Reaching a long-sought summit is a triumphant moment, so \"elated\" means overjoyed.",
+      "theory": "Vocabulary-in-context questions ask you to infer a word's meaning from the surrounding clues rather than a dictionary definition alone. Look at the tone and situation of the sentence to narrow choices. Here the positive event of reaching the top signals a positive emotion."
+    },
+    {
+      "id": "exam-reading-2",
+      "areaKey": "reading",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Read this sentence: \"Although the new policy was intended to reduce traffic, it inadvertently encouraged more drivers to use side streets.\" What is the main idea of this sentence?",
+      "options": [
+        "The policy worked exactly as planned.",
+        "The policy had an unintended effect opposite to its goal.",
+        "Side streets are safer than main roads.",
+        "Drivers ignored the new policy entirely."
+      ],
+      "correctIndex": 1,
+      "explanation": "The word \"inadvertently\" signals an unintended result that worked against the policy's goal of reducing traffic.",
+      "theory": "The main idea of a sentence is its central point once supporting details are stripped away. Contrast words like \"although\" and \"inadvertently\" flag a gap between intention and outcome. Identifying these signal words helps you pin down what the writer is really emphasizing."
+    },
+    {
+      "id": "exam-reading-3",
+      "areaKey": "reading",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "In the sentence \"Her arguments, though superficially compelling, ultimately proved specious upon closer scrutiny,\" the word \"specious\" most nearly means:",
+      "options": [
+        "genuinely persuasive",
+        "deliberately offensive",
+        "seemingly true but actually false",
+        "overly complicated"
+      ],
+      "correctIndex": 2,
+      "explanation": "The contrast between \"superficially compelling\" and the result of closer scrutiny shows that \"specious\" means appearing true but actually false.",
+      "theory": "Advanced vocabulary-in-context items reward attention to contrast and qualification. The phrase \"superficially compelling\" sets up an appearance, while \"upon closer scrutiny\" undercuts it. \"Specious\" specifically describes reasoning that looks valid on the surface but collapses under examination."
+    },
+    {
+      "id": "exam-grammar-1",
+      "areaKey": "grammar",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which sentence is grammatically correct?",
+      "options": [
+        "The dog wag its tail happily.",
+        "The dog wags its tail happily.",
+        "The dog wagging its tail happily.",
+        "The dog wag it's tail happily."
+      ],
+      "correctIndex": 1,
+      "explanation": "A singular subject (\"dog\") takes the singular present-tense verb \"wags,\" and \"its\" is the correct possessive.",
+      "theory": "Subject-verb agreement requires a singular subject to pair with a singular verb, which in the present tense usually ends in -s. The possessive \"its\" has no apostrophe, while \"it's\" is a contraction of \"it is.\" Distinguishing these two is a frequent test point."
+    },
+    {
+      "id": "exam-grammar-2",
+      "areaKey": "grammar",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Choose the option that correctly completes the sentence: \"Neither the manager nor the employees ___ aware of the schedule change.\"",
+      "options": ["was", "were", "is", "be"],
+      "correctIndex": 1,
+      "explanation": "With \"neither...nor,\" the verb agrees with the nearer subject, \"employees,\" which is plural and takes \"were.\"",
+      "theory": "When subjects are joined by \"neither...nor\" or \"either...or,\" the verb agrees with the subject closest to it. Because \"employees\" is plural and sits nearest the verb, the plural \"were\" is correct. Reordering the subjects can change the required verb form."
+    },
+    {
+      "id": "exam-grammar-3",
+      "areaKey": "grammar",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Which sentence corrects the dangling modifier in \"Walking to the office, the rain soaked my coat\"?",
+      "options": [
+        "Walking to the office, my coat was soaked by the rain.",
+        "The rain soaked my coat, walking to the office.",
+        "Walking to the office, I got my coat soaked by the rain.",
+        "Walking to the office the rain soaked my coat completely."
+      ],
+      "correctIndex": 2,
+      "explanation": "The modifier \"walking to the office\" must describe a person, so the subject should be \"I,\" the one doing the walking.",
+      "theory": "A dangling modifier is an introductory phrase whose implied subject does not match the actual subject of the main clause. Rain cannot walk, so the sentence must place a person who can walk right after the modifier. Fixing it means making the doer of the action the grammatical subject."
+    },
+    {
+      "id": "exam-reasoning-1",
+      "areaKey": "reasoning",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "All birds have feathers. A robin is a bird. Which conclusion must be true?",
+      "options": [
+        "A robin has feathers.",
+        "All feathered animals are robins.",
+        "Only robins have feathers.",
+        "A robin cannot fly."
+      ],
+      "correctIndex": 0,
+      "explanation": "Since all birds have feathers and a robin is a bird, it follows necessarily that a robin has feathers.",
+      "theory": "A valid deductive syllogism applies a general rule to a specific case to reach a guaranteed conclusion. The conclusion must follow strictly from the premises without adding outside information. Reversing the rule (assuming all feathered animals are birds) is a common logical error."
+    },
+    {
+      "id": "exam-reasoning-2",
+      "areaKey": "reasoning",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A study found that towns with more ice cream sales also have more swimming-pool accidents. Which statement best explains why ice cream sales do not necessarily cause the accidents?",
+      "options": [
+        "Ice cream makes swimmers careless.",
+        "Hot weather independently increases both ice cream sales and swimming.",
+        "Swimming-pool accidents reduce ice cream sales.",
+        "The study used too small a sample."
+      ],
+      "correctIndex": 1,
+      "explanation": "A third factor, hot weather, raises both ice cream sales and swimming activity, so the two are correlated without one causing the other.",
+      "theory": "Correlation does not imply causation, because two variables can move together due to a shared underlying cause. This hidden third variable is called a confounder. Identifying a plausible confounder is the standard way to weaken a claimed causal link."
+    },
+    {
+      "id": "exam-reasoning-3",
+      "areaKey": "reasoning",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "An ad claims: \"Nine out of ten dentists surveyed recommend our toothpaste.\" Which question most effectively challenges this claim?",
+      "options": [
+        "How much does the toothpaste cost?",
+        "How many dentists were surveyed, and how were they selected?",
+        "Do dentists use toothpaste themselves?",
+        "Is the toothpaste available in stores?"
+      ],
+      "correctIndex": 1,
+      "explanation": "The claim's strength depends on sample size and selection, so asking how many dentists were surveyed and how they were chosen exposes possible bias.",
+      "theory": "Statistical claims can mislead when the sample is small, unrepresentative, or selected to favor a result. Asking about sample size and selection method tests whether the data can be generalized. This scrutiny of methodology is central to evaluating evidence in critical reasoning."
+    }
+  ]
+}

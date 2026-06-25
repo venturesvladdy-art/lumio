@@ -1,0 +1,198 @@
+{
+  "skillId": "speaking",
+  "areas": [
+    {"key": "structure", "name": "Structure & Storytelling"},
+    {"key": "delivery", "name": "Delivery & Voice"},
+    {"key": "nerves", "name": "Handling Nerves"},
+    {"key": "audience", "name": "Audience & Q&A"}
+  ],
+  "questions": [
+    {
+      "id": "speaking-structure-1",
+      "areaKey": "structure",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "You have ten minutes to give a talk on switching to a four-day work week. Which overall structure will be clearest for your audience?",
+      "options": [
+        "Open by previewing your main points, deliver them in order, then summarize what you covered",
+        "List every fact you know in the order you happened to learn them",
+        "Start with your conclusion, then read your reference list aloud",
+        "Improvise freely and trust the audience to find the thread"
+      ],
+      "correctIndex": 0,
+      "explanation": "Telling the audience what you'll cover, covering it, then recapping gives listeners a roadmap that makes the content easy to follow and remember.",
+      "theory": "A classic talk structure has a clear beginning, middle, and end: preview your key points, develop them one at a time, then summarize. Listeners cannot rewind a live talk, so this repetition helps them follow and retain the message. The structure also keeps you on track and prevents rambling."
+    },
+    {
+      "id": "speaking-structure-2",
+      "areaKey": "structure",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Midway through a presentation you want listeners to clearly notice that you are moving from describing a problem to proposing solutions. What is the most effective technique?",
+      "options": [
+        "Use a verbal signpost such as 'Now that we've seen the problem, let's look at three ways to fix it'",
+        "Lower your voice and hope people infer the shift",
+        "Add a new slide with no spoken transition",
+        "Speed up so you can reach the solutions faster"
+      ],
+      "correctIndex": 0,
+      "explanation": "An explicit signpost tells the audience where you are in the talk and what is coming next, keeping them oriented through the transition.",
+      "theory": "Signposting uses transition phrases like 'first', 'on the other hand', and 'to sum up' to mark the boundaries between sections of a talk. Because audiences cannot see your outline, these verbal cues act as a map that keeps them from getting lost. Strong transitions also make the talk feel deliberate and well organized rather than a loose collection of points."
+    },
+    {
+      "id": "speaking-structure-3",
+      "areaKey": "structure",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "You want your closing line to feel memorable and complete. Which approach best creates that sense of resolution?",
+      "options": [
+        "Call back to the story or image you opened with, tying the ending to the beginning",
+        "End abruptly with 'Well, that's all I have, I guess'",
+        "Introduce a brand-new statistic the audience hasn't heard before",
+        "Apologize for running over time and rush off"
+      ],
+      "correctIndex": 0,
+      "explanation": "Returning to the opening image or story creates a 'bookend' that gives the talk a satisfying, deliberate sense of closure.",
+      "theory": "The callback or 'bookending' technique frames a talk by echoing its opening at the close, signaling to the audience that the journey is complete. This narrative symmetry feels intentional and resolves the tension or curiosity raised at the start. Avoid ending with new information or weak filler, which leave listeners feeling the talk simply trailed off."
+    },
+    {
+      "id": "speaking-delivery-1",
+      "areaKey": "delivery",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Pausing briefly after an important point gives the audience time to absorb it and can make the point land harder.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "A deliberate pause lets a key idea sink in and adds emphasis, which is why experienced speakers pause rather than rush onward.",
+      "theory": "Pauses are one of the most powerful tools in delivery: they give listeners a moment to process what you just said and they spotlight the words around them. Silence also lets you breathe and reset your pace. New speakers often fear pauses and fill them with 'um' or rush ahead, but a confident pause reads as poise, not hesitation."
+    },
+    {
+      "id": "speaking-delivery-2",
+      "areaKey": "delivery",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You notice you race through talks and listeners look lost. Which adjustment will most improve how easily people follow you?",
+      "options": [
+        "Slow your overall pace and add short pauses at the end of key sentences",
+        "Speak in a flat monotone so every word gets equal weight",
+        "Talk even faster to fit more detail into the time",
+        "Memorize the script word for word and recite it quickly"
+      ],
+      "correctIndex": 0,
+      "explanation": "Slowing down and pausing at sentence ends gives listeners time to process each idea, which is the core fix for a too-fast delivery.",
+      "theory": "Pacing is how fast you speak and where you pause, and a measured pace dramatically improves comprehension. Nervous speakers tend to accelerate, blurring their words together so the audience can't keep up. Deliberately slowing down, varying your speed, and pausing at natural breaks gives ideas room to breathe and makes you sound more confident."
+    },
+    {
+      "id": "speaking-delivery-3",
+      "areaKey": "delivery",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Throughout a talk your voice stays at one steady pitch and volume. Why does adding vocal variety make you a more effective speaker?",
+      "options": [
+        "Changing pitch, pace, and volume signals emphasis and emotion, keeping the audience engaged and highlighting what matters",
+        "It makes the talk longer, which audiences always prefer",
+        "A monotone is actually ideal because it sounds calm and authoritative",
+        "Volume changes only matter for singers, not speakers"
+      ],
+      "correctIndex": 0,
+      "explanation": "Varying pitch, pace, and volume marks which words carry weight and conveys feeling, preventing the monotony that makes listeners tune out.",
+      "theory": "Vocal variety, the modulation of pitch, pace, and volume, is what keeps a voice engaging and meaningful. A monotone delivery flattens emphasis so the audience can't tell what is important and quickly loses attention. Strategic changes, like dropping your volume for an intimate point or raising pitch for excitement, guide listeners' emotions and underline your key ideas."
+    },
+    {
+      "id": "speaking-nerves-1",
+      "areaKey": "nerves",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Just before you walk on stage your heart is pounding and your breathing is shallow. What is a quick, proven way to calm yourself in the moment?",
+      "options": [
+        "Take a few slow, deep breaths, exhaling longer than you inhale",
+        "Hold your breath until your turn to speak",
+        "Drink several cups of strong coffee to feel energized",
+        "Replay every way the talk could go wrong"
+      ],
+      "correctIndex": 0,
+      "explanation": "Slow, deep breathing with a longer exhale activates the body's calming response and steadies a racing heart before you begin.",
+      "theory": "When we feel anxious, breathing becomes fast and shallow, which fuels the body's stress response. Deliberate slow breathing, especially a long exhale, triggers the parasympathetic nervous system and physically calms you down. A simple round of deep breaths before speaking lowers your heart rate and steadies your voice."
+    },
+    {
+      "id": "speaking-nerves-2",
+      "areaKey": "nerves",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A speaker who feels their nerves as 'excitement' rather than 'fear' tends to perform better. What is the best explanation for this technique?",
+      "options": [
+        "Anxiety and excitement feel similar in the body, so relabeling the feeling lets you channel the energy instead of fighting it",
+        "It magically removes all physical symptoms of nervousness",
+        "Excitement and fear are completely unrelated states",
+        "Telling yourself to 'just calm down' is always more effective"
+      ],
+      "correctIndex": 0,
+      "explanation": "Because the physical arousal of anxiety and excitement is nearly identical, reframing it as excitement is easier than forcing calm and turns the energy to your advantage.",
+      "theory": "Anxiety reappraisal is the practice of relabeling pre-talk jitters as excitement rather than trying to suppress them. Both states share the same arousal, a racing heart and heightened alertness, so it is easier to shift the label than to switch the body off. Treating the energy as readiness rather than threat helps you channel it into an engaged, lively delivery."
+    },
+    {
+      "id": "speaking-nerves-3",
+      "areaKey": "nerves",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "You want a long-term strategy that reliably reduces stage fright over many talks, not just an in-the-moment trick. What works best?",
+      "options": [
+        "Thorough preparation and repeated rehearsal, ideally out loud and under realistic conditions",
+        "Avoiding all practice so the talk feels spontaneous",
+        "Picturing the audience in their underwear",
+        "Waiting until you no longer feel any nerves before agreeing to speak"
+      ],
+      "correctIndex": 0,
+      "explanation": "Deep preparation and realistic rehearsal build genuine confidence and automaticity, which is the most dependable way to shrink stage fright over time.",
+      "theory": "Much speaking anxiety comes from fear of the unknown and of forgetting your material. Rehearsing out loud, ideally standing and simulating real conditions, makes the talk familiar so your brain has fewer surprises to dread. Over repeated exposures this preparation builds lasting confidence, whereas gimmicks offer only momentary relief."
+    },
+    {
+      "id": "speaking-audience-1",
+      "areaKey": "audience",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "You are preparing the same technical update for a room of engineers versus a room of senior executives. What should most shape how you present it?",
+      "options": [
+        "Tailor the depth, jargon, and focus to what each audience already knows and cares about",
+        "Deliver the identical slides and wording to both groups",
+        "Use as much specialized jargon as possible to sound credible",
+        "Decide the content only by what is easiest for you to prepare"
+      ],
+      "correctIndex": 0,
+      "explanation": "Adapting your depth, vocabulary, and emphasis to each audience's knowledge and priorities is the foundation of an effective talk.",
+      "theory": "Knowing your audience means understanding their existing knowledge, interests, and what they need from you. The same information should be framed differently for specialists than for decision-makers: experts want detail, while executives want implications and outcomes. Matching your message to the listeners makes it relevant and keeps them engaged."
+    },
+    {
+      "id": "speaking-audience-2",
+      "areaKey": "audience",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "During Q&A someone asks a question and you don't know the answer. What is the most professional response?",
+      "options": [
+        "Admit you don't know, then offer to find out and follow up after the session",
+        "Make up a confident-sounding answer on the spot",
+        "Dismiss the question as irrelevant and move on",
+        "Pretend you didn't hear it and call on someone else"
+      ],
+      "correctIndex": 0,
+      "explanation": "Honestly acknowledging the gap and promising to follow up protects your credibility, whereas bluffing risks being caught in a wrong answer.",
+      "theory": "Audiences trust speakers who are honest about the limits of their knowledge. Saying 'I don't know, but I'll find out and get back to you' is far more credible than inventing an answer that may be wrong. Offering a genuine follow-up turns a tough question into a chance to build trust rather than lose it."
+    },
+    {
+      "id": "speaking-audience-3",
+      "areaKey": "audience",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "In Q&A a hostile audience member asks a loaded, off-topic question meant to derail you. Which technique lets you stay composed and steer back to your message?",
+      "options": [
+        "Briefly acknowledge the question, then bridge to a relevant key point with a phrase like 'What's important here is...'",
+        "Argue with the questioner point by point until one of you gives up",
+        "Ignore them completely and refuse to respond at all",
+        "Abandon your message and let them set the agenda"
+      ],
+      "correctIndex": 0,
+      "explanation": "Bridging acknowledges the question without taking the bait, then transitions to a point you want to make, keeping you in control of the conversation.",
+      "theory": "Bridging is a technique borrowed from media training for handling difficult or off-topic questions. You give a brief, respectful acknowledgment, then use a transition phrase to pivot to one of your core messages. This keeps you calm and in control, addresses the moment without getting trapped in a hostile tangent, and returns focus to what you came to say."
+    }
+  ]
+}

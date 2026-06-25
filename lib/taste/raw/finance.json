@@ -1,0 +1,198 @@
+{
+  "skillId": "finance",
+  "areas": [
+    {"key": "budgeting", "name": "Budgeting & Saving"},
+    {"key": "credit", "name": "Credit & Debt"},
+    {"key": "investing", "name": "Investing Basics"},
+    {"key": "retirement", "name": "Taxes & Retirement"}
+  ],
+  "questions": [
+    {
+      "id": "finance-budgeting-1",
+      "areaKey": "budgeting",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the main purpose of a personal budget?",
+      "options": [
+        "To plan how your income is allocated to spending and saving",
+        "To guarantee your investments earn a higher return",
+        "To remove the need to ever track your expenses again",
+        "To increase your credit limit with lenders"
+      ],
+      "correctIndex": 0,
+      "explanation": "A budget is a plan that maps your income against your spending and saving so you can direct your money intentionally.",
+      "theory": "A budget is simply a plan for where your money goes over a period, usually a month. It helps you make sure essential needs are covered, debts are paid, and some money is set aside for goals before discretionary spending. Reviewing it regularly lets you spot overspending early and adjust before it becomes a problem."
+    },
+    {
+      "id": "finance-budgeting-2",
+      "areaKey": "budgeting",
+      "difficulty": "intermediate",
+      "question": "In the popular 50/30/20 budgeting guideline, what does the 20% portion represent?",
+      "format": "mcq",
+      "options": [
+        "Savings and debt repayment beyond minimums",
+        "Rent and other housing costs",
+        "Discretionary 'wants' like dining out",
+        "Taxes withheld from your paycheck"
+      ],
+      "correctIndex": 0,
+      "explanation": "Under the 50/30/20 guideline, 50% goes to needs, 30% to wants, and 20% to savings and extra debt repayment.",
+      "theory": "The 50/30/20 rule is a simple framework that splits after-tax income into three buckets: needs, wants, and savings or debt paydown. It is meant as a starting point rather than a strict law, and the percentages can be adjusted to fit your situation. Its value is in forcing you to consciously reserve a slice for your future rather than spending everything you earn."
+    },
+    {
+      "id": "finance-budgeting-3",
+      "areaKey": "budgeting",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A common guideline suggests an emergency fund should cover roughly how much of your living expenses?",
+      "options": [
+        "Three to six months of essential expenses",
+        "One week of expenses",
+        "Two full years of expenses",
+        "Exactly one month's rent"
+      ],
+      "correctIndex": 0,
+      "explanation": "Most guidance recommends keeping three to six months of essential living costs in an accessible emergency fund to cover income loss or surprise bills.",
+      "theory": "An emergency fund is cash set aside specifically for unexpected events like job loss, medical bills, or urgent repairs. Holding three to six months of essential expenses is a common target, with people in less stable jobs leaning toward the higher end. Because the point is quick access without loss of value, this money is usually kept in a safe, liquid account rather than invested in volatile assets."
+    },
+    {
+      "id": "finance-credit-1",
+      "areaKey": "credit",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Paying your credit card balance in full and on time each month generally helps build a positive credit history.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Consistent, on-time payments are one of the strongest positive signals in a credit history, and paying in full also avoids interest charges.",
+      "theory": "Payment history is typically the single most important factor in a credit score. Paying at least the minimum on time avoids late marks, but paying the full statement balance also means you avoid interest entirely. Over time, a record of reliable payments demonstrates to lenders that you are a low-risk borrower."
+    },
+    {
+      "id": "finance-credit-2",
+      "areaKey": "credit",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Credit utilization, an important factor in many credit scores, measures what?",
+      "options": [
+        "The share of your available revolving credit that you are currently using",
+        "The total number of years your oldest account has been open",
+        "How many different lenders have ever checked your credit",
+        "The interest rate charged on your largest loan"
+      ],
+      "correctIndex": 0,
+      "explanation": "Credit utilization is the ratio of your current revolving balances to your total available credit limits.",
+      "theory": "Credit utilization compares how much revolving credit you are using to how much you have available, expressed as a percentage. Lower utilization generally signals that you are not overly reliant on borrowed money, which tends to support a higher score. A common rule of thumb is to keep utilization well below 30%, and paying balances down before the statement closes can help."
+    },
+    {
+      "id": "finance-credit-3",
+      "areaKey": "credit",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "When tackling several debts, what distinguishes the 'debt avalanche' method from the 'debt snowball' method?",
+      "options": [
+        "The avalanche targets the highest interest rate first, while the snowball targets the smallest balance first",
+        "The avalanche targets the smallest balance first, while the snowball targets the highest rate first",
+        "The avalanche pays only minimums while the snowball skips minimums",
+        "Both methods always pay the largest balance first"
+      ],
+      "correctIndex": 0,
+      "explanation": "The avalanche prioritizes the highest interest rate to minimize total interest, while the snowball prioritizes the smallest balance to build motivation through quick wins.",
+      "theory": "Both strategies have you pay minimums on every debt and then put extra money toward one target debt. The avalanche method attacks the highest interest rate first, which mathematically minimizes the total interest you pay. The snowball method attacks the smallest balance first, producing faster psychological wins that can help people stay motivated even if it costs slightly more in interest."
+    },
+    {
+      "id": "finance-investing-1",
+      "areaKey": "investing",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does it mean to diversify an investment portfolio?",
+      "options": [
+        "Spreading money across many different investments to reduce risk",
+        "Putting all your money into a single promising company",
+        "Only investing during years when markets are rising",
+        "Borrowing money to increase the size of your bets"
+      ],
+      "correctIndex": 0,
+      "explanation": "Diversification spreads your money across many assets so that a poor result from any one of them has a smaller impact on the whole.",
+      "theory": "Diversification is the practice of holding a variety of investments rather than concentrating in one place. Because different assets often do not move in lockstep, a loss in one can be offset by gains or stability in others, smoothing overall results. It does not eliminate risk, but it reduces the chance that a single bad outcome devastates your portfolio."
+    },
+    {
+      "id": "finance-investing-2",
+      "areaKey": "investing",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A broad-market index fund is generally designed to do what?",
+      "options": [
+        "Track the performance of a whole market index at low cost",
+        "Beat the market by frequently picking individual winning stocks",
+        "Guarantee a fixed return regardless of market conditions",
+        "Hold only a single company's stock for maximum focus"
+      ],
+      "correctIndex": 0,
+      "explanation": "An index fund aims to match, not beat, the returns of a market index by holding its components, which keeps costs low.",
+      "theory": "An index fund passively holds the securities in a target index, such as a broad stock market index, rather than trying to outsmart the market. Because it requires little active management, it typically charges very low fees, which directly improves long-term net returns. This combination of instant diversification and low cost is why index funds are a popular core holding for long-term investors."
+    },
+    {
+      "id": "finance-investing-3",
+      "areaKey": "investing",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Why does compound growth tend to favor investors who start early, even with smaller contributions?",
+      "options": [
+        "Earnings are reinvested and themselves generate earnings over a longer time horizon",
+        "Starting early guarantees a higher interest rate than starting later",
+        "Early investments are exempt from any market losses",
+        "Compounding only applies to money invested before a certain age"
+      ],
+      "correctIndex": 0,
+      "explanation": "Compounding reinvests returns so they generate further returns, and a longer time horizon gives that snowball effect far more time to grow.",
+      "theory": "Compound growth means the returns you earn are reinvested and go on to earn returns of their own. The longer your money stays invested, the more dramatic this snowball becomes, so time in the market is often more powerful than the amount invested. This is why a modest sum invested in your twenties can outgrow a larger sum invested decades later."
+    },
+    {
+      "id": "finance-retirement-1",
+      "areaKey": "retirement",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the main advantage of a tax-advantaged retirement account compared with an ordinary taxable account?",
+      "options": [
+        "It offers tax benefits designed to encourage long-term retirement saving",
+        "It guarantees your investments can never lose value",
+        "It lets you withdraw money any time with no rules at all",
+        "It pays a fixed government-set interest rate every year"
+      ],
+      "correctIndex": 0,
+      "explanation": "Tax-advantaged retirement accounts provide tax breaks, such as deferred or tax-free growth, to reward saving for retirement.",
+      "theory": "Tax-advantaged retirement accounts give you a tax incentive to set money aside for the long term. Depending on the account type, you might get a tax break when you contribute or tax-free withdrawals later, and investments inside the account can grow without yearly tax drag. In exchange for these benefits, the accounts usually have rules and penalties that discourage withdrawing the money before retirement."
+    },
+    {
+      "id": "finance-retirement-2",
+      "areaKey": "retirement",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "An employer 'match' on retirement contributions is best described as what?",
+      "options": [
+        "Extra money your employer adds based on what you contribute, up to a limit",
+        "A loan from your employer that must be repaid with interest",
+        "A tax your employer deducts from your retirement savings",
+        "A penalty for contributing too much to your account"
+      ],
+      "correctIndex": 0,
+      "explanation": "An employer match is additional money the employer contributes in proportion to your own contributions, effectively an immediate return on your savings.",
+      "theory": "Many employers offer to match a portion of what you contribute to a workplace retirement plan, up to a set percentage of your pay. This match is essentially free money and an immediate boost to your savings, so contributing at least enough to capture the full match is widely considered a priority. Failing to contribute enough means leaving part of your compensation on the table."
+    },
+    {
+      "id": "finance-retirement-3",
+      "areaKey": "retirement",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What is the key difference between a traditional (pre-tax) and a Roth (after-tax) retirement account?",
+      "options": [
+        "Traditional contributions may be taxed at withdrawal, while qualified Roth withdrawals are tax-free",
+        "Roth contributions are always taxed again when you withdraw them",
+        "Traditional accounts can never be invested in stocks",
+        "Roth accounts require you to pay tax on growth every year"
+      ],
+      "correctIndex": 0,
+      "explanation": "Traditional accounts typically defer tax until withdrawal, whereas Roth accounts are funded with after-tax money and allow qualified withdrawals tax-free.",
+      "theory": "The core distinction is when you pay tax. Traditional accounts often let you contribute pre-tax money and defer taxes until you withdraw in retirement, while Roth accounts use money you have already been taxed on so that qualified future withdrawals, including growth, are tax-free. Choosing between them often comes down to whether you expect your tax rate to be higher now or in retirement."
+    }
+  ]
+}

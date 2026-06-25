@@ -63,12 +63,12 @@ export default function HomePage() {
               {t("home.heroSubtitle")}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <ButtonLink href="/skills" size="lg">
-                {t("home.heroCtaPrimary")}
+              <ButtonLink href="/try" size="lg">
+                Try it free — no signup
                 <Icon name="ArrowRight" className="h-4 w-4" />
               </ButtonLink>
-              <ButtonLink href="/#how" size="lg" variant="outline">
-                {t("home.heroCtaSecondary")}
+              <ButtonLink href="/skills" size="lg" variant="outline">
+                {t("home.heroCtaPrimary")}
               </ButtonLink>
             </div>
             <p className="mt-5 flex items-center gap-2 text-sm text-slate-500">

@@ -54,6 +54,25 @@ export async function POST(req: Request) {
     }
   }
 
+  // Server-side limit: the Basic (free) tier may only have ONE skill. Block a
+  // second, distinct skill here as the authority (the UI also gates this).
+  if (tier === "basic" && userId && prisma) {
+    const otherSkill = await prisma.curriculum.findFirst({
+      where: { userId, skillId: { not: skill.id } },
+      select: { skillId: true },
+    });
+    if (otherSkill) {
+      return NextResponse.json(
+        {
+          error: "skill-limit",
+          reason: "skill-limit",
+          message: "The Basic plan includes one skill. Upgrade to add more.",
+        },
+        { status: 403 }
+      );
+    }
+  }
+
   const subareaKey = body.areaId;
   const area = subareaKey && body.areaName ? { id: subareaKey, name: body.areaName } : undefined;
   const levelOverride = clampLevel(body.levelOverride);

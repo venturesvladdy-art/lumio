@@ -8,13 +8,19 @@ import { prisma } from "@/lib/db";
 
 const FROM = process.env.EMAIL_FROM || "SkillSprinter <onboarding@resend.dev>";
 
-/** Absolute base URL for links in emails (set AUTH_URL in production). */
+/**
+ * Absolute base URL for customer-facing links (emails, etc.). Never falls back
+ * to a *.vercel.app deployment URL — in production it canonicalizes to the real
+ * domain so links shown to customers always read skillsprinter.com. Override
+ * with AUTH_URL if the domain ever changes.
+ */
 export function appBaseUrl(): string {
   const url =
     process.env.AUTH_URL ||
     process.env.NEXTAUTH_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-    "http://localhost:3000";
+    (process.env.NODE_ENV === "production"
+      ? "https://skillsprinter.com"
+      : "http://localhost:3000");
   return url.replace(/\/+$/, "");
 }
 

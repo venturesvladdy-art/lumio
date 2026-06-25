@@ -21,7 +21,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     priceMonthly: 0,
     priceYearly: 0,
     dailyQuestions: 5,
-    maxSkills: 3,
+    maxSkills: 1,
     tracking: false,
     highlight: false,
     blurb: {
@@ -30,7 +30,7 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     },
     features: [
       { en: "5 questions per day", pl: "5 pytań dziennie" },
-      { en: "Up to 3 skills", pl: "Do 3 umiejętności" },
+      { en: "One skill", pl: "Jedna umiejętność" },
       { en: "AI-personalized plans", pl: "Plany personalizowane przez AI" },
       { en: "XP, levels & streaks", pl: "PD, poziomy i passy" },
     ],

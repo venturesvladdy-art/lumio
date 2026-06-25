@@ -1,0 +1,143 @@
+{
+  "skillId": "spanish",
+  "areas": [
+    {"key": "vocab", "name": "Vocabulary & Phrases"},
+    {"key": "grammar", "name": "Grammar & Gender"},
+    {"key": "verbs", "name": "Verbs & Tenses"},
+    {"key": "conversation", "name": "Everyday Conversation"}
+  ],
+  "questions": [
+    {
+      "id": "spanish-vocab-1",
+      "areaKey": "vocab",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "How do you say \"good morning\" in Spanish?",
+      "options": ["Buenos días", "Buenas noches", "Buenas tardes", "Buen provecho"],
+      "correctIndex": 0,
+      "explanation": "\"Buenos días\" is the standard greeting used in the morning, literally meaning \"good days.\"",
+      "theory": "Spanish has three time-of-day greetings: \"buenos días\" (morning), \"buenas tardes\" (afternoon), and \"buenas noches\" (evening/night). Notice that \"días\" is masculine plural while \"tardes\" and \"noches\" are feminine, which is why the adjective changes between \"buenos\" and \"buenas.\" These phrases are used both as greetings and as farewells."
+    },
+    {
+      "id": "spanish-vocab-2",
+      "areaKey": "vocab",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Which Spanish word means \"to be hungry\" when used in the phrase \"tener ___\"?",
+      "options": ["hambre", "sed", "sueño", "frío"],
+      "correctIndex": 0,
+      "explanation": "\"Tener hambre\" literally means \"to have hunger,\" which is how Spanish expresses being hungry.",
+      "theory": "Spanish often uses the verb \"tener\" (to have) plus a noun where English uses \"to be\" plus an adjective. Common examples include \"tener hambre\" (hungry), \"tener sed\" (thirsty), \"tener sueño\" (sleepy), and \"tener frío\" (cold). Because these use a noun, you intensify them with \"mucho/mucha\" (a lot) rather than \"muy\" (very): \"tengo mucha hambre.\""
+    },
+    {
+      "id": "spanish-vocab-3",
+      "areaKey": "vocab",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does the idiom \"estar en las nubes\" mean?",
+      "options": ["To be daydreaming", "To be very tall", "To be on a plane", "To be in a bad mood"],
+      "correctIndex": 0,
+      "explanation": "\"Estar en las nubes\" literally means \"to be in the clouds\" and idiomatically means to be distracted or daydreaming.",
+      "theory": "Idioms rarely translate word-for-word, so they must be learned as fixed expressions. \"Estar en las nubes\" matches the English image of having one's \"head in the clouds.\" Many Spanish idioms use \"estar\" plus a vivid image, such as \"estar como una cabra\" (to be crazy) or \"estar hecho polvo\" (to be exhausted)."
+    },
+    {
+      "id": "spanish-grammar-1",
+      "areaKey": "grammar",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which is the correct way to say \"the book\" in Spanish?",
+      "options": ["el libro", "la libro", "los libro", "la libra"],
+      "correctIndex": 0,
+      "explanation": "\"Libro\" is a masculine singular noun, so it takes the masculine singular article \"el.\"",
+      "theory": "Every Spanish noun has a gender, masculine or feminine, and the article must match it. \"El\" is the masculine singular \"the\" and \"la\" is the feminine singular \"the.\" Most nouns ending in -o are masculine and most ending in -a are feminine, though there are exceptions you simply memorize."
+    },
+    {
+      "id": "spanish-grammar-2",
+      "areaKey": "grammar",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "How do you correctly say \"the red houses\" (plural) in Spanish?",
+      "options": ["las casas rojas", "los casas rojos", "las casa roja", "la casas roja"],
+      "correctIndex": 0,
+      "explanation": "\"Casa\" is feminine and plural here, so the article, noun, and adjective all take feminine plural forms: \"las casas rojas.\"",
+      "theory": "In Spanish, adjectives and articles must agree with the noun in both gender and number. When a noun is feminine plural, its article (\"las\") and any descriptive adjective (\"rojas\") also become feminine plural. Adjectives ending in -o/-a change their ending to match, while many ending in -e or a consonant only change for number."
+    },
+    {
+      "id": "spanish-grammar-3",
+      "areaKey": "grammar",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Which noun is grammatically masculine despite ending in -a?",
+      "options": ["el problema", "la mesa", "la silla", "la ventana"],
+      "correctIndex": 0,
+      "explanation": "\"El problema\" is masculine because many words of Greek origin ending in -ma are masculine, despite the -a ending.",
+      "theory": "The rule \"-a means feminine\" has notable exceptions, especially nouns of Greek origin ending in -ma, such as \"el problema,\" \"el tema,\" \"el sistema,\" and \"el idioma.\" These take masculine articles and adjectives: \"un problema serio.\" Recognizing these patterns helps you avoid a common learner mistake."
+    },
+    {
+      "id": "spanish-verbs-1",
+      "areaKey": "verbs",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "How do you say \"I speak\" in Spanish (from the verb \"hablar\")?",
+      "options": ["hablo", "hablas", "habla", "hablan"],
+      "correctIndex": 0,
+      "explanation": "For -ar verbs, the \"yo\" (I) form replaces -ar with -o, giving \"hablo.\"",
+      "theory": "Spanish verbs change their endings to show who is doing the action, so the subject pronoun is often dropped. For regular -ar verbs in the present tense, the endings are -o, -as, -a, -amos, -áis, -an. So \"hablar\" becomes \"hablo\" (I speak), \"hablas\" (you speak), and \"habla\" (he/she speaks)."
+    },
+    {
+      "id": "spanish-verbs-2",
+      "areaKey": "verbs",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Which sentence correctly uses the preterite to say \"I ate paella yesterday\"?",
+      "options": ["Ayer comí paella", "Ayer como paella", "Ayer comeré paella", "Ayer comía paella"],
+      "correctIndex": 0,
+      "explanation": "\"Comí\" is the first-person preterite of \"comer,\" used for a completed action at a specific past time like \"ayer\" (yesterday).",
+      "theory": "The preterite tense describes completed actions in the past, especially at a defined moment. For regular -er verbs like \"comer,\" the \"yo\" preterite ending is -í, giving \"comí.\" This contrasts with the imperfect (\"comía\"), which describes ongoing or habitual past actions rather than a single finished event."
+    },
+    {
+      "id": "spanish-verbs-3",
+      "areaKey": "verbs",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Which form correctly completes \"Espero que tú ___ (venir) a la fiesta\" (I hope that you come to the party)?",
+      "options": ["vengas", "vienes", "vendrás", "viniste"],
+      "correctIndex": 0,
+      "explanation": "The phrase \"espero que\" expresses hope and triggers the subjunctive, so \"venir\" becomes the present subjunctive \"vengas.\"",
+      "theory": "The subjunctive mood expresses wishes, doubts, emotions, and uncertainty rather than facts. Expressions like \"espero que\" (I hope that) or \"quiero que\" (I want that) require the verb in the dependent clause to be subjunctive. \"Venir\" is irregular, taking the stem \"veng-\" so the present subjunctive \"tú\" form is \"vengas.\""
+    },
+    {
+      "id": "spanish-conversation-1",
+      "areaKey": "conversation",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Someone says \"¿Cómo estás?\" How do you reply \"I'm fine, thank you\"?",
+      "options": ["Bien, gracias", "Me llamo Ana", "Hasta luego", "De nada"],
+      "correctIndex": 0,
+      "explanation": "\"Bien, gracias\" means \"fine, thanks\" and is the natural response to being asked how you are.",
+      "theory": "\"¿Cómo estás?\" is the informal way to ask \"How are you?\" A common reply is \"Bien, gracias\" (fine, thank you), often followed by \"¿y tú?\" (and you?) to return the question. The other options mean \"My name is Ana,\" \"See you later,\" and \"You're welcome,\" which answer different prompts."
+    },
+    {
+      "id": "spanish-conversation-2",
+      "areaKey": "conversation",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "At a restaurant, how would you politely ask for the bill?",
+      "options": ["La cuenta, por favor", "El menú, por favor", "Un café, por favor", "La carta, por favor"],
+      "correctIndex": 0,
+      "explanation": "\"La cuenta\" means \"the bill,\" so \"la cuenta, por favor\" is how you politely request it.",
+      "theory": "In a Spanish restaurant, \"la cuenta\" is the bill you ask for at the end of a meal, while \"la carta\" or \"el menú\" is the menu you read at the start. Adding \"por favor\" (please) keeps the request polite. You can also signal a waiter and say \"¿Me trae la cuenta, por favor?\" (Could you bring me the bill, please?)."
+    },
+    {
+      "id": "spanish-conversation-3",
+      "areaKey": "conversation",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "In most of Spain, you would use \"vosotros\" to address a group of friends informally, while much of Latin America uses \"ustedes\" instead. True or False?",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Spain commonly uses the informal plural \"vosotros\" for groups of friends, whereas Latin America generally uses \"ustedes\" for all plural \"you.\"",
+      "theory": "Spanish has multiple ways to say \"you,\" and usage varies by region. Spain distinguishes informal plural \"vosotros\" from formal plural \"ustedes,\" each with its own verb forms. Most of Latin America has dropped \"vosotros\" entirely, using \"ustedes\" for any group regardless of formality, so learners traveling between regions should expect this difference."
+    }
+  ]
+}

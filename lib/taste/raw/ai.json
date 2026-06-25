@@ -1,0 +1,143 @@
+{
+  "skillId": "ai",
+  "areas": [
+    {"key": "ml", "name": "ML Foundations"},
+    {"key": "neural", "name": "Neural Networks"},
+    {"key": "llms", "name": "Large Language Models"},
+    {"key": "prompting", "name": "Prompting & Evaluation"}
+  ],
+  "questions": [
+    {
+      "id": "ai-ml-1",
+      "areaKey": "ml",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A model is trained on emails that are each already labeled as 'spam' or 'not spam' so it can label new emails. What type of machine learning is this?",
+      "options": ["Supervised learning", "Unsupervised learning", "Reinforcement learning", "Clustering"],
+      "correctIndex": 0,
+      "explanation": "Learning from input examples paired with known correct labels is the defining characteristic of supervised learning.",
+      "theory": "Supervised learning trains a model on data where each example has a known target answer, so the model learns to map inputs to those labels. Once trained, it predicts labels for new, unseen inputs. Common tasks include classification (predicting categories) and regression (predicting numbers)."
+    },
+    {
+      "id": "ai-ml-2",
+      "areaKey": "ml",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You have a dataset of customer purchases with no labels, and you want to discover natural groupings of similar customers. Which approach fits best?",
+      "options": ["Clustering, an unsupervised method", "Linear regression, a supervised method", "Logistic regression, a supervised method", "A labeled train-test split"],
+      "correctIndex": 0,
+      "explanation": "Finding groupings in unlabeled data without predefined categories is unsupervised learning, and clustering is its canonical technique.",
+      "theory": "Unsupervised learning works with data that has no target labels, aiming to uncover hidden structure. Clustering groups similar examples together, while other unsupervised methods reduce dimensionality or detect anomalies. Because there are no ground-truth answers, results are evaluated by how meaningful or useful the discovered structure is."
+    },
+    {
+      "id": "ai-ml-3",
+      "areaKey": "ml",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A model reaches 99% accuracy on its training data but only 70% on a held-out test set. What is the most likely problem and a reasonable fix?",
+      "options": ["Overfitting; add regularization or more training data", "Underfitting; make the model much larger", "The test set is too easy; remove it", "Data leakage; raise the learning rate"],
+      "correctIndex": 0,
+      "explanation": "A large gap between high training accuracy and lower test accuracy signals overfitting, which regularization or more diverse data helps reduce.",
+      "theory": "Overfitting happens when a model memorizes quirks and noise in the training data instead of learning patterns that generalize. The telltale sign is strong training performance paired with weak performance on new data. Remedies include regularization, gathering more or more varied data, simplifying the model, and early stopping during training."
+    },
+    {
+      "id": "ai-neural-1",
+      "areaKey": "neural",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Without a non-linear activation function, a stack of neural network layers can only represent linear relationships between inputs and outputs.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Composing purely linear layers still yields a single linear function, so non-linear activations are what let networks model complex patterns.",
+      "theory": "Each layer of a neural network typically computes a weighted sum followed by an activation function. If the activation were linear (or absent), stacking layers would collapse into one equivalent linear transformation, limiting the network to straight-line relationships. Non-linear activations like ReLU, sigmoid, or tanh break this collapse, enabling networks to approximate complex, curved decision boundaries."
+    },
+    {
+      "id": "ai-neural-2",
+      "areaKey": "neural",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "In gradient descent, what role does the gradient of the loss function play during a training step?",
+      "options": ["It points in the direction of steepest increase, so we step opposite to it to reduce loss", "It directly sets the final weight values in one step", "It measures how accurate the model is on the test set", "It randomly shuffles the training data between epochs"],
+      "correctIndex": 0,
+      "explanation": "The gradient indicates the direction of steepest loss increase, so updating weights in the opposite direction lowers the loss.",
+      "theory": "Gradient descent improves a model by repeatedly nudging its weights to reduce a loss that measures error. The gradient is the vector of partial derivatives showing how the loss changes with each weight; it points uphill, so we move against it. The learning rate controls how big each step is, balancing speed against the risk of overshooting."
+    },
+    {
+      "id": "ai-neural-3",
+      "areaKey": "neural",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What is the core purpose of the backpropagation algorithm in training a neural network?",
+      "options": ["To efficiently compute the gradient of the loss with respect to every weight using the chain rule", "To choose the best activation function for each layer automatically", "To split the dataset into training and test sets", "To increase the learning rate when training slows down"],
+      "correctIndex": 0,
+      "explanation": "Backpropagation applies the chain rule backward through the network to compute each weight's gradient efficiently so gradient descent can update them.",
+      "theory": "Backpropagation calculates how much each weight contributed to the network's error by propagating the loss backward layer by layer. It reuses intermediate results via the chain rule of calculus, making gradient computation efficient even for millions of parameters. These gradients are then fed to an optimizer such as gradient descent, which adjusts the weights to reduce the loss."
+    },
+    {
+      "id": "ai-llms-1",
+      "areaKey": "llms",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "When a large language model processes text, what is a 'token'?",
+      "options": ["A chunk of text such as a word or word-piece that the model reads and predicts", "A security key that authorizes the API request", "A single pixel in an input image", "The model's final confidence score for an answer"],
+      "correctIndex": 0,
+      "explanation": "Language models break text into tokens (words or sub-word pieces) as the basic units they read and generate.",
+      "theory": "Tokens are the small pieces of text, often whole words or fragments of words, that a language model operates on. Text is split into tokens before processing, and the model generates output one token at a time. Token counts matter in practice because they determine how much text fits in a request and often how usage is priced."
+    },
+    {
+      "id": "ai-llms-2",
+      "areaKey": "llms",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Two words that are used in similar contexts, like 'cat' and 'kitten', tend to have embeddings that are close together in vector space. What does this illustrate?",
+      "options": ["Embeddings capture semantic similarity as geometric closeness", "Embeddings store the exact spelling of each word", "Embeddings are random and carry no meaning", "Embeddings only work for numbers, not words"],
+      "correctIndex": 0,
+      "explanation": "Embeddings map words to vectors so that semantically related words land near each other, which is why 'cat' and 'kitten' are close.",
+      "theory": "An embedding is a dense vector of numbers that represents a token or piece of text in a continuous space. Models learn these vectors so that items with similar meaning or usage sit near one another, letting distance and direction encode relationships. This is what lets systems compare meaning, power semantic search, and feed rich representations into transformers."
+    },
+    {
+      "id": "ai-llms-3",
+      "areaKey": "llms",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What key capability did the transformer's self-attention mechanism introduce that helps models handle long-range relationships in text?",
+      "options": ["Each token can directly weigh and draw information from any other token in the sequence", "It processes tokens strictly one at a time in fixed order with no parallelism", "It removes the need for any training data", "It guarantees the model never makes factual errors"],
+      "correctIndex": 0,
+      "explanation": "Self-attention lets every token attend to every other token directly, capturing long-range dependencies that earlier sequential models struggled with.",
+      "theory": "The transformer architecture relies on self-attention, where each token computes how relevant every other token is and blends in their information accordingly. This direct any-to-any connectivity captures long-range context that older recurrent models handled poorly, and it parallelizes well across hardware. Self-attention is the backbone of modern large language models and a major reason they scale effectively."
+    },
+    {
+      "id": "ai-prompting-1",
+      "areaKey": "prompting",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "In a language model, raising the 'temperature' setting generally has what effect on the generated text?",
+      "options": ["It makes outputs more random and varied", "It makes outputs more repetitive and deterministic", "It increases the model's factual accuracy", "It shortens the maximum response length"],
+      "correctIndex": 0,
+      "explanation": "Higher temperature flattens the probability distribution over next tokens, producing more random and diverse text.",
+      "theory": "Temperature is a sampling setting that controls how a model picks the next token from its predicted probabilities. Low temperature concentrates choices on the most likely tokens, giving focused and repeatable output, while high temperature spreads probability out, yielding more creative or surprising text. Choosing a value trades off reliability against variety depending on the task."
+    },
+    {
+      "id": "ai-prompting-2",
+      "areaKey": "prompting",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A model confidently states a made-up citation that does not exist. In the context of language models, this behavior is best described as what?",
+      "options": ["A hallucination", "A train-test split", "An activation function", "A clustering error"],
+      "correctIndex": 0,
+      "explanation": "Generating fluent but false or fabricated information is known as hallucination in language models.",
+      "theory": "Hallucination is when a language model produces confident-sounding text that is factually wrong or entirely invented. It arises because the model predicts plausible continuations rather than retrieving verified facts. Grounding responses in trusted sources, asking for citations you can check, and evaluating outputs carefully all help reduce the impact of hallucinations."
+    },
+    {
+      "id": "ai-prompting-3",
+      "areaKey": "prompting",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A team adds retrieval-augmented generation (RAG) to their chatbot, which fits within the model's limited context window. What primary benefit does RAG provide?",
+      "options": ["It supplies relevant external documents at query time so answers are grounded in current, specific information", "It permanently retrains the model's weights on every user question", "It removes the need to evaluate the system's outputs", "It eliminates the model's context window limit entirely"],
+      "correctIndex": 0,
+      "explanation": "RAG retrieves relevant documents and inserts them into the prompt so the model can ground answers in external, up-to-date information without retraining.",
+      "theory": "Retrieval-augmented generation pairs a language model with a search step that fetches relevant text from an external knowledge source and adds it to the prompt. This grounds responses in specific or current information the model was not trained on, reducing hallucination. Because models have a finite context window, retrieval must select only the most relevant passages, and outputs should still be evaluated for accuracy."
+    }
+  ]
+}

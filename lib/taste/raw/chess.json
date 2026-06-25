@@ -1,0 +1,198 @@
+{
+  "skillId": "chess",
+  "areas": [
+    {"key": "openings", "name": "Openings & Principles"},
+    {"key": "tactics", "name": "Tactics"},
+    {"key": "endgames", "name": "Endgames"},
+    {"key": "strategy", "name": "Strategy & Planning"}
+  ],
+  "questions": [
+    {
+      "id": "chess-openings-1",
+      "areaKey": "openings",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which of these is a core principle for playing the opening well?",
+      "options": [
+        "Control the center with pawns and pieces",
+        "Move your queen out as early as possible",
+        "Push the pawns in front of your king before developing",
+        "Move the same piece several times to find its best square"
+      ],
+      "correctIndex": 0,
+      "explanation": "Controlling the center gives your pieces more mobility and influence over the most important squares on the board.",
+      "theory": "The four central squares (d4, d5, e4, e5) are the most valuable real estate in chess because pieces placed near them reach the most squares. Strong opening play means fighting for the center with pawns and developing minor pieces to support that fight. Wasting early moves on the queen or repeated piece moves usually loses time and lets the opponent seize the initiative."
+    },
+    {
+      "id": "chess-openings-2",
+      "areaKey": "openings",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "After 1.e4 e5 2.Nf3, White attacks Black's e5 pawn. Which move both develops a piece and defends e5?",
+      "options": [
+        "2...Nc6",
+        "2...a6",
+        "2...Qe7",
+        "2...d6 followed by no development"
+      ],
+      "correctIndex": 0,
+      "explanation": "2...Nc6 develops the knight toward the center while defending the attacked e5 pawn, achieving two goals in one move.",
+      "theory": "Good opening moves often accomplish more than one thing at once, such as developing a piece while defending a pawn or controlling a key square. 2...Nc6 is the most natural reply because the knight defends e5, fights for the center, and heads to an active square. Passive defenses like 2...Qe7 block your own pieces, while 2...d6 (the Philidor) defends but is more cramped and passive than the knight move."
+    },
+    {
+      "id": "chess-openings-3",
+      "areaKey": "openings",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "In a gambit such as the King's Gambit (1.e4 e5 2.f4), what is the player who sacrifices a pawn primarily trying to obtain?",
+      "options": [
+        "A lead in development and active piece play",
+        "An immediate forced checkmate",
+        "A material advantage by winning a piece back at once",
+        "A locked, drawish pawn structure"
+      ],
+      "correctIndex": 0,
+      "explanation": "A gambit trades material for a head start in development and open lines, hoping that activity and initiative outweigh the lost pawn.",
+      "theory": "A gambit deliberately gives up a pawn (or more) to gain time, open lines, and faster development. The idea is that rapid mobilization and the initiative can be worth more than a single pawn, especially if the defender falls behind. Gambits are double-edged: if the attacker fails to use the activity quickly, the extra pawn can decide the game in the long run."
+    },
+    {
+      "id": "chess-tactics-1",
+      "areaKey": "tactics",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is a 'fork' in chess?",
+      "options": [
+        "One piece attacking two or more enemy pieces at the same time",
+        "Trapping a piece against the edge of the board",
+        "Trading two pieces for a single stronger piece",
+        "Moving a pawn to the last rank to promote it"
+      ],
+      "correctIndex": 0,
+      "explanation": "A fork is a single move that attacks two or more targets simultaneously, so the opponent cannot save them all.",
+      "theory": "A fork is one of the most common tactics, where a single piece threatens two or more enemy pieces or squares at once. Knights are especially good at forking because they attack in an L-shape that other pieces cannot block. The classic example is a knight that attacks the enemy king and queen together, forcing the king to move and winning the queen."
+    },
+    {
+      "id": "chess-tactics-2",
+      "areaKey": "tactics",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A pin and a skewer both attack two pieces on the same line. What is the key difference?",
+      "options": [
+        "In a skewer the more valuable piece is in front and must move, exposing the piece behind it",
+        "A pin can only be made by a knight, while a skewer is made by a bishop",
+        "A skewer always attacks the king, while a pin never does",
+        "A pin wins material immediately, while a skewer never wins material"
+      ],
+      "correctIndex": 0,
+      "explanation": "In a skewer the valuable piece is in front and is forced to move, allowing capture of the lesser piece behind it, which is the reverse of a pin.",
+      "theory": "Pins and skewers are line tactics carried out by bishops, rooks, and queens. In a pin, a less valuable (or equally valuable) piece is shielded behind a more valuable one, so it cannot or should not move. A skewer is the inverse: the valuable piece is attacked first and must step aside, exposing the piece behind it to capture."
+    },
+    {
+      "id": "chess-tactics-3",
+      "areaKey": "tactics",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What makes a 'discovered attack' so dangerous, and especially a discovered check?",
+      "options": [
+        "Moving one piece unveils an attack from another, so two threats appear at once and a discovered check can win material 'for free'",
+        "It forces an immediate draw by repetition",
+        "It only works when both kings are still on their starting squares",
+        "It allows a pawn to capture two pieces in a single move"
+      ],
+      "correctIndex": 0,
+      "explanation": "A discovered attack lets the moving piece create its own threat while uncovering a second attacker, and with a discovered check the opponent must respond to the check first, often losing the piece attacked by the moving piece.",
+      "theory": "A discovered attack happens when you move one piece out of the way to reveal an attack from a piece behind it, generating two threats with a single move. The moving piece can capture, attack, or make its own threat while the unveiled piece does its work. A discovered check is the strongest version because the opponent is forced to deal with the check immediately, so the moving piece can grab material or a key square almost unopposed."
+    },
+    {
+      "id": "chess-endgames-1",
+      "areaKey": "endgames",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "When a pawn reaches the opponent's back rank (the far end of the board), what happens?",
+      "options": [
+        "It promotes and is replaced by a queen, rook, bishop, or knight of the same color",
+        "It is removed from the board as a reward",
+        "It automatically becomes a second king",
+        "It must stay a pawn but can now move backward"
+      ],
+      "correctIndex": 0,
+      "explanation": "A pawn that reaches the last rank must promote, almost always to a queen because the queen is the most powerful piece.",
+      "theory": "Promotion is the reason pawns become so important in the endgame: every pawn is a potential queen. When a pawn reaches the eighth rank (or first rank for Black), it is immediately exchanged for a queen, rook, bishop, or knight of the same color. Players almost always choose a queen, but occasionally promote to a knight or another piece to avoid stalemate or to deliver an immediate fork or check."
+    },
+    {
+      "id": "chess-endgames-2",
+      "areaKey": "endgames",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "In king and pawn endgames, what does it mean to 'have the opposition'?",
+      "options": [
+        "Your kings face each other with one empty square between them and it is the opponent's turn to move, forcing their king to give way",
+        "You have more pawns than your opponent on the same file",
+        "Your king is in check and must move immediately",
+        "You control a diagonal with your bishop against the enemy king"
+      ],
+      "correctIndex": 0,
+      "explanation": "Having the opposition means the kings stand directly opposed with one square between them and the other player is on move, so their king must step aside and yield ground.",
+      "theory": "The opposition is a key king-and-pawn endgame technique where the player NOT on the move often controls the position. When the kings stand one square apart and your opponent must move, their king is forced to give way, letting your king advance. Mastering the opposition lets the stronger side escort a pawn to promotion and helps the weaker side hold a draw."
+    },
+    {
+      "id": "chess-endgames-3",
+      "areaKey": "endgames",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "A lone king plus a single knight (with no pawns) can force checkmate against a lone king.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "explanation": "King and a single knight cannot force checkmate against a lone king; there is insufficient mating material, so the game is drawn.",
+      "theory": "Some material combinations simply cannot force checkmate against a lone king, which results in a draw by insufficient material. A king and one knight, or a king and one bishop, can never deliver a forced mate. By contrast, king and queen, king and rook, and even the tricky two-bishop or bishop-plus-knight combinations can all force mate with correct play."
+    },
+    {
+      "id": "chess-strategy-1",
+      "areaKey": "strategy",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Using the standard relative piece values, how much is a rook worth?",
+      "options": [
+        "About 5 points",
+        "About 1 point",
+        "About 3 points",
+        "About 9 points"
+      ],
+      "correctIndex": 0,
+      "explanation": "A rook is conventionally valued at about 5 points, more than a minor piece (3) but less than a queen (9).",
+      "theory": "The standard point values help you judge trades: pawn 1, knight 3, bishop 3, rook 5, and queen 9. The king has no point value because it can never be captured. These numbers are guidelines rather than absolute rules, since activity, king safety, and pawn structure can make a piece worth more or less than its nominal value in a given position."
+    },
+    {
+      "id": "chess-strategy-2",
+      "areaKey": "strategy",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "In chess strategy, what is an 'outpost'?",
+      "options": [
+        "An advanced square, often protected by a pawn and not attackable by enemy pawns, where a piece like a knight is very strong",
+        "A pawn that has no friendly pawns on the files next to it",
+        "The square directly in front of the king after castling",
+        "Any square on the player's own first two ranks"
+      ],
+      "correctIndex": 0,
+      "explanation": "An outpost is a well-protected advanced square that enemy pawns cannot challenge, making it an ideal home for a knight or other piece.",
+      "theory": "An outpost is a strong square deep in or near the opponent's territory that cannot be attacked by enemy pawns, usually because those pawns have advanced past it or been traded off. Knights love outposts because once established they cannot easily be driven away and they radiate pressure. Planning your strategy often involves creating an outpost and maneuvering a knight to occupy it."
+    },
+    {
+      "id": "chess-strategy-3",
+      "areaKey": "strategy",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "An 'isolated queen's pawn' (an isolated pawn on the d-file) is a classic structural feature. What is the typical strategic trade-off it creates?",
+      "options": [
+        "It grants active piece play and central space, but is a long-term weakness that can be blockaded and attacked",
+        "It guarantees a winning attack in every game",
+        "It is always a decisive weakness with no compensation whatsoever",
+        "It can never be captured because it sits on the d-file"
+      ],
+      "correctIndex": 0,
+      "explanation": "An isolated d-pawn offers space and open lines for active pieces in the middlegame, but because no friendly pawn can defend it, the opponent aims to blockade and eventually win it, especially in the endgame.",
+      "theory": "An isolated pawn has no friendly pawns on the adjacent files, so it can only be defended by pieces, not pawns. The isolated queen's pawn is the textbook example: its owner gets open lines, central space, and attacking chances in the middlegame, while the opponent tries to neutralize the activity and blockade the pawn on the square in front of it. Whoever understands this trade-off better usually steers the game toward the structure that favors them, the attacker keeping pieces on, the defender trading down toward an endgame."
+    }
+  ]
+}

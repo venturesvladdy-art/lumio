@@ -1,0 +1,193 @@
+{
+  "skillId": "interpersonal",
+  "areas": [
+    {"key": "listening", "name": "Active Listening"},
+    {"key": "feedback", "name": "Giving Feedback"},
+    {"key": "negotiation", "name": "Negotiation"},
+    {"key": "conflict", "name": "Conflict & Empathy"}
+  ],
+  "questions": [
+    {
+      "id": "interpersonal-listening-1",
+      "areaKey": "listening",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A coworker is explaining a problem they ran into. Which behavior best shows you are actively listening?",
+      "options": [
+        "Paraphrasing what they said back to them to confirm you understood",
+        "Thinking about how you'll respond while they are still talking",
+        "Checking your phone but nodding occasionally",
+        "Jumping in to solve the problem before they finish"
+      ],
+      "correctIndex": 0,
+      "explanation": "Paraphrasing the speaker's point back to them confirms understanding and signals that you were genuinely attending to their words.",
+      "theory": "Active listening means fully concentrating on the speaker rather than passively hearing them. A core technique is reflecting or paraphrasing what you heard, which both checks your understanding and shows the speaker they were heard. This builds trust and reduces miscommunication."
+    },
+    {
+      "id": "interpersonal-listening-2",
+      "areaKey": "listening",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "During a one-on-one, a teammate says, 'I guess the project went fine,' but sounds flat and hesitant. What is the best active-listening response?",
+      "options": [
+        "Reflect what you notice: 'You say it went fine, but you sound unsure. What's on your mind?'",
+        "Take them at their word and move to the next agenda item",
+        "Reassure them: 'I'm sure it was great, don't worry about it.'",
+        "Point out that they should sound more confident in meetings"
+      ],
+      "correctIndex": 0,
+      "explanation": "Naming the mismatch between their words and tone invites them to share what they actually feel, which is the goal of listening for meaning beneath the words.",
+      "theory": "Skilled listeners attend to nonverbal cues like tone, pace, and hesitation, not just the literal words. When words and signals conflict, gently reflecting the discrepancy opens space for the real message. This is sometimes called listening for the music behind the words."
+    },
+    {
+      "id": "interpersonal-listening-3",
+      "areaKey": "listening",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "True or False: Asking clarifying, open-ended questions can be a form of active listening, even though you are the one speaking.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Open-ended questions that draw out and deepen the speaker's meaning are a recognized active-listening skill, because their purpose is to understand rather than to redirect.",
+      "theory": "Active listening is not silent passivity; it includes verbal techniques that serve understanding. Open-ended questions such as 'What led you to that?' encourage the speaker to elaborate and show you are tracking their thinking. The test is intent: questions that explore the speaker's view aid listening, while questions that steer toward your own agenda do not."
+    },
+    {
+      "id": "interpersonal-feedback-1",
+      "areaKey": "feedback",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which of these is the most effective feedback to give a colleague?",
+      "options": [
+        "'In yesterday's review, you interrupted Maria twice before she finished her point.'",
+        "'You're kind of rude in meetings.'",
+        "'Everyone thinks you talk over people.'",
+        "'You always make meetings difficult.'"
+      ],
+      "correctIndex": 0,
+      "explanation": "Effective feedback describes a specific, observable behavior at a specific time, rather than labeling the person's character.",
+      "theory": "Good feedback is specific and behavior-focused, pointing to what someone actually did rather than judging who they are. Vague or character-based labels like 'rude' put people on the defensive and give them nothing concrete to change. Naming the exact behavior makes the feedback both fair and actionable."
+    },
+    {
+      "id": "interpersonal-feedback-2",
+      "areaKey": "feedback",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You want to tell a teammate that their late report delayed your work. Which phrasing is most constructive?",
+      "options": [
+        "'When the report arrived a day late, I had to rush my part and felt stressed.'",
+        "'You made me miss my deadline because you're never on time.'",
+        "'Why can't you ever get things in when you say you will?'",
+        "'It's fine, but try not to be late, I guess.'"
+      ],
+      "correctIndex": 0,
+      "explanation": "An 'I' statement that links a specific behavior to its concrete impact and your own experience delivers the message without attacking the person.",
+      "theory": "'I' statements describe the situation, the effect on you, and how you felt, instead of accusing the other person with 'you' blame. The structure 'When X happened, I experienced Y' keeps the focus on impact rather than character. This lowers defensiveness and makes the listener more able to hear and act on the feedback."
+    },
+    {
+      "id": "interpersonal-feedback-3",
+      "areaKey": "feedback",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A direct report did excellent work but you also need to raise a real concern. What approach makes the feedback most credible?",
+      "options": [
+        "Give genuine, specific praise and the specific concern as separate, clearly stated messages",
+        "Sandwich the criticism between two compliments so it stings less",
+        "Skip the praise and lead straight into the criticism to save time",
+        "Soften the concern so much that it sounds optional"
+      ],
+      "correctIndex": 0,
+      "explanation": "Keeping praise and concern specific and distinct preserves the credibility of both, whereas burying criticism dilutes the message and can make praise feel manipulative.",
+      "theory": "The classic 'feedback sandwich' often backfires because people learn to discount the praise as mere padding for bad news. Research and practice favor being clear and specific about both strengths and concerns, treating each as a real, standalone message. Honesty paired with specificity earns trust; manufactured softening erodes it."
+    },
+    {
+      "id": "interpersonal-negotiation-1",
+      "areaKey": "negotiation",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "In a negotiation, what does it mean to focus on 'interests' rather than 'positions'?",
+      "options": [
+        "Looking at the underlying needs behind what each side is demanding",
+        "Sticking firmly to your opening demand no matter what",
+        "Caring only about the other side's stated final offer",
+        "Splitting the difference as quickly as possible"
+      ],
+      "correctIndex": 0,
+      "explanation": "Interests are the underlying needs and motivations driving a demand, and focusing on them opens up solutions a rigid position would hide.",
+      "theory": "A position is what someone says they want; an interest is why they want it. Two people arguing over a single orange may both get more if one needs the peel and the other the fruit. Identifying interests behind positions is a foundation of principled negotiation because it reveals options that satisfy both sides."
+    },
+    {
+      "id": "interpersonal-negotiation-2",
+      "areaKey": "negotiation",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You are negotiating a contract. What does knowing your BATNA give you?",
+      "options": [
+        "A clear sense of your best alternative if no deal is reached, so you know when to walk away",
+        "A guarantee that the other side will accept your first offer",
+        "Permission to ignore the other party's interests entirely",
+        "A rule that you must always accept any offer above your asking price"
+      ],
+      "correctIndex": 0,
+      "explanation": "BATNA stands for Best Alternative To a Negotiated Agreement, and knowing it tells you the point at which walking away beats accepting a poor deal.",
+      "theory": "Your BATNA is what you will do if this particular negotiation fails. It sets your walk-away point: you should not accept any deal worse than your best alternative. A strong, well-understood BATNA increases your leverage and protects you from being pressured into an agreement that leaves you worse off."
+    },
+    {
+      "id": "interpersonal-negotiation-3",
+      "areaKey": "negotiation",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "The other party opens with an aggressive, extreme number. What is the most effective response?",
+      "options": [
+        "Avoid anchoring to it, refocus on objective criteria, and ask how they arrived at that figure",
+        "Immediately counter with an equally extreme number in the opposite direction",
+        "Accept a small concession from their number to keep things friendly",
+        "Walk out of the negotiation in protest of the tactic"
+      ],
+      "correctIndex": 0,
+      "explanation": "Declining to treat the extreme figure as a reference point and steering toward objective standards neutralizes the anchor without escalating or conceding.",
+      "theory": "An aggressive first offer is an anchoring tactic, exploiting our tendency to judge value relative to the first number we hear. The countermeasure is to refuse the anchor's pull and insist on independent, objective criteria such as market rates or precedent. Asking the other side to justify their number also exposes weak reasoning and resets the conversation onto fairer ground."
+    },
+    {
+      "id": "interpersonal-conflict-1",
+      "areaKey": "conflict",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A friend is visibly upset and venting about a hard day. What is the most empathetic first response?",
+      "options": [
+        "'That sounds really frustrating. What happened?'",
+        "'Well, at least it wasn't worse than my day.'",
+        "'You should just stop letting it bother you.'",
+        "'Here's exactly what you need to do to fix it.'"
+      ],
+      "correctIndex": 0,
+      "explanation": "Acknowledging the person's emotion and inviting them to say more shows empathy before any attempt to fix or compare.",
+      "theory": "Empathy starts with recognizing and validating another person's feelings rather than minimizing, comparing, or rushing to solutions. Acknowledging emotion first signals that the person matters and makes them feel understood. Only once someone feels heard are they usually ready to think about solutions."
+    },
+    {
+      "id": "interpersonal-conflict-2",
+      "areaKey": "conflict",
+      "difficulty": "intermediate",
+      "format": "truefalse",
+      "question": "True or False: When someone comes to you angry about a problem, acknowledging their emotion before jumping to solutions usually makes the conversation go better.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Acknowledging the emotion first helps the person feel heard and calms the interaction, making them more open to problem-solving afterward.",
+      "theory": "Strong emotion narrows people's capacity to reason and absorb solutions. Naming and validating the feeling, sometimes called affect labeling, helps reduce its intensity and signals respect. Once the person feels understood, the conversation can shift productively to addressing the underlying problem."
+    },
+    {
+      "id": "interpersonal-conflict-3",
+      "areaKey": "conflict",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Two team members are in a heated disagreement and each insists the other is wrong. As a neutral colleague, what is the most effective way to de-escalate?",
+      "options": [
+        "Have each person restate the other's view to the other's satisfaction before debating solutions",
+        "Decide who is right based on who argues more forcefully",
+        "Tell them both to drop it and move on for now",
+        "Take the side of whoever you personally agree with"
+      ],
+      "correctIndex": 0,
+      "explanation": "Requiring each person to accurately restate the other's view ensures both feel understood and surfaces the real disagreement, which lowers defensiveness before solving the problem.",
+      "theory": "In heated conflict, people dig in partly because they feel unheard. A powerful de-escalation technique is to have each side reflect the other's position until that person agrees it was captured fairly. This forces genuine perspective-taking, separates real disagreements from misunderstandings, and replaces a contest of wills with mutual understanding."
+    }
+  ]
+}
