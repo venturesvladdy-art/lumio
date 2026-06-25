@@ -45,6 +45,8 @@ interface StoreValue {
   state: UserState;
   setTier: (t: PlanTier) => void;
   startSkill: (plan: LearningPlan, items?: QAItem[], briefs?: Brief[]) => void;
+  /** Load a fully-formed skill progress (used to resume a saved drill). */
+  loadSkillProgress: (progress: SkillProgress) => void;
   recordAnswer: (skillId: string, item: QAItem, correct: boolean) => AnswerResult;
   resetAll: () => void;
   hasSkill: (skillId: string) => boolean;
@@ -161,6 +163,18 @@ export function AppProvider({
     [commit]
   );
 
+  const loadSkillProgress = useCallback(
+    (progress: SkillProgress) => {
+      const s = ref.current;
+      commit({
+        ...s,
+        onboarded: true,
+        skills: { ...s.skills, [progress.skillId]: progress },
+      });
+    },
+    [commit]
+  );
+
   const recordAnswer = useCallback(
     (skillId: string, item: QAItem, correct: boolean): AnswerResult => {
       const s = normalizeDaily(ref.current);
@@ -245,6 +259,7 @@ export function AppProvider({
     state,
     setTier,
     startSkill,
+    loadSkillProgress,
     recordAnswer,
     resetAll,
     hasSkill,

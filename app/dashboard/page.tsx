@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useT, useTx } from "@/lib/i18n";
 import { USE_DB } from "@/lib/flags";
 import { useStore } from "@/lib/store";
 import { useRequireAuth, useCurrentUser } from "@/lib/session";
 import { resolveSkill } from "@/lib/skills";
 import { planItemIds } from "@/lib/agent";
-import type { SkillMastery } from "@/lib/types";
+import type { Difficulty, SkillMastery } from "@/lib/types";
 import { LEVEL_LABEL } from "@/lib/mastery";
 import {
   aggregate,
@@ -265,7 +265,11 @@ export default function DashboardPage() {
                             )}
                           </div>
 
-                          <SubareaLevels mastery={state.mastery?.[sid]} skillId={sid} />
+                          <SubareaLevels
+                            mastery={state.mastery?.[sid]}
+                            skillId={sid}
+                            onChanged={refresh}
+                          />
                         </div>
                       </div>
                     </Card>
@@ -388,9 +392,40 @@ const LEVEL_TONE: Record<string, "slate" | "sky" | "brand" | "violet"> = {
   expert: "violet",
 };
 
-/** v2: per-subarea mastery levels with drill-in links + overall skill level. */
-function SubareaLevels({ mastery, skillId }: { mastery?: SkillMastery; skillId: string }) {
+const LEVEL_ORDER: Difficulty[] = ["beginner", "intermediate", "advanced"];
+
+/**
+ * v2: per-subarea mastery — drill-in (resume or build), accuracy, and a manual
+ * start-level stepper (Beginner↔Advanced; never Expert, which is earned).
+ */
+function SubareaLevels({
+  mastery,
+  skillId,
+  onChanged,
+}: {
+  mastery?: SkillMastery;
+  skillId: string;
+  onChanged: () => void | Promise<void>;
+}) {
+  const [busy, setBusy] = useState<string | null>(null);
   if (!mastery || mastery.subareas.length === 0) return null;
+
+  const setStartLevel = async (subareaKey: string, level: Difficulty) => {
+    setBusy(subareaKey);
+    try {
+      await fetch("/api/level", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subareaKey, level }),
+      });
+      await onChanged();
+    } catch {
+      /* leave the UI as-is on failure */
+    } finally {
+      setBusy(null);
+    }
+  };
+
   return (
     <div className="mt-4 border-t border-slate-100 pt-3">
       <div className="flex items-center justify-between">
@@ -402,25 +437,85 @@ function SubareaLevels({ mastery, skillId }: { mastery?: SkillMastery; skillId: 
           {LEVEL_LABEL[mastery.level]} · {mastery.pct}%
         </Pill>
       </div>
-      <div className="mt-3 space-y-2.5">
-        {mastery.subareas.map((s) => (
-          <Link
-            key={s.subareaKey}
-            href={`/learn/${skillId}?area=${encodeURIComponent(s.subareaKey)}&areaName=${encodeURIComponent(s.name)}&continue=1`}
-            className="group block"
-          >
-            <div className="flex items-center justify-between gap-2 text-sm">
-              <span className="truncate font-medium text-slate-700 group-hover:text-brand-700">
-                {s.name}
-              </span>
-              <span className="shrink-0 text-xs font-semibold text-slate-500">
-                {LEVEL_LABEL[s.level]}
-                {s.level !== "expert" ? ` · ${s.pctToNext}% to next` : ""}
-              </span>
+      <div className="mt-3 space-y-3">
+        {mastery.subareas.map((s) => {
+          const acc = s.answered > 0 ? Math.round((s.correct / s.answered) * 100) : null;
+          const startIdx = LEVEL_ORDER.indexOf(s.startLevel);
+          const isBusy = busy === s.subareaKey;
+          const href =
+            `/learn/${skillId}?area=${encodeURIComponent(s.subareaKey)}` +
+            `&areaName=${encodeURIComponent(s.name)}&level=${s.startLevel}&continue=1`;
+          return (
+            <div
+              key={s.subareaKey}
+              className="rounded-xl border border-slate-100 bg-slate-50/60 p-3"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <Link
+                  href={href}
+                  className="group flex min-w-0 items-center gap-1 text-sm font-medium text-slate-700 hover:text-brand-700"
+                >
+                  <span className="truncate">{s.name}</span>
+                  <Icon
+                    name="ArrowRight"
+                    className="h-3.5 w-3.5 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-500"
+                  />
+                </Link>
+                {acc !== null ? (
+                  <span
+                    className="shrink-0 text-xs font-semibold text-emerald-600"
+                    title={`${s.correct}/${s.answered} correct`}
+                  >
+                    {acc}% acc
+                  </span>
+                ) : (
+                  <span className="shrink-0 text-xs text-slate-400">Not started</span>
+                )}
+              </div>
+
+              <div className="mt-2 flex items-center justify-between gap-2">
+                {/* Start-level stepper */}
+                <div className="flex items-center gap-1">
+                  <span className="mr-0.5 text-[11px] uppercase tracking-wide text-slate-400">
+                    Start
+                  </span>
+                  <button
+                    type="button"
+                    disabled={isBusy || startIdx <= 0}
+                    onClick={() => void setStartLevel(s.subareaKey, LEVEL_ORDER[startIdx - 1])}
+                    className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 transition-colors hover:border-brand-300 hover:text-brand-600 disabled:opacity-40"
+                    title="Lower starting level"
+                  >
+                    <Icon name="Minus" className="h-3.5 w-3.5" />
+                  </button>
+                  <span className="min-w-[78px] text-center text-xs font-semibold text-slate-700">
+                    {LEVEL_LABEL[s.startLevel]}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={isBusy || startIdx >= LEVEL_ORDER.length - 1}
+                    onClick={() => void setStartLevel(s.subareaKey, LEVEL_ORDER[startIdx + 1])}
+                    className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 transition-colors hover:border-brand-300 hover:text-brand-600 disabled:opacity-40"
+                    title="Raise starting level"
+                  >
+                    <Icon name="Plus" className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+
+                {/* Earned standing */}
+                <span className="shrink-0 text-xs font-semibold text-slate-500">
+                  {LEVEL_LABEL[s.level]}
+                  {s.level !== "expert" ? ` · ${s.pctToNext}% to next` : ""}
+                </span>
+              </div>
+
+              <ProgressBar
+                value={s.level === "expert" ? 100 : s.pctToNext}
+                className="mt-2 h-1.5"
+              />
             </div>
-            <ProgressBar value={s.level === "expert" ? 100 : s.pctToNext} className="mt-1 h-1.5" />
-          </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

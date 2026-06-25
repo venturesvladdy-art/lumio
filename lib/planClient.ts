@@ -1,4 +1,4 @@
-import type { OnboardingAnswers, SkillDef } from "@/lib/types";
+import type { Difficulty, OnboardingAnswers, SkillDef } from "@/lib/types";
 import { generatePlan, type PlanResult } from "@/lib/agent";
 
 /**
@@ -12,11 +12,14 @@ export async function requestPlan({
   answers,
   area,
   continueDrill,
+  level,
 }: {
   skill: SkillDef;
   answers: OnboardingAnswers;
   area?: { id: string; name: string };
   continueDrill?: boolean;
+  /** Dashboard-chosen starting level for this subarea (overrides survey level). */
+  level?: Difficulty;
 }): Promise<PlanResult> {
   try {
     const controller = new AbortController();
@@ -36,6 +39,7 @@ export async function requestPlan({
         areaId: area?.id,
         areaName: area?.name,
         continue: continueDrill,
+        levelOverride: level,
       }),
     });
     clearTimeout(timeout);

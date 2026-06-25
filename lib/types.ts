@@ -172,8 +172,17 @@ export interface SubareaMastery {
   /** full-coverage concept target for this subarea */
   conceptTarget: number;
   level: MasteryLevel;
+  /**
+   * The chosen STARTING band (manual override, else the skill's survey level).
+   * Drives the dashboard up/down control and the difficulty of new drills.
+   * Never "expert" — that band is earned only through Q&A.
+   */
+  startLevel: Difficulty;
   /** 0–100 progress toward the next level (100 at Expert = mastered) */
   pctToNext: number;
+  /** distinct questions answered / answered correctly in this subarea */
+  answered: number;
+  correct: number;
 }
 
 /** v2: a learner's standing across a whole skill (areas → subareas). */

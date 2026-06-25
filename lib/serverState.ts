@@ -54,7 +54,7 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
   if (!prisma) return EMPTY_STATE;
 
   const [user, curricula, attempts] = await Promise.all([
-    prisma.user.findUnique({ where: { id: userId }, select: { tier: true } }),
+    prisma.user.findUnique({ where: { id: userId }, select: { tier: true, subareaLevels: true } }),
     prisma.curriculum.findMany({
       where: { userId },
       orderBy: { createdAt: "asc" },
@@ -244,28 +244,41 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
   state.earnedBadges = evaluateBadges(state);
 
   // ---- v2: subarea mastery levels (concept-deduped, survey-seeded) ----
-  // Distinct mastered concepts per (skill, subarea).
+  // Distinct mastered concepts + distinct answered/correct questions per subarea.
   const masteredBySub = new Map<string, Set<string>>();
+  const answeredBySub = new Map<string, Set<string>>();
+  const correctBySub = new Map<string, Set<string>>();
+  const add = (m: Map<string, Set<string>>, key: string, v: string) => {
+    let s = m.get(key);
+    if (!s) {
+      s = new Set();
+      m.set(key, s);
+    }
+    s.add(v);
+  };
   for (const a of attempts) {
-    if (!a.correct || !a.concept || !a.subareaKey) continue;
-    const key = `${a.skillId}::${a.subareaKey}`;
-    let set = masteredBySub.get(key);
-    if (!set) {
-      set = new Set();
-      masteredBySub.set(key, set);
-    }
-    set.add(a.concept);
+    const sub = a.subareaKey;
+    if (!sub) continue;
+    const key = `${a.skillId}::${sub}`;
+    add(answeredBySub, key, a.questionClientId);
+    if (a.correct) add(correctBySub, key, a.questionClientId);
+    if (a.correct && a.concept) add(masteredBySub, key, a.concept);
   }
-  // Starting proficiency per subarea from the first curriculum's stored answers.
-  const startProf = new Map<string, number>();
+
+  // The learner's self-proclaimed level applies to EVERY subarea of a skill,
+  // taken from the earliest (onboarding) curriculum's survey answers.
+  const skillDefaultProf = new Map<string, number>();
   for (const c of curricula) {
-    const sk = c.subareaKey ?? c.areaId;
-    if (!sk) continue;
-    const key = `${c.skillId}::${sk}`;
-    if (!startProf.has(key) && c.answers) {
-      startProf.set(key, proficiencyFromAnswers(c.answers as SurveyAnswers));
+    if (!skillDefaultProf.has(c.skillId) && c.answers) {
+      skillDefaultProf.set(c.skillId, proficiencyFromAnswers(c.answers as SurveyAnswers));
     }
   }
+  // Manual per-subarea overrides (never Expert).
+  const overrides = (user?.subareaLevels ?? {}) as Record<string, string>;
+  const asMasteryStart = (lvl: string | undefined) =>
+    lvl === "beginner" || lvl === "intermediate" || lvl === "advanced"
+      ? (lvl as "beginner" | "intermediate" | "advanced")
+      : undefined;
 
   const touchedSkills = new Set<string>([
     ...Object.keys(skills),
@@ -275,6 +288,7 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
   for (const skillId of touchedSkills) {
     const tax = await getCachedTaxonomy(resolveSkill(skillId));
     if (!tax) continue;
+    const defaultStart = startLevelFor(skillDefaultProf.get(skillId) ?? 0);
     let sumEff = 0;
     let sumTarget = 0;
     const subList: SubareaMastery[] = [];
@@ -282,7 +296,7 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
       for (const sub of area.subareas) {
         const key = `${skillId}::${sub.subareaKey}`;
         const masteredConcepts = masteredBySub.get(key)?.size ?? 0;
-        const startLevel = startLevelFor(startProf.get(key) ?? 0);
+        const startLevel = asMasteryStart(overrides[sub.subareaKey]) ?? defaultStart;
         const target = clampTarget(sub.conceptTarget);
         const st = standing(masteredConcepts, startLevel, target);
         subList.push({
@@ -293,7 +307,10 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
           creditedConcepts: creditedConceptsFor(startLevel, target),
           conceptTarget: target,
           level: st.level,
+          startLevel,
           pctToNext: st.pctToNext,
+          answered: answeredBySub.get(key)?.size ?? 0,
+          correct: correctBySub.get(key)?.size ?? 0,
         });
         sumEff += st.effectiveMastered;
         sumTarget += st.target;

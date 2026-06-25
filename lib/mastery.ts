@@ -41,9 +41,9 @@ export function clampTarget(target: number | null | undefined): number {
 
 /**
  * Starting band from the survey's proficiency (0..1). Capped at "advanced" —
- * Expert is never a starting level.
+ * Expert is never a starting level (so the return is a 3-band `Difficulty`).
  */
-export function startLevelFor(proficiency: number): MasteryLevel {
+export function startLevelFor(proficiency: number): Difficulty {
   if (proficiency >= 0.7) return "advanced";
   if (proficiency >= 0.4) return "intermediate";
   return "beginner";

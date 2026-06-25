@@ -48,6 +48,14 @@ const XP_BY_DIFFICULTY: Record<Difficulty, number> = {
   advanced: 25,
 };
 
+/** Representative proficiency for a manually-chosen starting band (keeps the
+ *  generator's "level" and "proficiency" signals consistent). */
+const PROF_BY_LEVEL: Record<Difficulty, number> = {
+  beginner: 0.2,
+  intermediate: 0.55,
+  advanced: 0.85,
+};
+
 /* ---- Structured-output schema (six question types) ---- */
 const QUESTION_SET_SCHEMA = {
   type: "object",
@@ -441,11 +449,17 @@ export async function buildPlanForUser(opts: {
   answers: OnboardingAnswers;
   area?: DrillArea;
   ctx?: GenContext;
+  /** Dashboard-chosen starting level — overrides the survey-derived level. */
+  levelOverride?: Difficulty;
 }): Promise<BuildResult> {
-  const { userId, tier, skill, answers, area, ctx = {} } = opts;
+  const { userId, tier, skill, answers, area, ctx = {}, levelOverride } = opts;
   const apiKey = process.env.ANTHROPIC_API_KEY;
   const model = modelForTier(tier);
   const profile = deriveProfile(answers);
+  if (levelOverride) {
+    profile.level = levelOverride;
+    profile.proficiency = PROF_BY_LEVEL[levelOverride];
+  }
 
   let result: { plan: LearningPlan; items: QAItem[] };
   let source: string;

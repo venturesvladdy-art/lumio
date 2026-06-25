@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import type { Difficulty, LearningPlan, SkillDef } from "@/lib/types";
+import type { Difficulty, LearningPlan, QAItem, SkillDef } from "@/lib/types";
 import { resolveSkill } from "@/lib/skills";
 import { focusLabels } from "@/lib/onboarding";
 import { BUILD_STEPS } from "@/lib/agent";
@@ -11,6 +11,7 @@ import { requestPlan } from "@/lib/planClient";
 import { SURVEY } from "@/lib/survey/skillsprinter.survey";
 import { nextQuestion, surveyProgress } from "@/lib/survey/runner";
 import type { SurveyAnswers } from "@/lib/survey/types";
+import { USE_DB } from "@/lib/flags";
 import { useStore } from "@/lib/store";
 import { useRequireAuth } from "@/lib/session";
 import { useT, useTx } from "@/lib/i18n";
@@ -60,7 +61,7 @@ function Onboarding() {
   const params = useParams();
   const search = useSearchParams();
   const router = useRouter();
-  const { state, hydrated, startSkill } = useStore();
+  const { state, hydrated, startSkill, loadSkillProgress } = useStore();
   const { ready: authReady, user } = useRequireAuth();
 
   const id = String(params.skill);
@@ -71,6 +72,7 @@ function Onboarding() {
   const contAreaId = search.get("area") ?? undefined;
   const contAreaName = search.get("areaName") ?? undefined;
   const isContinue = search.get("continue") === "1";
+  const levelParam = (search.get("level") as Difficulty | null) ?? undefined;
 
   const [phase, setPhase] = useState<Phase>("loading");
   const [answers, setAnswers] = useState<SurveyAnswers>({});
@@ -111,13 +113,19 @@ function Onboarding() {
   }, [skill.id, skill.name.en, skill.topics.en]);
 
   const runBuild = useCallback(
-    async (subareaKey: string, subareaName: string, continueDrill = false) => {
+    async (
+      subareaKey: string,
+      subareaName: string,
+      continueDrill = false,
+      levelOverride?: Difficulty
+    ) => {
       setPhase("building");
       const { plan: generated, items, briefs } = await requestPlan({
         skill,
         answers,
         area: { id: subareaKey, name: subareaName },
         continueDrill,
+        level: levelOverride,
       });
       startSkill(generated, items, briefs);
       setPlan(generated);
@@ -126,12 +134,59 @@ function Onboarding() {
     [skill, answers, startSkill]
   );
 
+  // Clicking a subarea: resume an unfinished drill if one exists, otherwise
+  // build a fresh one at the dashboard-chosen level (reusing the saved answers).
+  const resumeOrBuild = useCallback(
+    async (subareaKey: string, subareaName: string, level?: Difficulty) => {
+      setPhase("building");
+      if (USE_DB) {
+        try {
+          const res = await fetch("/api/drill", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ skillId: skill.id, subareaKey }),
+          });
+          if (res.ok) {
+            const data = (await res.json()) as {
+              drill?: {
+                plan: LearningPlan;
+                items: QAItem[];
+                completedItemIds: string[];
+                correctItemIds: string[];
+                xp?: number;
+              } | null;
+            };
+            if (data.drill) {
+              loadSkillProgress({
+                skillId: skill.id,
+                plan: data.drill.plan,
+                completedItemIds: data.drill.completedItemIds,
+                correctItemIds: data.drill.correctItemIds,
+                xp: data.drill.xp ?? 0,
+                combo: 0,
+                bestCombo: 0,
+                generatedItems: data.drill.items,
+                briefs: [],
+              });
+              router.replace(`/learn/${skill.id}/session`);
+              return;
+            }
+          }
+        } catch {
+          /* fall through to a fresh build */
+        }
+      }
+      await runBuild(subareaKey, subareaName, true, level);
+    },
+    [skill.id, runBuild, loadSkillProgress, router]
+  );
+
   // Decide the starting phase once state + taxonomy are ready.
   useEffect(() => {
     if (!hydrated || areas === null || didInit.current) return;
     didInit.current = true;
     if (isContinue && contAreaId && contAreaName) {
-      void runBuild(contAreaId, contAreaName, true);
+      void resumeOrBuild(contAreaId, contAreaName, levelParam);
       return;
     }
     if (forcePick) {
@@ -147,7 +202,7 @@ function Onboarding() {
     } else {
       setPhase("survey");
     }
-  }, [hydrated, areas, skill.id, state, forcePick, isContinue, contAreaId, contAreaName, runBuild]);
+  }, [hydrated, areas, skill.id, state, forcePick, isContinue, contAreaId, contAreaName, levelParam, resumeOrBuild]);
 
   const current = nextQuestion(SURVEY, answers);
 

@@ -7,7 +7,7 @@ import { deriveProfile } from "@/lib/survey/profile";
 import { activeTarget } from "@/lib/mastery";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
-import type { OnboardingAnswers, PlanTier } from "@/lib/types";
+import type { Difficulty, OnboardingAnswers, PlanTier } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,7 +21,16 @@ const BodySchema = z.object({
   areaId: z.string().optional(),
   areaName: z.string().optional(),
   continue: z.boolean().optional(),
+  // Dashboard-chosen starting level for the subarea (never "expert").
+  levelOverride: z.enum(["beginner", "intermediate", "advanced", "expert"]).optional(),
 });
+
+/** A drill's difficulty maxes out at "advanced" — Expert is earned, not generated. */
+function clampLevel(l: string | undefined): Difficulty | undefined {
+  if (l === "beginner" || l === "intermediate" || l === "advanced") return l;
+  if (l === "expert") return "advanced";
+  return undefined;
+}
 
 export async function POST(req: Request) {
   let body: z.infer<typeof BodySchema>;
@@ -47,6 +56,7 @@ export async function POST(req: Request) {
 
   const subareaKey = body.areaId;
   const area = subareaKey && body.areaName ? { id: subareaKey, name: body.areaName } : undefined;
+  const levelOverride = clampLevel(body.levelOverride);
 
   const ctx: GenContext = {};
   if (area) {
@@ -61,8 +71,6 @@ export async function POST(req: Request) {
     } catch {
       /* fall through with defaults */
     }
-    const profile = deriveProfile(answers);
-    ctx.masteryTarget = activeTarget(ctx.subareaTargetFull ?? 200, profile.level);
 
     if (userId && prisma) {
       // Continuation reuses stored answers + targets the missed concepts.
@@ -100,9 +108,13 @@ export async function POST(req: Request) {
         /* concept column may be absent on an un-migrated DB */
       }
     }
+
+    // Concept target reflects the FINAL answers + the dashboard-chosen level.
+    const effLevel = levelOverride ?? deriveProfile(answers).level;
+    ctx.masteryTarget = activeTarget(ctx.subareaTargetFull ?? 200, effLevel);
   }
 
-  const built = await buildPlanForUser({ userId, tier, skill, answers, area, ctx });
+  const built = await buildPlanForUser({ userId, tier, skill, answers, area, ctx, levelOverride });
   const { plan, items, source, curriculumId } = built;
   return NextResponse.json({ plan, items, briefs: [], source, curriculumId });
 }
