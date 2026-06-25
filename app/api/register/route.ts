@@ -15,6 +15,10 @@ const Schema = z.object({
     .trim()
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email"),
   password: z.string().min(8).max(200),
+  /** Affirmative agreement to the Terms + Privacy Policy (must be true). */
+  acceptTerms: z.boolean().optional(),
+  /** Version of the Terms the user accepted (recorded with the account). */
+  termsVersion: z.string().max(40).optional(),
 });
 
 export async function POST(req: Request) {
@@ -36,6 +40,14 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json(
       { error: "Invalid input. Password must be at least 8 characters." },
+      { status: 400 }
+    );
+  }
+
+  // Require affirmative agreement to the Terms + Privacy Policy at sign-up.
+  if (!body.acceptTerms) {
+    return NextResponse.json(
+      { error: "You must agree to the Terms of Service and Privacy Policy." },
       { status: 400 }
     );
   }
@@ -63,6 +75,20 @@ export async function POST(req: Request) {
         userId: user.id,
         type: "user.registered",
         data: { provider: "credentials" },
+      },
+    })
+    .catch(() => {});
+
+  // Record the Terms acceptance (version + timestamp) per §1 of the Terms.
+  await prisma.auditEvent
+    .create({
+      data: {
+        userId: user.id,
+        type: "terms.accepted",
+        data: {
+          version: body.termsVersion ?? "unspecified",
+          acceptedAt: new Date().toISOString(),
+        },
       },
     })
     .catch(() => {});

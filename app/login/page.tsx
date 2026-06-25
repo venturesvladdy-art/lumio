@@ -8,6 +8,7 @@ import { useT } from "@/lib/i18n";
 import { useAuth, tierForEmail, type AuthProviderId } from "@/lib/auth";
 import { useStore } from "@/lib/store";
 import { USE_DB } from "@/lib/flags";
+import { TERMS_VERSION } from "@/lib/legal";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -66,6 +67,7 @@ function DbLogin() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -80,13 +82,23 @@ function DbLogin() {
       setError(t("auth.passwordHint"));
       return;
     }
+    if (mode === "signup" && !agreed) {
+      setError("Please agree to the Terms of Service and Privacy Policy to continue.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "signup") {
         const res = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password }),
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+            acceptTerms: true,
+            termsVersion: TERMS_VERSION,
+          }),
         });
         if (!res.ok) {
           const j = await res.json().catch(() => ({}));
@@ -184,13 +196,47 @@ function DbLogin() {
             </Link>
           </div>
         )}
+        {mode === "signup" && (
+          <label className="flex cursor-pointer items-start gap-2.5 pt-1 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-brand-400"
+            />
+            <span>
+              I agree to the{" "}
+              <Link
+                href="/terms"
+                target="_blank"
+                className="font-medium text-brand-600 hover:underline"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                target="_blank"
+                className="font-medium text-brand-600 hover:underline"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </span>
+          </label>
+        )}
         {error && (
           <p className="flex items-center gap-1.5 text-sm text-rose-600">
             <Icon name="CircleHelp" className="h-4 w-4" />
             {error}
           </p>
         )}
-        <Button type="submit" size="lg" className="w-full" disabled={busy}>
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full"
+          disabled={busy || (mode === "signup" && !agreed)}
+        >
           {busy
             ? t("common.loading")
             : mode === "signin"
