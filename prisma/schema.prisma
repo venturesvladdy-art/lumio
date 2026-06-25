@@ -100,6 +100,8 @@ model Curriculum {
   /// Stage B: the skill area this drill targets (null for legacy full plans).
   areaId       String?
   areaName     String?
+  /// v2: the catalogued subarea this drill targets.
+  subareaKey   String?
   createdAt    DateTime @default(now())
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -135,10 +137,13 @@ model Question {
   clientId      String
   skillId       String
   difficulty    String
-  /// Stage B: mcq | truefalse | numeric | free  (defaults to mcq)
+  /// mcq | truefalse | numeric | input | order | free  (defaults to mcq)
   type          String   @default("mcq")
-  /// Stage B: the brief (clientId) this question belongs to, if any
+  /// Stage B: the brief (clientId) this question belongs to, if any (legacy)
   briefClientId String?
+  /// v2: catalogued subarea + canonical concept (kebab-case) for mastery dedup
+  subareaKey    String?
+  concept       String?
   questionEn    String   @db.Text
   questionPl    String   @db.Text
   optionsEn     String[]
@@ -146,8 +151,15 @@ model Question {
   correctIndex  Int
   /// Stage B: canonical answer (numeric) / model answer (free)
   answerText    String?  @db.Text
+  /// v2: input-type accepted answers; order-type items + correct permutation
+  acceptedAnswers String[] @default([])
+  orderItems      String[] @default([])
+  correctOrder    Int[]    @default([])
   /// Stage B: grading rubric for free-text questions
   rubric        String?  @db.Text
+  /// v2: cached on-demand theory (generated once per question, re-read on re-tap)
+  theory               String?  @db.Text
+  theoryIncludesAnswer Boolean?
   explanationEn String   @db.Text
   explanationPl String   @db.Text
   xp            Int
@@ -158,6 +170,8 @@ model Question {
 
   @@index([curriculumId])
   @@index([skillId])
+  @@index([subareaKey])
+  @@index([skillId, concept])
 }
 
 /// Append-only log of every answer a user submits.
@@ -167,6 +181,9 @@ model Attempt {
   curriculumId     String?
   skillId          String
   areaId           String?
+  /// v2: catalogued subarea + concept (copied from the answered question)
+  subareaKey       String?
+  concept          String?
   questionClientId String
   /// Stage B: question type answered (defaults to mcq)
   type             String   @default("mcq")
@@ -184,6 +201,7 @@ model Attempt {
   curriculum Curriculum? @relation(fields: [curriculumId], references: [id], onDelete: SetNull)
 
   @@index([userId, skillId])
+  @@index([userId, skillId, subareaKey])
   @@index([curriculumId])
   @@index([answeredAt])
 }
@@ -201,4 +219,26 @@ model AuditEvent {
   @@index([userId])
   @@index([type])
   @@index([createdAt])
+}
+
+/* ───────────────── v2: reusable Skill Taxonomy catalogue ───────────────── */
+
+/// One catalogued area→subarea breakdown per skill, shared across ALL users and
+/// reused (generated once with a strong model, then cached). `areas` holds the
+/// hierarchy as JSON: [{ areaKey, name, blurb, subareas: [{ subareaKey, name,
+/// blurb, conceptTarget }] }].
+model SkillTaxonomy {
+  id            String   @id @default(cuid())
+  skillSlug     String   @unique
+  canonicalName String
+  matchKey      String // normalized dedupe key
+  kind          String   @default("standardized") // standardized | subjective
+  origin        String   @default("ai-generated") // curated | ai-generated
+  model         String?
+  version       Int      @default(1)
+  areas         Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([matchKey])
 }

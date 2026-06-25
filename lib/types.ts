@@ -60,7 +60,13 @@ export type OnboardingAnswers = Record<string, string[]>;
 
 /** ---- Learning content (Q&A) ---- */
 
-export type QAFormat = "mcq" | "truefalse" | "numeric" | "free";
+export type QAFormat =
+  | "mcq"
+  | "truefalse"
+  | "numeric"
+  | "input" // short exact typed answer
+  | "order" // sequence/rank items
+  | "free"; // AI-graded open response
 
 export interface QAItem {
   id: string;
@@ -73,9 +79,19 @@ export interface QAItem {
   correctIndex: number;
   /** numeric: canonical answer · free: model answer (kept server-side ideally) */
   answerText?: string;
+  /** input: accepted answers (lowercased/trimmed) the grader matches against */
+  acceptedAnswers?: string[];
+  /** order: the items to sequence (shown shuffled) */
+  orderItems?: string[];
+  /** order: indices of orderItems in the correct sequence */
+  correctOrder?: number[];
   /** free: grading rubric used by the AI grader */
   rubric?: string;
-  /** the learning brief (clientId) this question belongs to, if any */
+  /** v2: canonical concept id (kebab-case) — the mastery dedup key */
+  concept?: string;
+  /** v2: catalogued subarea this question belongs to */
+  subareaKey?: string;
+  /** the learning brief (clientId) this question belongs to, if any (legacy) */
   briefClientId?: string;
   explanation: I18nText;
   hint?: I18nText;
@@ -141,6 +157,34 @@ export interface AreaCoverage {
   correct: number;
 }
 
+/** v2: the four mastery bands a learner climbs within a subarea. */
+export type MasteryLevel = "beginner" | "intermediate" | "advanced" | "expert";
+
+/** v2: a learner's standing within one catalogued subarea. */
+export interface SubareaMastery {
+  subareaKey: string;
+  areaKey: string;
+  name: string;
+  /** distinct concepts mastered through Q&A (concept-deduped) */
+  masteredConcepts: number;
+  /** floor credited from the intake survey's starting level */
+  creditedConcepts: number;
+  /** full-coverage concept target for this subarea */
+  conceptTarget: number;
+  level: MasteryLevel;
+  /** 0–100 progress toward the next level (100 at Expert = mastered) */
+  pctToNext: number;
+}
+
+/** v2: a learner's standing across a whole skill (areas → subareas). */
+export interface SkillMastery {
+  skillId: string;
+  level: MasteryLevel;
+  /** overall 0–100 across the catalogue */
+  pct: number;
+  subareas: SubareaMastery[];
+}
+
 export interface UserState {
   tier: PlanTier;
   xp: number;
@@ -153,4 +197,6 @@ export interface UserState {
   onboarded: boolean;
   /** Stage B: areas drilled per skill (skillId → coverage list). */
   coverage?: Record<string, AreaCoverage[]>;
+  /** v2: per-skill subarea mastery levels (skillId → mastery). */
+  mastery?: Record<string, SkillMastery>;
 }

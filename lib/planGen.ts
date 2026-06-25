@@ -207,9 +207,9 @@ function normalizeQuestion(
   index: number
 ): QAItem | null {
   const q = raw as Record<string, unknown>;
-  const type: QAFormat = (["mcq", "truefalse", "numeric", "free"] as const).includes(
-    q.type as QAFormat
-  )
+  const type: QAFormat = (
+    ["mcq", "truefalse", "numeric", "input", "order", "free"] as const
+  ).includes(q.type as QAFormat)
     ? (q.type as QAFormat)
     : "mcq";
 
