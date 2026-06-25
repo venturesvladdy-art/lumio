@@ -71,6 +71,14 @@ export function PlanCards({
         });
         return;
       }
+      if (res.status === 403) {
+        // Email not confirmed yet — required before any paid action.
+        setNotice({
+          ok: false,
+          text: "Please confirm your email first — check your inbox for the link, then come back to upgrade.",
+        });
+        return;
+      }
       const j = await res.json().catch(() => ({}));
 
       // New subscription → Stripe-hosted payment page.

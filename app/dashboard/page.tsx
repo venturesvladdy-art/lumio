@@ -8,7 +8,7 @@ import { useStore } from "@/lib/store";
 import { useRequireAuth, useCurrentUser } from "@/lib/session";
 import { resolveSkill } from "@/lib/skills";
 import { planItemIds } from "@/lib/agent";
-import type { Difficulty, SkillMastery } from "@/lib/types";
+import type { Difficulty, SkillMastery, SubareaMastery } from "@/lib/types";
 import { LEVEL_LABEL } from "@/lib/mastery";
 import {
   aggregate,
@@ -265,11 +265,15 @@ export default function DashboardPage() {
                             )}
                           </div>
 
-                          <SubareaLevels
-                            mastery={state.mastery?.[sid]}
-                            skillId={sid}
-                            onChanged={refresh}
-                          />
+                          {tier.tracking ? (
+                            <SubareaLevels
+                              mastery={state.mastery?.[sid]}
+                              skillId={sid}
+                              onChanged={refresh}
+                            />
+                          ) : (
+                            <MasteryTeaser />
+                          )}
                         </div>
                       </div>
                     </Card>
@@ -310,6 +314,9 @@ export default function DashboardPage() {
                   })}
                 </div>
               </Card>
+
+              {/* Guru-only advanced analytics */}
+              {state.tier === "guru" && <AdvancedInsights mastery={state.mastery} />}
 
               {/* Plan / usage */}
               <Card className="p-5">
@@ -432,6 +439,8 @@ function SubareaLevels({
   const [busy, setBusy] = useState<string | null>(null);
   if (!mastery || mastery.subareas.length === 0) return null;
 
+  const weakest = weakestSubareas(mastery.subareas, 2);
+
   const setStartLevel = async (subareaKey: string, level: Difficulty) => {
     setBusy(subareaKey);
     try {
@@ -459,6 +468,18 @@ function SubareaLevels({
           {LEVEL_LABEL[mastery.level]} · {mastery.pct}%
         </Pill>
       </div>
+
+      {weakest.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <span className="text-xs font-semibold text-slate-500">Focus next:</span>
+          {weakest.map((s) => (
+            <Pill key={s.subareaKey} tone="amber">
+              {s.name}
+            </Pill>
+          ))}
+        </div>
+      )}
+
       <div className="mt-3 space-y-3">
         {mastery.subareas.map((s) => {
           const acc = s.answered > 0 ? Math.round((s.correct / s.answered) * 100) : null;
@@ -540,6 +561,111 @@ function SubareaLevels({
         })}
       </div>
     </div>
+  );
+}
+
+const MASTERY_ORDER = ["beginner", "intermediate", "advanced", "expert"];
+
+/** Rank subareas by how far along they are (lower = weaker); return the N weakest. */
+function weakestSubareas(subs: SubareaMastery[], n: number): SubareaMastery[] {
+  const score = (s: SubareaMastery) =>
+    MASTERY_ORDER.indexOf(s.level) * 100 + (s.level === "expert" ? 100 : s.pctToNext);
+  return [...subs]
+    .filter((s) => s.level !== "expert")
+    .sort((a, b) => score(a) - score(b))
+    .slice(0, n);
+}
+
+/** Basic tier: a blurred sample of the mastery panel with an upgrade CTA. */
+function MasteryTeaser() {
+  const sample = [
+    { name: "Algebra", pct: 62 },
+    { name: "Geometry", pct: 28 },
+    { name: "Data analysis", pct: 81 },
+  ];
+  return (
+    <div className="relative mt-4 border-t border-slate-100 pt-3">
+      <div className="select-none blur-[3px]" aria-hidden>
+        <div className="flex items-center justify-between">
+          <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            Mastery
+          </div>
+          <Pill tone="brand">
+            <Icon name="Gauge" className="h-3.5 w-3.5" />
+            Intermediate · 57%
+          </Pill>
+        </div>
+        <div className="mt-3 space-y-3">
+          {sample.map((s) => (
+            <div key={s.name} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-slate-700">{s.name}</span>
+                <span className="text-xs font-semibold text-emerald-600">{s.pct}% acc</span>
+              </div>
+              <ProgressBar value={s.pct} className="mt-2 h-1.5" />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 rounded-xl bg-gradient-to-b from-white/50 to-white/95 p-4 text-center">
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-50 text-brand-600">
+          <Icon name="LineChart" className="h-5 w-5" />
+        </span>
+        <p className="text-sm font-semibold text-ink">See your accuracy &amp; weak areas</p>
+        <p className="max-w-[16rem] text-xs text-slate-500">
+          Per-subarea mastery and what to focus on next — unlock with Smart.
+        </p>
+        <ButtonLink href="/pricing" size="sm" className="mt-1">
+          <Icon name="TrendingUp" className="h-4 w-4" />
+          Upgrade to Smart
+        </ButtonLink>
+      </div>
+    </div>
+  );
+}
+
+/** Guru tier: a cross-skill weakness map (the advanced-analytics differentiator). */
+function AdvancedInsights({ mastery }: { mastery?: Record<string, SkillMastery> }) {
+  if (!mastery) return null;
+  const rows = Object.values(mastery).flatMap((m) =>
+    m.subareas.map((s) => ({ skillId: m.skillId, sub: s }))
+  );
+  const weakest = rows
+    .filter((r) => r.sub.level !== "expert")
+    .sort((a, b) => {
+      const score = (s: SubareaMastery) =>
+        MASTERY_ORDER.indexOf(s.level) * 100 + s.pctToNext;
+      return score(a.sub) - score(b.sub);
+    })
+    .slice(0, 5);
+  if (weakest.length === 0) return null;
+
+  return (
+    <Card className="p-5">
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-lg font-semibold text-ink">Weakness map</h2>
+        <Pill tone="violet">
+          <Icon name="Sparkles" className="h-3.5 w-3.5" />
+          Guru
+        </Pill>
+      </div>
+      <p className="mt-1 text-xs text-slate-500">
+        Your lowest-mastery areas across every skill — clear these to climb fastest.
+      </p>
+      <div className="mt-4 space-y-3">
+        {weakest.map((r) => (
+          <div key={`${r.skillId}-${r.sub.subareaKey}`}>
+            <div className="flex items-center justify-between gap-2 text-sm">
+              <span className="truncate font-medium text-slate-700">{r.sub.name}</span>
+              <span className="shrink-0 text-xs text-slate-400">
+                {resolveSkill(r.skillId).name.en}
+              </span>
+            </div>
+            <ProgressBar value={r.sub.pctToNext} className="mt-1 h-1.5" />
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }
 

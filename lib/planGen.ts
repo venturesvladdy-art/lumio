@@ -451,8 +451,10 @@ export async function buildPlanForUser(opts: {
   ctx?: GenContext;
   /** Dashboard-chosen starting level — overrides the survey-derived level. */
   levelOverride?: Difficulty;
+  /** When false, skip live AI and serve from the bank (e.g. unverified users). */
+  live?: boolean;
 }): Promise<BuildResult> {
-  const { userId, tier, skill, answers, area, ctx = {}, levelOverride } = opts;
+  const { userId, tier, skill, answers, area, ctx = {}, levelOverride, live = true } = opts;
   const apiKey = process.env.ANTHROPIC_API_KEY;
   const model = modelForTier(tier);
   const profile = deriveProfile(answers);
@@ -464,9 +466,9 @@ export async function buildPlanForUser(opts: {
   let result: { plan: LearningPlan; items: QAItem[] };
   let source: string;
 
-  if (!apiKey || !area) {
+  if (!apiKey || !area || !live) {
     result = buildBankPlan({ skill, answers });
-    source = !apiKey ? "bank" : "bank";
+    source = "bank";
   } else {
     try {
       result = await generateWithClaude(apiKey, skill, profile, model, tier, area, ctx);

@@ -33,6 +33,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
+  // Email must be confirmed before any paid action (Proposal §5).
+  const verified = Boolean((session?.user as { emailVerified?: boolean } | undefined)?.emailVerified);
+  if (!verified) {
+    return NextResponse.json(
+      { error: "verify-required", message: "Confirm your email before upgrading." },
+      { status: 403 }
+    );
+  }
+
   const body = await req.json().catch(() => ({}));
   const target: PlanTier | null =
     body.tier === "guru" ? "guru" : body.tier === "smart" ? "smart" : body.tier === "basic" ? "basic" : null;

@@ -42,6 +42,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  // AI free-text grading is a paid (Smart/Guru) feature (Proposal junction matrix).
+  const tier = (session?.user as { tier?: string } | undefined)?.tier ?? "basic";
+  if (tier === "basic") {
+    return NextResponse.json(
+      { error: "paid-feature", score: 0, pass: false, feedback: "", xp: 0 },
+      { status: 403 }
+    );
+  }
+
   let body: z.infer<typeof Schema>;
   try {
     body = Schema.parse(await req.json());

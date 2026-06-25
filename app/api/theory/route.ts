@@ -63,8 +63,12 @@ export async function POST(req: Request) {
     });
   }
 
+  // Live theory generation requires a confirmed email (Proposal §5). Cached
+  // theory (above) is served to everyone; unverified users fall through to the
+  // explanation below instead of triggering a live model call.
+  const verified = Boolean((session?.user as { emailVerified?: boolean } | undefined)?.emailVerified);
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  const gen = apiKey
+  const gen = apiKey && verified
     ? await generateTheory(
         apiKey,
         {

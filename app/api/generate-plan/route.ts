@@ -45,9 +45,11 @@ export async function POST(req: Request) {
 
   let userId: string | undefined;
   let tier: PlanTier = "basic";
+  let verified = false;
   if (prisma) {
     const session = await auth();
     userId = (session?.user as { id?: string } | undefined)?.id;
+    verified = Boolean((session?.user as { emailVerified?: boolean } | undefined)?.emailVerified);
     if (userId) {
       const u = await prisma.user.findUnique({ where: { id: userId }, select: { tier: true } });
       if (u?.tier) tier = u.tier as PlanTier;
@@ -139,7 +141,18 @@ export async function POST(req: Request) {
     ctx.masteryTarget = activeTarget(ctx.subareaTargetFull ?? 200, effLevel);
   }
 
-  const built = await buildPlanForUser({ userId, tier, skill, answers, area, ctx, levelOverride });
+  // Unverified users get a bank drill (no live AI) — verification unlocks live
+  // personalization. (Proposal §2.4 / Phase 5: emailVerified is load-bearing.)
+  const built = await buildPlanForUser({
+    userId,
+    tier,
+    skill,
+    answers,
+    area,
+    ctx,
+    levelOverride,
+    live: verified,
+  });
   const { plan, items, source, curriculumId } = built;
   return NextResponse.json({ plan, items, briefs: [], source, curriculumId });
 }

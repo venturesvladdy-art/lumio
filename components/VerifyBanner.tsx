@@ -30,7 +30,7 @@ export function VerifyBanner() {
       <div className="container-page flex flex-wrap items-center justify-center gap-x-3 gap-y-1 py-2 text-center text-sm text-amber-800">
         <span className="flex items-center gap-1.5">
           <Icon name="Mail" className="h-4 w-4" />
-          Confirm your email to secure your account.
+          Confirm your email to unlock AI-personalized drills, live theory, and upgrades.
         </span>
         {state === "sent" ? (
           <span className="font-medium text-emerald-700">Confirmation sent — check your inbox.</span>
