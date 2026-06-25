@@ -88,6 +88,8 @@ function SessionInner() {
   const [score, setScore] = useState<number | null>(null); // free-text score 0–5
   const [shownBriefs, setShownBriefs] = useState<Set<string>>(new Set());
   const [orderPick, setOrderPick] = useState<number[]>([]); // order-type sequence
+  const [theory, setTheory] = useState<string | null>(null);
+  const [theoryLoading, setTheoryLoading] = useState(false);
   const [checked, setChecked] = useState(false);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXp, setLastXp] = useState(0);
@@ -304,11 +306,31 @@ function SessionInner() {
     }
   };
 
+  const loadTheory = async () => {
+    if (theory || theoryLoading) return;
+    setTheoryLoading(true);
+    try {
+      const res = await fetch("/api/theory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ skillId: skill.id, questionClientId: item.id }),
+      });
+      const data = (await res.json()) as { theory?: string };
+      setTheory(data.theory ?? "Theory isn't available right now.");
+    } catch {
+      setTheory("Theory isn't available right now.");
+    } finally {
+      setTheoryLoading(false);
+    }
+  };
+
   const next = () => {
     const nextCursor = cursor + 1;
     setSelected(null);
     setText("");
     setOrderPick([]);
+    setTheory(null);
+    setTheoryLoading(false);
     setFeedback("");
     setScore(null);
     setChecked(false);
@@ -545,6 +567,28 @@ function SessionInner() {
               </p>
             )}
           </div>
+        )}
+
+        {/* Theory (on demand) */}
+        {theory ? (
+          <div className="mt-5 animate-fade-up rounded-2xl border border-violet-200 bg-violet-50/60 p-5">
+            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-violet-700">
+              <Icon name="Lightbulb" className="h-4 w-4" />
+              Background &amp; theory
+            </div>
+            <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">
+              {theory}
+            </p>
+          </div>
+        ) : (
+          <button
+            onClick={() => void loadTheory()}
+            disabled={theoryLoading}
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-violet-600 transition-colors hover:text-violet-800 disabled:opacity-60"
+          >
+            <Icon name="Lightbulb" className="h-4 w-4" />
+            {theoryLoading ? "Thinking…" : "Show the background & theory"}
+          </button>
         )}
 
         {/* Action */}
