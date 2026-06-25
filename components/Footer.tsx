@@ -21,9 +21,8 @@ export function Footer() {
     {
       title: t("footer.company"),
       links: [
-        { label: t("footer.about"), href: "#" },
-        { label: t("footer.blog"), href: "#" },
-        { label: t("footer.careers"), href: "#" },
+        { label: t("footer.about"), href: "/about" },
+        { label: t("footer.contact"), href: "/contact" },
       ],
     },
     {
@@ -31,7 +30,6 @@ export function Footer() {
       links: [
         { label: t("footer.privacy"), href: "/privacy" },
         { label: t("footer.terms"), href: "/terms" },
-        { label: t("footer.contact"), href: "/contact" },
       ],
     },
   ];
@@ -72,7 +70,6 @@ export function Footer() {
           <span>
             © {year} SkillSprinter. {t("footer.rights")}
           </span>
-          <span>{t("footer.builtWith")}</span>
         </div>
       </div>
     </footer>
