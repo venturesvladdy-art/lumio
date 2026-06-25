@@ -5,6 +5,7 @@ import { buildPlanForUser, type GenContext } from "@/lib/planGen";
 import { resolveTaxonomy, findSubarea } from "@/lib/taxonomy";
 import { deriveProfile } from "@/lib/survey/profile";
 import { activeTarget } from "@/lib/mastery";
+import { remainingBudget, EST_COST } from "@/lib/budget";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import type { Difficulty, OnboardingAnswers, PlanTier } from "@/lib/types";
@@ -141,8 +142,14 @@ export async function POST(req: Request) {
     ctx.masteryTarget = activeTarget(ctx.subareaTargetFull ?? 200, effLevel);
   }
 
-  // Unverified users get a bank drill (no live AI) — verification unlocks live
-  // personalization. (Proposal §2.4 / Phase 5: emailVerified is load-bearing.)
+  // Live routing: must be verified (Phase 5) AND within the monthly AI budget
+  // (Phase 4). Out of budget or unverified → a bank drill, never a dead end.
+  let goLive = verified;
+  if (goLive && userId) {
+    const remaining = await remainingBudget(userId, tier);
+    if (remaining < EST_COST.plan) goLive = false;
+  }
+
   const built = await buildPlanForUser({
     userId,
     tier,
@@ -151,7 +158,7 @@ export async function POST(req: Request) {
     area,
     ctx,
     levelOverride,
-    live: verified,
+    live: goLive,
   });
   const { plan, items, source, curriculumId } = built;
   return NextResponse.json({ plan, items, briefs: [], source, curriculumId });

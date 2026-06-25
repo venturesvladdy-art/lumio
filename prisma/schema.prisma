@@ -41,6 +41,11 @@ model User {
   /// v2: manual per-subarea starting-level overrides { subareaKey: level }
   subareaLevels Json?
 
+  /// Phase 3: anonymous progress snapshots already claimed (idempotent claim).
+  claimedAnonIds String[] @default([])
+  /// Phase 6: bumped on password change to invalidate older JWTs.
+  pwTokenVersion Int      @default(0)
+
   accounts   Account[]
   sessions   Session[]
   curricula  Curriculum[]
@@ -228,6 +233,58 @@ model AuditEvent {
 }
 
 /* ───────────────── v2: reusable Skill Taxonomy catalogue ───────────────── */
+
+/// Phase 2: reusable, curated/generated Q&A shared across ALL users. Built
+/// offline (batch API) and served forever at ~$0 — backs anonymous, unverified,
+/// Basic, and the budget-exhausted state of paid tiers.
+model BankQuestion {
+  id              String   @id @default(cuid())
+  skillId         String
+  subareaKey      String
+  concept         String
+  difficulty      String // beginner | intermediate | advanced
+  type            String   @default("mcq")
+  questionEn      String   @db.Text
+  questionPl      String   @db.Text
+  optionsEn       String[]
+  optionsPl       String[]
+  correctIndex    Int
+  answerText      String?  @db.Text
+  acceptedAnswers String[] @default([])
+  orderItems      String[] @default([])
+  correctOrder    Int[]    @default([])
+  explanationEn   String   @db.Text
+  explanationPl   String   @db.Text
+  theoryEn        String?  @db.Text
+  theoryPl        String?  @db.Text
+  xp              Int      @default(10)
+  qualityState    String   @default("approved") // draft | approved | retired
+  model           String?
+  buildBatchId    String?
+  createdAt       DateTime @default(now())
+
+  @@index([skillId, subareaKey, difficulty])
+  @@index([skillId, concept])
+  @@index([qualityState])
+}
+
+/// Phase 4: append-only AI spend ledger — one row per live model call. Enforces
+/// the "AI cost ≤ 20% of revenue" invariant and drives live-vs-bank routing.
+model AiUsage {
+  id                String   @id @default(cuid())
+  userId            String? // null = anonymous (should be ~empty; anon is bank-only)
+  kind              String // plan | theory | grade | taxonomy | areas | bank-build
+  model             String
+  inputTokens       Int
+  outputTokens      Int
+  cachedInputTokens Int      @default(0)
+  costUsd           Float
+  period            String // "YYYY-MM" for fast monthly rollup
+  createdAt         DateTime @default(now())
+
+  @@index([userId, period])
+  @@index([period, kind])
+}
 
 /// One catalogued area→subarea breakdown per skill, shared across ALL users and
 /// reused (generated once with a strong model, then cached). `areas` holds the

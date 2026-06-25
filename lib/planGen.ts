@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { assembleDrill, buildBankPlan } from "@/lib/agent";
 import { modelForTier, effortForTier } from "@/lib/aiModel";
 import { deriveProfile } from "@/lib/survey/profile";
+import { recordUsage, usageFromResponse, type TokenUsage } from "@/lib/budget";
 import { prisma } from "@/lib/db";
 import type {
   Difficulty,
@@ -278,7 +279,7 @@ export async function generateWithClaude(
   tier: PlanTier,
   area: DrillArea,
   ctx: GenContext
-): Promise<{ plan: LearningPlan; items: QAItem[] }> {
+): Promise<{ plan: LearningPlan; items: QAItem[]; usage: TokenUsage }> {
   const client = new Anthropic({ apiKey });
 
   const params = {
@@ -294,8 +295,9 @@ export async function generateWithClaude(
 
   const message = await (client.messages.create as unknown as (
     p: typeof params
-  ) => Promise<{ content: Array<{ type: string; text?: string }> }>)(params);
+  ) => Promise<{ content: Array<{ type: string; text?: string }>; usage?: unknown }>)(params);
 
+  const usage = usageFromResponse(message.usage);
   const text = message.content
     .filter((b) => b.type === "text" && typeof b.text === "string")
     .map((b) => b.text as string)
@@ -320,7 +322,7 @@ export async function generateWithClaude(
     createdAt: Date.now(),
   });
 
-  return { plan, items };
+  return { plan, items, usage };
 }
 
 /** Persist a curriculum + its Q&A for a user (tiered fallback for old DBs). */
@@ -463,7 +465,7 @@ export async function buildPlanForUser(opts: {
     profile.proficiency = PROF_BY_LEVEL[levelOverride];
   }
 
-  let result: { plan: LearningPlan; items: QAItem[] };
+  let result: { plan: LearningPlan; items: QAItem[]; usage?: TokenUsage };
   let source: string;
 
   if (!apiKey || !area || !live) {
@@ -473,6 +475,10 @@ export async function buildPlanForUser(opts: {
     try {
       result = await generateWithClaude(apiKey, skill, profile, model, tier, area, ctx);
       source = "claude";
+      // Record live AI spend against the user's monthly budget (best-effort).
+      if (userId && result.usage) {
+        await recordUsage(userId, "plan", model, result.usage);
+      }
     } catch (err) {
       console.error("[planGen] generation failed; using bank:", err);
       result = buildBankPlan({ skill, answers });

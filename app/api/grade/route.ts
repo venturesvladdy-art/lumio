@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
+import { recordUsage, usageFromResponse } from "@/lib/budget";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -106,7 +107,9 @@ Return a score (0–5) and one sentence of feedback.`,
 
     const message = await (client.messages.create as unknown as (
       p: typeof params
-    ) => Promise<{ content: Array<{ type: string; text?: string }> }>)(params);
+    ) => Promise<{ content: Array<{ type: string; text?: string }>; usage?: unknown }>)(params);
+
+    await recordUsage(userId, "grade", GRADER_MODEL, usageFromResponse(message.usage));
 
     const text = message.content
       .filter((b) => b.type === "text" && typeof b.text === "string")

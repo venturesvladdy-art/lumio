@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { THEORY_MODEL, THEORY_ESCALATION_MODEL } from "@/lib/aiModel";
+import { usageFromResponse, type TokenUsage } from "@/lib/budget";
 
 /**
  * On-demand "background / theory" for a single question — two paragraphs that
@@ -85,7 +86,7 @@ export async function generateTheory(
   apiKey: string,
   q: TheoryQuestion,
   escalate = false
-): Promise<{ theory: string; includesAnswer: boolean; model: string } | null> {
+): Promise<{ theory: string; includesAnswer: boolean; model: string; usage: TokenUsage } | null> {
   try {
     const client = new Anthropic({ apiKey });
     const model = pickTheoryModel(q, escalate);
@@ -98,14 +99,19 @@ export async function generateTheory(
     };
     const message = await (client.messages.create as unknown as (
       p: typeof params
-    ) => Promise<{ content: Array<{ type: string; text?: string }> }>)(params);
+    ) => Promise<{ content: Array<{ type: string; text?: string }>; usage?: unknown }>)(params);
     const text = message.content
       .filter((b) => b.type === "text" && typeof b.text === "string")
       .map((b) => b.text as string)
       .join("");
     const parsed = JSON.parse(text) as { theory?: string; includesAnswer?: boolean };
     if (!parsed.theory) return null;
-    return { theory: parsed.theory, includesAnswer: Boolean(parsed.includesAnswer), model };
+    return {
+      theory: parsed.theory,
+      includesAnswer: Boolean(parsed.includesAnswer),
+      model,
+      usage: usageFromResponse(message.usage),
+    };
   } catch (e) {
     console.error("[theory] generation failed:", e);
     return null;

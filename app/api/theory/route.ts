@@ -3,6 +3,8 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { generateTheory } from "@/lib/theory";
+import { remainingBudget, recordUsage, EST_COST } from "@/lib/budget";
+import type { PlanTier } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -63,12 +65,19 @@ export async function POST(req: Request) {
     });
   }
 
-  // Live theory generation requires a confirmed email (Proposal §5). Cached
-  // theory (above) is served to everyone; unverified users fall through to the
-  // explanation below instead of triggering a live model call.
+  // Live theory requires a confirmed email (Phase 5) AND remaining budget
+  // (Phase 4). Cached theory (above) is served to everyone; otherwise we fall
+  // through to the explanation below instead of a live model call.
   const verified = Boolean((session?.user as { emailVerified?: boolean } | undefined)?.emailVerified);
+  const tier = ((session?.user as { tier?: string } | undefined)?.tier ?? "basic") as PlanTier;
+  let goLive = verified;
+  if (goLive) {
+    const remaining = await remainingBudget(userId, tier);
+    if (remaining < EST_COST.theory) goLive = false;
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  const gen = apiKey && verified
+  const gen = apiKey && goLive
     ? await generateTheory(
         apiKey,
         {
@@ -84,6 +93,10 @@ export async function POST(req: Request) {
         body.escalate
       )
     : null;
+
+  if (gen) {
+    await recordUsage(userId, "theory", gen.model, gen.usage);
+  }
 
   if (!gen) {
     // Degraded fallback so the learner is never stuck.
