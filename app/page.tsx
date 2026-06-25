@@ -87,9 +87,9 @@ export default function HomePage() {
         <div className="border-y border-slate-200/70 bg-white/60 backdrop-blur">
           <div className="container-page grid grid-cols-3 gap-6 py-6 text-center">
             {[
-              { v: "10,000+", k: t("home.trustedBy") },
-              { v: "15+", k: "Skills practiced today" },
-              { v: "70,000+", k: "Questions answered daily" },
+              { v: "10", k: "Skills ready to practice" },
+              { v: "6", k: "Question formats" },
+              { v: "4", k: "Mastery levels to climb" },
             ].map((s) => (
               <div key={s.v}>
                 <div className="font-display text-2xl font-bold text-ink">

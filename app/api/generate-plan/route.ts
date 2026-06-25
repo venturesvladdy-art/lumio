@@ -54,6 +54,12 @@ export async function POST(req: Request) {
     }
   }
 
+  // Require auth in DB mode — unauthenticated plan generation triggers live AI
+  // (Opus/Sonnet) and is a cost-amplification vector. (Guests use static banks.)
+  if (prisma && !userId) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
   // Server-side limit: the Basic (free) tier may only have ONE skill. Block a
   // second, distinct skill here as the authority (the UI also gates this).
   if (tier === "basic" && userId && prisma) {
