@@ -87,6 +87,7 @@ function SessionInner() {
   const [feedback, setFeedback] = useState(""); // free-text AI feedback
   const [score, setScore] = useState<number | null>(null); // free-text score 0–5
   const [shownBriefs, setShownBriefs] = useState<Set<string>>(new Set());
+  const [orderPick, setOrderPick] = useState<number[]>([]); // order-type sequence
   const [checked, setChecked] = useState(false);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXp, setLastXp] = useState(0);
@@ -182,6 +183,9 @@ function SessionInner() {
   const total = queue.length;
   const isChoice = item.format === "mcq" || item.format === "truefalse";
   const isFree = item.format === "free";
+  const isNumeric = item.format === "numeric";
+  const isInput = item.format === "input";
+  const isOrder = item.format === "order";
 
   // Show the learning brief before the first question that references it.
   const briefForItem =
@@ -200,7 +204,12 @@ function SessionInner() {
     );
   }
 
-  const hasInput = isChoice ? selected !== null : text.trim().length > 0;
+  const orderLen = item.orderItems?.length ?? 0;
+  const hasInput = isChoice
+    ? selected !== null
+    : isOrder
+    ? orderPick.length === orderLen && orderLen > 0
+    : text.trim().length > 0;
 
   const finalize = (
     correct: boolean,
@@ -216,6 +225,8 @@ function SessionInner() {
           skillId: skill.id,
           questionClientId: item.id,
           type: item.format,
+          subareaKey: item.subareaKey,
+          concept: item.concept,
           selectedIndex: payload.selectedIndex,
           responseText: payload.responseText,
           score: payload.score ?? undefined,
@@ -243,11 +254,21 @@ function SessionInner() {
     if (isChoice) {
       if (selected === null) return;
       finalize(selected === item.correctIndex, { selectedIndex: selected });
-    } else if (item.format === "numeric") {
+    } else if (isNumeric) {
       if (!text.trim()) return;
       const a = parseNum(text);
       const b = parseNum(item.answerText ?? "");
       finalize(a !== null && b !== null && a === b, { responseText: text.trim() });
+    } else if (isInput) {
+      if (!text.trim()) return;
+      const norm = text.trim().toLowerCase();
+      const correct = (item.acceptedAnswers ?? []).some((a) => a === norm);
+      finalize(correct, { responseText: text.trim() });
+    } else if (isOrder) {
+      if (orderPick.length !== orderLen) return;
+      const correctOrder = item.correctOrder ?? [];
+      const correct = orderPick.every((v, i) => v === correctOrder[i]);
+      finalize(correct, { responseText: JSON.stringify(orderPick) });
     } else {
       // free-text → AI grade (Haiku)
       if (!text.trim()) return;
@@ -287,6 +308,7 @@ function SessionInner() {
     const nextCursor = cursor + 1;
     setSelected(null);
     setText("");
+    setOrderPick([]);
     setFeedback("");
     setScore(null);
     setChecked(false);
@@ -416,19 +438,30 @@ function SessionInner() {
               );
             })}
           </div>
-        ) : item.format === "numeric" ? (
+        ) : isNumeric || isInput ? (
           <div className="mt-6">
             <input
               type="text"
-              inputMode="decimal"
+              inputMode={isNumeric ? "decimal" : "text"}
               value={text}
               disabled={checked}
               autoFocus
               onChange={(e) => setText(e.target.value)}
-              placeholder="Type your answer"
+              placeholder={isNumeric ? "Type your answer" : "Type your answer"}
               className="h-14 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-ink outline-none transition-shadow placeholder:text-slate-400 focus:border-brand-400 focus:shadow-ring disabled:bg-slate-50"
             />
           </div>
+        ) : isOrder ? (
+          <OrderInput
+            items={item.orderItems ?? []}
+            pick={orderPick}
+            disabled={checked}
+            onPick={(idx) =>
+              setOrderPick((p) =>
+                p.includes(idx) ? p.filter((x) => x !== idx) : [...p, idx]
+              )
+            }
+          />
         ) : (
           <div className="mt-6">
             <textarea
@@ -494,12 +527,21 @@ function SessionInner() {
                 {feedback}
               </p>
             )}
-            {!isChoice && item.answerText && (
+            {!isChoice && !isOrder && item.answerText && (
               <p className="mt-2 text-sm leading-relaxed text-slate-600">
                 <span className="font-semibold text-slate-700">
                   {isFree ? "Model answer" : "Answer"}:{" "}
                 </span>
                 {item.answerText}
+              </p>
+            )}
+            {isOrder && (item.correctOrder?.length ?? 0) > 0 && (
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                <span className="font-semibold text-slate-700">Correct order: </span>
+                {(item.correctOrder ?? [])
+                  .map((idx) => item.orderItems?.[idx])
+                  .filter(Boolean)
+                  .join(" → ")}
               </p>
             )}
           </div>
@@ -556,6 +598,56 @@ function difficultyTone(d: string) {
 function parseNum(s: string): number | null {
   const n = Number(String(s).replace(/[,\s]/g, ""));
   return Number.isFinite(n) ? n : null;
+}
+
+/* ---------- Order (tap-to-sequence) ---------- */
+function OrderInput({
+  items,
+  pick,
+  disabled,
+  onPick,
+}: {
+  items: string[];
+  pick: number[];
+  disabled: boolean;
+  onPick: (idx: number) => void;
+}) {
+  return (
+    <div className="mt-6">
+      <p className="mb-2 text-xs text-slate-400">Tap the steps in the correct order.</p>
+      <div className="grid gap-2.5">
+        {items.map((it, i) => {
+          const rank = pick.indexOf(i);
+          const chosen = rank >= 0;
+          return (
+            <button
+              key={i}
+              disabled={disabled}
+              onClick={() => onPick(i)}
+              className={cn(
+                "flex items-center gap-3 rounded-2xl border px-5 py-4 text-left text-[15px] font-medium transition-all focusable",
+                chosen
+                  ? "border-brand-500 bg-brand-50 text-brand-900 shadow-ring"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+              )}
+            >
+              <span
+                className={cn(
+                  "grid h-7 w-7 shrink-0 place-items-center rounded-lg border text-xs font-bold",
+                  chosen
+                    ? "border-brand-500 bg-brand-500 text-white"
+                    : "border-slate-300 bg-white text-slate-400"
+                )}
+              >
+                {chosen ? rank + 1 : ""}
+              </span>
+              {it}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 /* ---------- Learning brief (Stage B) ---------- */

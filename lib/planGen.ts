@@ -1,11 +1,10 @@
 import { randomBytes } from "crypto";
 import Anthropic from "@anthropic-ai/sdk";
-import { deriveLevel, focusLabels } from "@/lib/onboarding";
-import { assemblePlan, assembleDrill, buildBankPlan } from "@/lib/agent";
-import { modelForTier } from "@/lib/aiModel";
+import { assembleDrill, buildBankPlan } from "@/lib/agent";
+import { modelForTier, effortForTier } from "@/lib/aiModel";
+import { deriveProfile } from "@/lib/survey/profile";
 import { prisma } from "@/lib/db";
 import type {
-  Brief,
   Difficulty,
   LearningPlan,
   OnboardingAnswers,
@@ -14,195 +13,177 @@ import type {
   QAItem,
   SkillDef,
 } from "@/lib/types";
+import type { LearnerProfile } from "@/lib/survey/types";
 
 /**
- * Server-side plan generation engine. Shared by the /api/generate-plan route
- * and the upgrade-time regeneration (lib/regenerate.ts) so both build and
- * persist curricula the exact same way.
+ * v2 question-generation engine. Builds a focused 10-question drill for one
+ * catalogued subarea, tuned to the learner's profile, with mixed question types
+ * (mcq / truefalse / numeric / input / order / free) — free-text only when the
+ * model judges it warranted. Every question is tagged with a canonical
+ * `concept` so the mastery system can dedup rephrasings.
  */
 
-/** A skill area to drill (Stage B). */
 export interface DrillArea {
-  id: string;
+  id: string; // subareaKey
   name: string;
+  blurb?: string;
 }
 
-const QUESTION_COUNT = 8;
-/**
- * Stage B: questions per single-area drill. Kept modest by default so the whole
- * generation (questions + briefs + free-text rubrics) finishes inside the
- * serverless time limit — a 20-question drill was timing out on Vercel and the
- * client silently fell back to the un-persisted local bank. Raise via
- * SKILLSPRINTER_DRILL_COUNT if you're on a plan with longer function limits.
- */
-const DRILL_COUNT = Math.max(
+/** Generation context the route assembles (mastery targets, covered concepts). */
+export interface GenContext {
+  coveredConcepts?: string[];
+  subareaTargetFull?: number;
+  masteryTarget?: number;
+  weakness?: string[];
+}
+
+const COUNT = Math.max(
   4,
-  Math.min(20, Number(process.env.SKILLSPRINTER_DRILL_COUNT) || 10)
+  Math.min(15, Number(process.env.SKILLSPRINTER_DRILL_COUNT) || 10)
 );
+
 const XP_BY_DIFFICULTY: Record<Difficulty, number> = {
   beginner: 10,
   intermediate: 15,
   advanced: 25,
 };
 
-/* ---- Structured-output schema for Claude (English-only) ---- */
-const PLAN_JSON_SCHEMA = {
+/* ---- Structured-output schema (six question types) ---- */
+const QUESTION_SET_SCHEMA = {
   type: "object",
   additionalProperties: false,
+  required: ["summary", "questions"],
   properties: {
     summary: { type: "string" },
-    briefs: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          title: { type: "string" },
-          body: { type: "string" },
-        },
-        required: ["title", "body"],
-      },
-    },
     questions: {
       type: "array",
       items: {
         type: "object",
         additionalProperties: false,
+        required: ["type", "concept", "difficulty", "question", "explanation"],
         properties: {
-          type: {
-            type: "string",
-            enum: ["mcq", "truefalse", "numeric", "free"],
-          },
-          difficulty: {
-            type: "string",
-            enum: ["beginner", "intermediate", "advanced"],
-          },
-          briefIndex: { type: "integer" },
+          type: { type: "string", enum: ["mcq", "truefalse", "numeric", "input", "order", "free"] },
+          concept: { type: "string" },
+          difficulty: { type: "string", enum: ["beginner", "intermediate", "advanced"] },
           question: { type: "string" },
+          explanation: { type: "string" },
           options: { type: "array", items: { type: "string" } },
           correctIndex: { type: "integer" },
           answer: { type: "string" },
+          accepted: { type: "array", items: { type: "string" } },
+          items: { type: "array", items: { type: "string" } },
+          correctOrder: { type: "array", items: { type: "integer" } },
+          modelAnswer: { type: "string" },
           rubric: { type: "string" },
-          explanation: { type: "string" },
         },
-        required: ["type", "difficulty", "briefIndex", "question", "explanation"],
       },
     },
   },
-  required: ["summary", "briefs", "questions"],
 };
 
-const SYSTEM_PROMPT = `You are SkillSprinter's master tutor and curriculum designer. You teach a single skill area through short learning briefs followed by varied practice questions, tailored to a learner's level and goals.
+const SYSTEM_PROMPT = `You are SkillSprinter's master item-writer. You generate short, high-quality practice questions that assess one subarea of a skill, tuned to a specific learner profile and difficulty. Write rigorous, unambiguous items in clear, natural English.
 
-Write everything in clear, natural English.
+OUTPUT
+- Produce exactly the requested number of questions — no briefs, no theory, no preamble. Questions only, in the requested structured format.
+- Every question is self-contained and answerable without external context. Never reference "the passage above", an image, or anything not in the question text.
 
-BRIEFS
-- Break the area into a sequence of small concepts. For each, write a brief: a short "title" and a "body" of 2–4 sentences that teaches just enough to answer the next questions.
-- Each brief primes the 2–3 questions that follow it. Aim for one brief per 2–3 questions.
+QUESTION TYPES — choose the BEST type per question, do not default to one:
+- "mcq": a stem plus EXACTLY 4 "options"; "correctIndex" is the 0-based index of the single correct option. Distractors must be plausible and target common misconceptions — never obviously wrong, never "all/none of the above".
+- "truefalse": "options" is exactly ["True","False"]; "correctIndex" is 0 (True) or 1 (False). Use sparingly, only for genuinely binary claims.
+- "numeric": no options. "answer" is the exact numeric result as a plain string (digits, optional leading minus, optional decimal point — no units, no thousands separators, no words).
+- "input": no options. The learner types a short exact answer (a term, name, symbol, or 1-3 words). Provide "accepted": every acceptable spelling/synonym, lowercased and trimmed. Use when there is a small closed set of correct short answers.
+- "order": "items" is 3-6 short strings shown shuffled; "correctOrder" is the 0-based indices of "items" in the correct sequence (a permutation). Use for sequencing, ranking, ordering steps, or chronology.
+- "free": an open written response graded by AI. No options. Provide "modelAnswer" (a concise full-credit exemplar) and "rubric" (1-2 sentences naming what a full-credit answer must contain). Keep the expected answer under ~120 words.
 
-QUESTIONS — vary the "type":
-- "mcq": EXACTLY 4 "options"; "correctIndex" is the 0-based index of the correct one.
-- "truefalse": "options" is ["True","False"]; "correctIndex" is 0 or 1.
-- "numeric": no options. "answer" is the exact numeric answer as a string (plain digits).
-- "free": short open response. No options. Provide a model "answer" and a concise "rubric" (1–2 sentences naming what a full-credit answer must include). Keep it answerable in under 200 characters.
-- Use mostly mcq, a few truefalse and numeric where they fit naturally, and 2–4 "free" questions across the set.
-- Every question sets "briefIndex" to the 0-based index of the brief it belongs to.
-- Write a concise "explanation" (1–2 sentences) of the correct answer for every question.
-- Order questions so difficulty ramps up gently from the learner's level. Be accurate and unambiguous.
+THE FREE-TEXT RULE — use "free" ONLY WHEN WARRANTED:
+- Use "free" when correctness is judgment-based or the learner must PRODUCE prose: empathy/communication (e.g. "respond in one paragraph to someone who says 'my dog is sick and I'm sad'"), explanation/justification, critique, summarizing in their own words.
+- Do NOT use "free" for a fact, term, computation, single value, sequence, or choice among known options — those grade instantly as input/numeric/order/mcq.
+- Heuristic: if you can list exact acceptable answers, it is NOT free. If a fair grader must read a paragraph and judge it, it IS.
 
-Write a warm 2–3 sentence "summary" addressed to the learner describing the drill you built. Return your answer strictly in the requested structured format.`;
+CONCEPT TAGGING — every question carries "concept": a short canonical lowercase kebab-case id naming the single underlying idea (e.g. "linear-equations-one-variable", "active-listening-reflection"). Two questions testing the same idea with different numbers/wording MUST share the same "concept". When the user message lists already-covered concepts, do NOT reuse them — pick fresh, uncovered concepts in the subarea.
+
+DIFFICULTY — "difficulty" is beginner/intermediate/advanced; center on the learner's level and ramp gently. Advanced learners already know the basics: skip foundational recall, weight toward harder items and edge cases.
+
+QUALITY — exactly one defensible correct answer per non-free item; one-sentence "explanation" of the correct answer for every question. Write a warm 2-3 sentence "summary" to the learner about the drill.
+
+Return strictly the requested structured format and nothing else.`;
 
 const GOAL_TEXT: Record<string, string> = {
-  exam: "pass an exam or test",
-  career: "grow their career",
-  school: "do better at school",
-  growth: "personal growth",
-  curiosity: "curiosity",
-};
-const EXP_TEXT: Record<string, string> = {
-  none: "brand new to this",
-  little: "a little experience",
-  some: "quite a bit of experience",
-  lots: "a lot of experience",
-};
-const STYLE_TEXT: Record<string, string> = {
-  drills: "quick drills",
-  deep: "deep dives",
-  mix: "a mix of both",
-};
-const CHALLENGE_TEXT: Record<string, string> = {
-  gentle: "ease in gently",
-  balanced: "a balanced challenge",
-  push: "push hard",
+  exam: "pass an exam",
+  career: "level up for work",
+  school: "do better in a class",
+  growth: "grow a personal skill",
+  curiosity: "explore out of curiosity",
 };
 
-function first(answers: OnboardingAnswers, key: string): string | undefined {
-  return answers[key]?.[0];
+function freeGuidance(tolerance: number): string {
+  if (tolerance < 0.3)
+    return "Prefer auto-gradable types; use free-text questions only when truly necessary (often zero).";
+  if (tolerance > 0.7)
+    return "The learner welcomes written practice — include 2-4 free-text items where they genuinely add value.";
+  return "Use free-text only for genuinely open/subjective items (typically 0-2).";
 }
 
 function buildUserPrompt(
   skill: SkillDef,
-  level: Difficulty,
-  focusEn: string[],
-  answers: OnboardingAnswers,
+  profile: LearnerProfile,
+  area: DrillArea,
   count: number,
-  area?: DrillArea,
-  weakness?: string[]
+  ctx: GenContext
 ): string {
-  const goal = GOAL_TEXT[first(answers, "goal") ?? ""] ?? "general improvement";
-  const exp = EXP_TEXT[first(answers, "experience") ?? ""] ?? "some experience";
-  const style = STYLE_TEXT[first(answers, "style") ?? ""] ?? "a mix";
-  const challenge = CHALLENGE_TEXT[first(answers, "challenge") ?? ""] ?? "a balanced challenge";
-  const time = first(answers, "time") ?? "15";
-  const selfRating = first(answers, "level") ?? "3";
-  const focus = focusEn.length ? focusEn.join(", ") : skill.topics.en.join(", ");
-
-  const areaLine = area
-    ? `\nDrill area (focus ALL questions tightly on this one area): ${area.name}`
-    : `\nFocus areas they care about most: ${focus}`;
-  const concentration = area
-    ? `concentrated specifically on "${area.name}"`
-    : "concentrated on the focus areas above";
-
+  const goal = GOAL_TEXT[profile.goal] ?? "general improvement";
+  const covered = (ctx.coveredConcepts ?? []).slice(0, 120);
+  const coveredBlock = covered.length
+    ? covered.map((c) => `- ${c}`).join("\n")
+    : "- (none yet — this is the first set in this subarea)";
+  const targetFull = ctx.subareaTargetFull ?? 200;
+  const target = ctx.masteryTarget ?? targetFull;
+  const deadlineLine =
+    profile.deadline && profile.deadline !== "unset"
+      ? `\n- Deadline: ${profile.deadline}`
+      : "";
   const weaknessBlock =
-    weakness && weakness.length
-      ? `\n\nThis is a FOLLOW-UP drill. The learner recently missed questions on these points — include several fresh questions (reworded, not copies) that revisit these concepts, then extend with new material:\n${weakness
-          .map((w) => `- ${w}`)
-          .join("\n")}`
+    ctx.weakness && ctx.weakness.length
+      ? `\n\nFOLLOW-UP: the learner recently missed these — include fresh (reworded) questions that revisit them, then extend with new concepts:\n${ctx.weakness.map((w) => `- ${w}`).join("\n")}`
       : "";
 
-  return `Create a personalized practice set for this learner.
+  return `Generate ${count} practice questions for this learner.
 
-Skill: ${skill.name.en}
-Derived level: ${level}
-Self-rating (1-5): ${selfRating}
-Prior experience: ${exp}
-Main goal: ${goal}${areaLine}
-Preferred learning style: ${style}
-Preferred difficulty: ${challenge}
-Time available per day: ~${time} minutes${weaknessBlock}
+LEARNER PROFILE
+- Skill: ${skill.name.en}
+- Level: ${profile.level} (proficiency ${profile.proficiency.toFixed(2)})
+- Desired depth: ${profile.depth}
+- Goal: ${goal}${profile.examName ? ` (${profile.examName})` : ""}${deadlineLine}
+- Total time they'll invest: ~${profile.totalHours} hours
 
-Generate ${count} questions (mixed types, with briefs) tuned to a ${level} learner, ${concentration}, with difficulty ramping up gradually. Return them (and the briefs and summary) in the structured format.`;
+SUBAREA TO COVER (focus every question tightly here): ${area.name}${area.blurb ? ` — ${area.blurb}` : ""}
+
+MASTERY CONTEXT
+- Full mastery of this subarea is ~${targetFull} distinct concepts.
+- For this learner the active target is ~${target} concepts (advanced learners skip the basics).
+- Move the learner toward mastery without repeating concepts they've seen.
+
+ALREADY-COVERED CONCEPTS — do NOT generate questions for any of these; choose fresh concepts:
+${coveredBlock}
+
+QUESTION-TYPE POLICY
+${freeGuidance(profile.freeTextTolerance)}${weaknessBlock}
+
+Produce exactly ${count} questions, ramping difficulty up gently, choosing the best type per question, each with a canonical "concept" tag. Return them and the summary in the structured format.`;
 }
 
-function normalizeBriefs(raw: unknown): Brief[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .map((b, i) => {
-      const o = b as Record<string, unknown>;
-      return {
-        clientId: `brief-${i}`,
-        title: typeof o.title === "string" ? o.title : `Concept ${i + 1}`,
-        body: typeof o.body === "string" ? o.body : "",
-        orderIndex: i,
-      };
-    })
-    .filter((b) => b.body.trim().length > 0);
+function kebab(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
 }
 
 function normalizeQuestion(
   raw: unknown,
   skillId: string,
+  subareaKey: string,
   runId: string,
   index: number
 ): QAItem | null {
@@ -216,93 +197,93 @@ function normalizeQuestion(
   const question = typeof q.question === "string" ? q.question : "";
   if (!question) return null;
   const explanation = typeof q.explanation === "string" ? q.explanation : "";
-  const answer = typeof q.answer === "string" ? q.answer : undefined;
-  const rubric = typeof q.rubric === "string" ? q.rubric : undefined;
-
+  const concept = typeof q.concept === "string" && q.concept ? kebab(q.concept) : `q-${index}`;
   const difficulty: Difficulty = (["beginner", "intermediate", "advanced"] as const).includes(
     q.difficulty as Difficulty
   )
     ? (q.difficulty as Difficulty)
     : "intermediate";
 
-  const briefIndex = Number.isInteger(q.briefIndex) ? Number(q.briefIndex) : -1;
-  const briefClientId = briefIndex >= 0 ? `brief-${briefIndex}` : undefined;
-
   let options: string[] = [];
   let correctIndex = 0;
+  let answerText: string | undefined;
+  let acceptedAnswers: string[] = [];
+  let orderItems: string[] = [];
+  let correctOrder: number[] = [];
+  let rubric: string | undefined;
+
   if (type === "mcq" || type === "truefalse") {
     options = Array.isArray(q.options) ? (q.options as unknown[]).map(String) : [];
     if (type === "truefalse" && options.length < 2) options = ["True", "False"];
     if (options.length < 2) return null;
     options = options.slice(0, type === "truefalse" ? 2 : 4);
     const ci = Number(q.correctIndex);
-    correctIndex = Number.isInteger(ci)
-      ? Math.min(Math.max(0, ci), options.length - 1)
-      : 0;
-  } else if ((type === "numeric" || type === "free") && !answer) {
-    return null; // numeric/free need a checkable model answer to grade against
+    correctIndex = Number.isInteger(ci) ? Math.min(Math.max(0, ci), options.length - 1) : 0;
+  } else if (type === "numeric") {
+    answerText = typeof q.answer === "string" ? q.answer : undefined;
+    if (!answerText) return null;
+  } else if (type === "input") {
+    acceptedAnswers = Array.isArray(q.accepted)
+      ? (q.accepted as unknown[]).map((x) => String(x).toLowerCase().trim()).filter(Boolean)
+      : [];
+    if (!acceptedAnswers.length) return null;
+    answerText = acceptedAnswers[0];
+  } else if (type === "order") {
+    orderItems = Array.isArray(q.items) ? (q.items as unknown[]).map(String) : [];
+    correctOrder = Array.isArray(q.correctOrder)
+      ? (q.correctOrder as unknown[]).map((n) => Number(n)).filter((n) => Number.isInteger(n))
+      : [];
+    if (orderItems.length < 2 || correctOrder.length !== orderItems.length) return null;
+  } else {
+    // free
+    answerText = typeof q.modelAnswer === "string" ? q.modelAnswer : undefined;
+    rubric = typeof q.rubric === "string" ? q.rubric : undefined;
+    if (!answerText && !rubric) return null;
   }
 
-  // English-only content. The {en,pl} shape is kept (pl mirrors en) so the
-  // existing NOT NULL Pl columns keep working until they're dropped.
-  // The runId keeps clientIds unique per drill, so re-drills don't collide.
   return {
     id: `gen-${skillId}-${runId}-${index}`,
     skillId,
+    subareaKey,
+    concept,
     difficulty,
     format: type,
     question: { en: question, pl: question },
     options: { en: options, pl: options },
     correctIndex,
-    answerText: answer,
+    answerText,
+    acceptedAnswers,
+    orderItems,
+    correctOrder,
     rubric,
-    briefClientId,
     explanation: { en: explanation, pl: explanation },
     xp: XP_BY_DIFFICULTY[difficulty],
   };
 }
 
-/** Call Claude to produce a personalized plan/drill + Q&A with the given model. */
+/** Call Claude to produce a profile-tuned subarea drill. */
 export async function generateWithClaude(
   apiKey: string,
   skill: SkillDef,
-  answers: OnboardingAnswers,
+  profile: LearnerProfile,
   model: string,
-  opts?: { area?: DrillArea; count?: number; weakness?: string[] }
-): Promise<{ plan: LearningPlan; items: QAItem[]; briefs: Brief[] }> {
+  tier: PlanTier,
+  area: DrillArea,
+  ctx: GenContext
+): Promise<{ plan: LearningPlan; items: QAItem[] }> {
   const client = new Anthropic({ apiKey });
-  const area = opts?.area;
-  const count = opts?.count ?? (area ? DRILL_COUNT : QUESTION_COUNT);
-  const level = deriveLevel(answers);
-  const focusValues = answers["focus"] ?? [];
-  const focusList = focusLabels(skill, focusValues);
-  const focusEn = focusList.map((f) => f.en);
 
-  // Note: Opus 4.8 rejects temperature/top_p; do not send them. Structured
-  // output is requested via output_config.format (json_schema).
   const params = {
     model,
-    // Bounded so a rambling response can't blow past the function time limit.
-    max_tokens: 10000,
-    system: [
-      {
-        type: "text",
-        text: SYSTEM_PROMPT,
-        cache_control: { type: "ephemeral" },
-      },
-    ],
-    messages: [
-      {
-        role: "user",
-        content: buildUserPrompt(skill, level, focusEn, answers, count, area, opts?.weakness),
-      },
-    ],
+    max_tokens: 8000,
+    system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
+    messages: [{ role: "user", content: buildUserPrompt(skill, profile, area, COUNT, ctx) }],
     output_config: {
-      format: { type: "json_schema", schema: PLAN_JSON_SCHEMA },
+      format: { type: "json_schema", schema: QUESTION_SET_SCHEMA },
+      effort: effortForTier(tier),
     },
   };
 
-  // Cast to satisfy SDK typings across versions; runtime shape follows the docs.
   const message = await (client.messages.create as unknown as (
     p: typeof params
   ) => Promise<{ content: Array<{ type: string; text?: string }> }>)(params);
@@ -311,52 +292,34 @@ export async function generateWithClaude(
     .filter((b) => b.type === "text" && typeof b.text === "string")
     .map((b) => b.text as string)
     .join("");
+  const parsed = JSON.parse(text) as { summary?: string; questions?: unknown[] };
 
-  const parsed = JSON.parse(text) as {
-    summary?: string;
-    briefs?: unknown[];
-    questions?: unknown[];
-  };
-
-  const runId = randomBytes(3).toString("hex"); // unique per drill
-  const briefs = normalizeBriefs(parsed.briefs);
+  const runId = randomBytes(3).toString("hex");
   const items = (parsed.questions ?? [])
-    .map((q, i) => normalizeQuestion(q, skill.id, runId, i))
+    .map((q, i) => normalizeQuestion(q, skill.id, area.id, runId, i))
     .filter((x): x is QAItem => x !== null);
-
   if (items.length === 0) throw new Error("Claude returned no usable questions");
 
   const summaryText = typeof parsed.summary === "string" ? parsed.summary : "";
-  const summary = { en: summaryText, pl: summaryText };
+  const plan = assembleDrill({
+    skillId: skill.id,
+    level: profile.level,
+    focusValues: profile.subareaKeys,
+    summary: { en: summaryText, pl: summaryText },
+    items,
+    areaId: area.id,
+    areaName: area.name,
+    createdAt: Date.now(),
+  });
 
-  const plan = area
-    ? assembleDrill({
-        skillId: skill.id,
-        level,
-        focusValues,
-        summary,
-        items,
-        areaId: area.id,
-        areaName: area.name,
-        createdAt: Date.now(),
-      })
-    : assemblePlan({
-        skillId: skill.id,
-        level,
-        focusValues,
-        summary,
-        items,
-        createdAt: Date.now(),
-      });
-
-  return { plan, items, briefs };
+  return { plan, items };
 }
 
-/** Persist a curriculum + its Q&A for a user (best-effort; returns its id). */
+/** Persist a curriculum + its Q&A for a user (tiered fallback for old DBs). */
 export async function persistCurriculum(opts: {
   userId: string;
   skill: SkillDef;
-  result: { plan: LearningPlan; items: QAItem[]; briefs?: Brief[] };
+  result: { plan: LearningPlan; items: QAItem[] };
   source: string;
   model: string | null;
   answers: OnboardingAnswers;
@@ -365,10 +328,7 @@ export async function persistCurriculum(opts: {
   if (!prisma) return undefined;
   const { userId, skill, result, source, model, answers, area } = opts;
   const plan = result.plan;
-  const briefs = result.briefs ?? [];
 
-  // The pre-Stage-B columns every database has. Used as the last-resort
-  // fallback so a curriculum still saves even if newer columns are missing.
   const legacyData = {
     userId,
     skillId: skill.id,
@@ -398,32 +358,29 @@ export async function persistCurriculum(opts: {
     },
   };
 
-  // Stage B fields (area, briefs, question type/answer/rubric) on top.
+  // v2 fields (subarea, concept, new payload columns) on top of the legacy shape.
   const baseData = {
     ...legacyData,
     areaId: area?.id ?? null,
     areaName: area?.name ?? null,
-    briefs: {
-      create: briefs.map((b) => ({
-        clientId: b.clientId,
-        title: b.title,
-        body: b.body,
-        orderIndex: b.orderIndex,
-      })),
-    },
+    subareaKey: area?.id ?? null,
     questions: {
       create: result.items.map((it, i) => ({
         clientId: it.id,
         skillId: it.skillId,
         difficulty: it.difficulty,
         type: it.format,
-        briefClientId: it.briefClientId ?? null,
+        subareaKey: it.subareaKey ?? null,
+        concept: it.concept ?? null,
         questionEn: it.question.en,
         questionPl: it.question.pl,
         optionsEn: it.options.en,
         optionsPl: it.options.pl,
         correctIndex: it.correctIndex,
         answerText: it.answerText ?? null,
+        acceptedAnswers: it.acceptedAnswers ?? [],
+        orderItems: it.orderItems ?? [],
+        correctOrder: it.correctOrder ?? [],
         rubric: it.rubric ?? null,
         explanationEn: it.explanation.en,
         explanationPl: it.explanation.pl,
@@ -433,9 +390,6 @@ export async function persistCurriculum(opts: {
     },
   };
 
-  // Persist with progressively fewer optional columns so an un-migrated DB
-  // still saves the curriculum rather than dropping it: full → no answers →
-  // legacy (pre-Stage-B) shape.
   const create = (data: object) =>
     prisma!.curriculum.create({ data: data as never, select: { id: true } });
 
@@ -447,7 +401,7 @@ export async function persistCurriculum(opts: {
       created = await create(baseData); // `answers` column missing
     } catch (e2) {
       console.warn(
-        "[planGen] Stage B columns missing; saving in legacy shape. Run skillsprinter-stage-b.sql.",
+        "[planGen] v2 columns missing; saving in legacy shape. Run skillsprinter-v2.sql.",
         e2
       );
       created = await create(legacyData);
@@ -459,7 +413,7 @@ export async function persistCurriculum(opts: {
       data: {
         userId,
         type: "curriculum.created",
-        data: { curriculumId: created.id, skillId: skill.id, source },
+        data: { curriculumId: created.id, skillId: skill.id, source, subareaKey: area?.id ?? null },
       },
     })
     .catch(() => {});
@@ -470,16 +424,15 @@ export async function persistCurriculum(opts: {
 export interface BuildResult {
   plan: LearningPlan;
   items: QAItem[];
-  briefs: Brief[];
+  briefs: never[]; // v2: briefs removed (theory is on-demand); kept empty for compat
   source: string;
   model: string | null;
   curriculumId?: string;
 }
 
 /**
- * Build a plan for a learner using the model their tier deserves, then persist
- * it (when a userId + DB are available). Falls back to the curated bank if no
- * API key is set or Claude fails, so the flow never dead-ends.
+ * Build a subarea drill for a learner using the model their tier deserves, then
+ * persist it. Falls back to the curated bank if no API key / Claude fails.
  */
 export async function buildPlanForUser(opts: {
   userId?: string;
@@ -487,25 +440,26 @@ export async function buildPlanForUser(opts: {
   skill: SkillDef;
   answers: OnboardingAnswers;
   area?: DrillArea;
-  weakness?: string[];
+  ctx?: GenContext;
 }): Promise<BuildResult> {
-  const { userId, tier, skill, answers, area, weakness } = opts;
+  const { userId, tier, skill, answers, area, ctx = {} } = opts;
   const apiKey = process.env.ANTHROPIC_API_KEY;
   const model = modelForTier(tier);
+  const profile = deriveProfile(answers);
 
-  let result: { plan: LearningPlan; items: QAItem[]; briefs: Brief[] };
+  let result: { plan: LearningPlan; items: QAItem[] };
   let source: string;
 
-  if (!apiKey) {
-    result = { ...buildBankPlan({ skill, answers }), briefs: [] };
-    source = "bank";
+  if (!apiKey || !area) {
+    result = buildBankPlan({ skill, answers });
+    source = !apiKey ? "bank" : "bank";
   } else {
     try {
-      result = await generateWithClaude(apiKey, skill, answers, model, { area, weakness });
+      result = await generateWithClaude(apiKey, skill, profile, model, tier, area, ctx);
       source = "claude";
     } catch (err) {
-      console.error("[planGen] Claude generation failed; using bank:", err);
-      result = { ...buildBankPlan({ skill, answers }), briefs: [] };
+      console.error("[planGen] generation failed; using bank:", err);
+      result = buildBankPlan({ skill, answers });
       source = "bank-fallback";
     }
   }
@@ -526,5 +480,12 @@ export async function buildPlanForUser(opts: {
     });
   }
 
-  return { ...result, source, model: source === "claude" ? model : null, curriculumId };
+  return {
+    plan: result.plan,
+    items: result.items,
+    briefs: [],
+    source,
+    model: source === "claude" ? model : null,
+    curriculumId,
+  };
 }

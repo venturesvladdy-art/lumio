@@ -1,4 +1,4 @@
-import type { MasteryLevel } from "@/lib/types";
+import type { Difficulty, MasteryLevel } from "@/lib/types";
 
 /**
  * v2 mastery model: within a subarea a learner climbs four bands —
@@ -103,3 +103,15 @@ export const LEVEL_LABEL: Record<MasteryLevel, string> = {
   advanced: "Advanced",
   expert: "Expert",
 };
+
+/** Concepts an advanced learner needs vs a beginner (they skip the basics). */
+export const GEN_TARGET_FACTOR: Record<Difficulty, number> = {
+  beginner: 1.0,
+  intermediate: 0.72,
+  advanced: 0.5,
+};
+
+/** The active concept target for generation, scaled down for stronger learners. */
+export function activeTarget(conceptTarget: number, level: Difficulty): number {
+  return Math.round(clampTarget(conceptTarget) * GEN_TARGET_FACTOR[level]);
+}
