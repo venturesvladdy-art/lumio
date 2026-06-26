@@ -1,0 +1,275 @@
+{
+  "skillId": "python",
+  "areas": [
+    { "key": "syntax", "name": "Syntax & Variables" },
+    { "key": "structures", "name": "Lists, Dicts & Strings" },
+    { "key": "flow", "name": "Control Flow & Loops" },
+    { "key": "functions", "name": "Functions & Errors" }
+  ],
+  "questions": [
+    {
+      "id": "python-syntax-b-1",
+      "areaKey": "syntax",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the data type of the value assigned here?\n\nx = 42",
+      "options": ["int", "float", "str", "bool"],
+      "correctIndex": 0,
+      "explanation": "A whole number with no decimal point is an integer, so x is of type int.",
+      "theory": "Python infers a variable's type from the value you assign. Whole numbers like 42 are int, numbers with a decimal point like 4.2 are float. You do not declare types explicitly when creating a variable."
+    },
+    {
+      "id": "python-syntax-b-2",
+      "areaKey": "syntax",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which symbol begins a single-line comment in Python?",
+      "options": ["#", "//", "--", "/*"],
+      "correctIndex": 0,
+      "explanation": "Python uses the hash symbol # to start a comment that runs to the end of the line.",
+      "theory": "Comments are ignored by the interpreter and exist to explain code to humans. In Python a comment starts with # and continues to the end of that line. The // and /* styles belong to other languages such as C and Java."
+    },
+    {
+      "id": "python-syntax-i-1",
+      "areaKey": "syntax",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this code print?\n\nx = 5\ny = x\nx = 10\nprint(y)",
+      "options": ["5", "10", "15", "None"],
+      "correctIndex": 0,
+      "explanation": "y was bound to the integer 5 when assigned, and reassigning x later does not change y.",
+      "theory": "Assignment binds a name to a value. When you write y = x, y points at the same value x currently refers to. Rebinding x afterward to a new value does not retroactively change y, because integers are immutable and y kept its own reference."
+    },
+    {
+      "id": "python-syntax-i-2",
+      "areaKey": "syntax",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the result of this expression?\n\n7 // 2",
+      "options": ["3", "3.5", "4", "1"],
+      "correctIndex": 0,
+      "explanation": "The // operator performs floor division, discarding the fractional part to give 3.",
+      "theory": "The // operator is floor division: it divides and rounds the result down to the nearest whole number. With two integers it returns an int. Regular division with / always returns a float, so 7 / 2 would be 3.5."
+    },
+    {
+      "id": "python-syntax-a-1",
+      "areaKey": "syntax",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this code print?\n\na, b = 1, 2\na, b = b, a + b\nprint(a, b)",
+      "options": ["2 3", "1 2", "2 4", "3 2"],
+      "correctIndex": 0,
+      "explanation": "The right side is fully evaluated first as (2, 3) using the old values, then unpacked into a and b.",
+      "theory": "In a tuple assignment, Python evaluates the entire right-hand side before assigning anything. Here b is 2 and a + b is 3, producing the tuple (2, 3), which is then unpacked so a becomes 2 and b becomes 3. This is why swaps like a, b = b, a work without a temporary variable."
+    },
+    {
+      "id": "python-syntax-a-2",
+      "areaKey": "syntax",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this code print?\n\nx = 0.1 + 0.2\nprint(x == 0.3)",
+      "options": ["False", "True", "0.3", "0.30000000000000004"],
+      "correctIndex": 0,
+      "explanation": "Floating-point rounding makes 0.1 + 0.2 slightly more than 0.3, so the equality is False.",
+      "theory": "Floats are stored in binary and cannot represent many decimal fractions exactly. As a result 0.1 + 0.2 evaluates to 0.30000000000000004, which is not equal to 0.3. To compare floats reliably, use a tolerance such as math.isclose."
+    },
+    {
+      "id": "python-structures-b-1",
+      "areaKey": "structures",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does this code print?\n\nfruits = ['apple', 'banana', 'cherry']\nprint(fruits[1])",
+      "options": ["banana", "apple", "cherry", "1"],
+      "correctIndex": 0,
+      "explanation": "List indexing starts at 0, so index 1 is the second element, 'banana'.",
+      "theory": "Lists are ordered collections accessed by index, and indexing begins at 0. So fruits[0] is 'apple' and fruits[1] is 'banana'. Using an index equal to or beyond the list length raises an IndexError."
+    },
+    {
+      "id": "python-structures-b-2",
+      "areaKey": "structures",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does this code print?\n\nperson = {'name': 'Ada', 'age': 36}\nprint(person['name'])",
+      "options": ["Ada", "name", "36", "'name'"],
+      "correctIndex": 0,
+      "explanation": "Looking up the key 'name' in the dictionary returns its associated value, 'Ada'.",
+      "theory": "A dictionary stores key-value pairs and you retrieve a value by its key using square brackets. Here person['name'] returns 'Ada'. Looking up a key that does not exist raises a KeyError."
+    },
+    {
+      "id": "python-structures-i-1",
+      "areaKey": "structures",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this code print?\n\ns = 'python'\nprint(s[1:4])",
+      "options": ["yth", "pyt", "ytho", "ythо"],
+      "correctIndex": 0,
+      "explanation": "Slicing from index 1 up to but not including index 4 gives the characters 'yth'.",
+      "theory": "String slicing uses the form s[start:stop], including the start index but excluding the stop index. For 'python', indices 1, 2, and 3 are 'y', 't', and 'h'. Strings are immutable, so slicing returns a new string."
+    },
+    {
+      "id": "python-structures-i-2",
+      "areaKey": "structures",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this code print?\n\nnums = [1, 2, 3]\nnums.append([4, 5])\nprint(len(nums))",
+      "options": ["4", "5", "2", "3"],
+      "correctIndex": 0,
+      "explanation": "append adds its argument as a single element, so the list [4, 5] becomes one new item, making length 4.",
+      "theory": "The append method adds exactly one element to the end of a list, even if that element is itself a list. So nums becomes [1, 2, 3, [4, 5]] with length 4. To add the individual items instead, you would use extend."
+    },
+    {
+      "id": "python-structures-a-1",
+      "areaKey": "structures",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this code print?\n\na = [1, 2, 3]\nb = a\nb.append(4)\nprint(a)",
+      "options": ["[1, 2, 3, 4]", "[1, 2, 3]", "[4]", "[1, 2, 3, [4]]"],
+      "correctIndex": 0,
+      "explanation": "b = a makes both names refer to the same list object, so appending through b also changes a.",
+      "theory": "Assigning one list to another name does not copy the list; both names reference the same underlying object. Mutating it through either name is visible through both. To get an independent copy, use a.copy() or list(a)."
+    },
+    {
+      "id": "python-structures-a-2",
+      "areaKey": "structures",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this code print?\n\nsquares = [x * x for x in range(5) if x % 2 == 0]\nprint(squares)",
+      "options": ["[0, 4, 16]", "[0, 1, 4, 9, 16]", "[4, 16]", "[0, 2, 4]"],
+      "correctIndex": 0,
+      "explanation": "The comprehension keeps only even x values (0, 2, 4) and squares each, giving 0, 4, and 16.",
+      "theory": "A list comprehension builds a list by transforming items from an iterable, optionally filtered by an if clause. Here range(5) yields 0 through 4, the filter keeps the even numbers 0, 2, and 4, and each is squared. The result is [0, 4, 16]."
+    },
+    {
+      "id": "python-flow-b-1",
+      "areaKey": "flow",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does this code print?\n\nx = 8\nif x > 5:\n    print('big')\nelse:\n    print('small')",
+      "options": ["big", "small", "8", "True"],
+      "correctIndex": 0,
+      "explanation": "Since 8 is greater than 5 the condition is true, so the if branch runs and prints 'big'.",
+      "theory": "An if statement runs its indented block only when the condition is true; otherwise the else block runs. Here x > 5 is true because 8 is greater than 5. Indentation defines which statements belong to each branch."
+    },
+    {
+      "id": "python-flow-b-2",
+      "areaKey": "flow",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "How many times does this loop print?\n\nfor i in range(3):\n    print(i)",
+      "options": ["3", "2", "4", "1"],
+      "correctIndex": 0,
+      "explanation": "range(3) produces the values 0, 1, and 2, so the loop body runs three times.",
+      "theory": "range(n) generates numbers starting at 0 up to but not including n, giving n values total. So range(3) yields 0, 1, 2 and the loop runs three times. The stop value itself is never produced."
+    },
+    {
+      "id": "python-flow-i-1",
+      "areaKey": "flow",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this code print?\n\ntotal = 0\nfor i in range(1, 5):\n    total += i\nprint(total)",
+      "options": ["10", "15", "6", "4"],
+      "correctIndex": 0,
+      "explanation": "range(1, 5) yields 1, 2, 3, 4 and their sum is 10.",
+      "theory": "range(start, stop) begins at start and stops before stop, so range(1, 5) gives 1, 2, 3, 4. The loop accumulates these into total with +=. Adding them gives 1 + 2 + 3 + 4 = 10."
+    },
+    {
+      "id": "python-flow-i-2",
+      "areaKey": "flow",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this code print?\n\nfor i in range(5):\n    if i == 3:\n        break\n    print(i)",
+      "options": ["0 1 2", "0 1 2 3", "0 1 2 3 4", "3"],
+      "correctIndex": 0,
+      "explanation": "The loop prints 0, 1, 2 and then break ends the loop when i reaches 3, before printing it.",
+      "theory": "The break statement immediately exits the nearest enclosing loop. Here when i equals 3 the loop stops before that value is printed, so only 0, 1, and 2 appear. By contrast continue would skip just the current iteration."
+    },
+    {
+      "id": "python-flow-a-1",
+      "areaKey": "flow",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this code print?\n\nfor i in range(2):\n    for j in range(2):\n        if j == 1:\n            continue\n        print(i, j)",
+      "options": ["0 0\\n1 0", "0 0\\n0 1\\n1 0\\n1 1", "0 0\\n1 1", "0 0"],
+      "correctIndex": 0,
+      "explanation": "continue skips the print whenever j is 1, so only the pairs where j is 0 are printed.",
+      "theory": "continue skips the rest of the current iteration of the inner loop and moves to its next value. Here it skips printing whenever j equals 1, leaving only j equal to 0 for each value of i. The result is the pairs (0, 0) and (1, 0)."
+    },
+    {
+      "id": "python-flow-a-2",
+      "areaKey": "flow",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this loop print?\n\nn = 0\nwhile n < 5:\n    n += 1\n    if n == 2:\n        continue\n    print(n)",
+      "options": ["1 3 4 5", "1 2 3 4 5", "1 3 4", "2 3 4 5"],
+      "correctIndex": 0,
+      "explanation": "n is incremented before the check, and continue skips printing only when n equals 2.",
+      "theory": "In this while loop n is incremented at the top, so it takes the values 1 through 5. When n equals 2 the continue skips the print for that iteration only. Every other value is printed, giving 1, 3, 4, 5."
+    },
+    {
+      "id": "python-functions-b-1",
+      "areaKey": "functions",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does this code print?\n\ndef greet(name):\n    return 'Hi ' + name\n\nprint(greet('Sam'))",
+      "options": ["Hi Sam", "Hi name", "greet Sam", "Hi"],
+      "correctIndex": 0,
+      "explanation": "The argument 'Sam' replaces the parameter name, so the function returns and prints 'Hi Sam'.",
+      "theory": "A function defined with def can take parameters that receive the arguments passed in the call. The return statement sends a value back to the caller. Here name becomes 'Sam', and the returned string 'Hi Sam' is printed."
+    },
+    {
+      "id": "python-functions-b-2",
+      "areaKey": "functions",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "A Python function that has no explicit return statement returns None.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "When a function ends without returning a value, Python automatically returns None.",
+      "theory": "Every Python function returns something. If you do not write a return statement, or write return with no value, the function returns None. This is a special object representing the absence of a value."
+    },
+    {
+      "id": "python-functions-i-1",
+      "areaKey": "functions",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this code print?\n\ndef power(base, exp=2):\n    return base ** exp\n\nprint(power(3))",
+      "options": ["9", "6", "3", "8"],
+      "correctIndex": 0,
+      "explanation": "exp defaults to 2 when not supplied, so the function computes 3 ** 2, which is 9.",
+      "theory": "A parameter with a default value is optional; if the caller omits it, the default is used. Here power(3) uses exp equal to 2, so it returns 3 ** 2, which is 9. The ** operator raises a number to a power."
+    },
+    {
+      "id": "python-functions-i-2",
+      "areaKey": "functions",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does this code print?\n\ntry:\n    print(10 / 0)\nexcept ZeroDivisionError:\n    print('oops')",
+      "options": ["oops", "0", "10", "ZeroDivisionError"],
+      "correctIndex": 0,
+      "explanation": "Dividing by zero raises ZeroDivisionError, which the except block catches and prints 'oops'.",
+      "theory": "A try block runs code that might fail, and a matching except block handles a specific error if it occurs. Dividing by zero raises ZeroDivisionError, so control jumps to the except block and prints 'oops' instead of crashing."
+    },
+    {
+      "id": "python-functions-a-1",
+      "areaKey": "functions",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this code print?\n\ndef add(*args):\n    return sum(args)\n\nprint(add(1, 2, 3, 4))",
+      "options": ["10", "4", "1234", "[1, 2, 3, 4]"],
+      "correctIndex": 0,
+      "explanation": "*args collects all positional arguments into a tuple, and sum adds them to give 10.",
+      "theory": "A parameter written as *args gathers any number of positional arguments into a tuple inside the function. Here args becomes (1, 2, 3, 4), and sum adds them to produce 10. This lets a function accept a variable number of arguments."
+    },
+    {
+      "id": "python-functions-a-2",
+      "areaKey": "functions",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does this code print?\n\ndef f():\n    try:\n        return 'try'\n    finally:\n        print('finally')\n\nprint(f())",
+      "options": ["finally\\ntry", "try\\nfinally", "try", "finally"],
+      "correctIndex": 0,
+      "explanation": "The finally block runs before the function actually returns, so 'finally' prints before the returned 'try'.",
+      "theory": "A finally block always executes when leaving the try, even when a return is in progress. Here the return value 'try' is prepared, then finally prints 'finally', and only afterward does the function return to the caller, which prints 'try'. So 'finally' appears first."
+    }
+  ]
+}

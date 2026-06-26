@@ -1,0 +1,375 @@
+{
+  "skillId": "interpersonal",
+  "areas": [
+    { "key": "listening", "name": "Active Listening" },
+    { "key": "feedback", "name": "Giving Feedback" },
+    { "key": "negotiation", "name": "Negotiation" },
+    { "key": "conflict", "name": "Conflict & Empathy" }
+  ],
+  "questions": [
+    {
+      "id": "interpersonal-listening-b-1",
+      "areaKey": "listening",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A coworker is explaining a problem they're facing. Which behavior best demonstrates active listening?",
+      "options": [
+        "Paraphrasing what they said to confirm you understood",
+        "Quickly offering a solution before they finish",
+        "Checking your phone while nodding occasionally",
+        "Changing the subject to a similar problem you once had"
+      ],
+      "correctIndex": 0,
+      "explanation": "Paraphrasing shows the speaker you've genuinely processed their message and lets them correct any misunderstanding.",
+      "theory": "Active listening means fully concentrating on the speaker rather than just waiting to reply. A core technique is reflecting or paraphrasing the speaker's words back to them. This confirms understanding and signals that you value what they said."
+    },
+    {
+      "id": "interpersonal-listening-b-2",
+      "areaKey": "listening",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Interrupting someone to finish their sentence shows you're engaged and listening well.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "explanation": "Interrupting signals impatience and shifts focus to you rather than letting the speaker complete their own thought.",
+      "theory": "Letting people finish their thoughts is a foundation of respectful listening. Interrupting, even with good intentions, can make speakers feel unheard or rushed. Allowing brief silences gives them space to express themselves fully."
+    },
+    {
+      "id": "interpersonal-listening-i-1",
+      "areaKey": "listening",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A teammate says, 'I guess I'll just handle the launch alone, like always.' What's the best active-listening response?",
+      "options": [
+        "It sounds like you're feeling unsupported on this. Can you tell me more?",
+        "You're not alone, stop exaggerating.",
+        "Okay, let me know if you need anything.",
+        "Everyone is busy, that's just how launches go."
+      ],
+      "correctIndex": 0,
+      "explanation": "Reflecting the underlying feeling invites the speaker to share more and shows you heard the emotion behind the words.",
+      "theory": "Active listening includes attending to the emotion beneath the literal words. Reflecting feelings ('it sounds like you're feeling...') validates the person and opens dialogue. This is more effective than dismissing, minimizing, or offering a quick fix."
+    },
+    {
+      "id": "interpersonal-listening-i-2",
+      "areaKey": "listening",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Which question type best encourages someone to elaborate during a conversation?",
+      "options": [
+        "An open-ended question like 'What happened next?'",
+        "A closed yes/no question like 'Did that work?'",
+        "A leading question like 'You agree it was fine, right?'",
+        "A rapid series of short factual questions"
+      ],
+      "correctIndex": 0,
+      "explanation": "Open-ended questions invite fuller responses and let the speaker steer the depth and direction of their answer.",
+      "theory": "Open-ended questions begin with words like what, how, or tell me, and cannot be answered with a single word. They encourage the speaker to elaborate and reveal more context. Closed and leading questions tend to shut down or steer the conversation."
+    },
+    {
+      "id": "interpersonal-listening-a-1",
+      "areaKey": "listening",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "In a tense meeting, a stakeholder's words say 'It's fine' but their tone is clipped and arms are crossed. What does skilled listening call for?",
+      "options": [
+        "Gently naming the mismatch: 'You say it's fine, but I sense some hesitation—what's on your mind?'",
+        "Taking 'it's fine' at face value and moving on",
+        "Pointing out publicly that their body language is negative",
+        "Ignoring the cue to avoid making things awkward"
+      ],
+      "correctIndex": 0,
+      "explanation": "Gently surfacing the gap between words and nonverbal cues invites honesty without putting the person on the defensive.",
+      "theory": "When verbal and nonverbal messages conflict, the nonverbal signal often carries the truer feeling. Skilled listeners tactfully name the discrepancy to invite the real concern into the open. Doing this privately and curiously, rather than accusingly, preserves the person's dignity."
+    },
+    {
+      "id": "interpersonal-listening-a-2",
+      "areaKey": "listening",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "You notice you're mentally rehearsing your rebuttal while a colleague is still talking. What's the most effective self-correction?",
+      "options": [
+        "Refocus attention on understanding their point before forming any response",
+        "Interrupt now so you don't forget your counterargument",
+        "Tune out and wait for them to finish so you can speak",
+        "Write down your rebuttal in detail as they talk"
+      ],
+      "correctIndex": 0,
+      "explanation": "Listening to understand rather than to reply is what makes comprehension and connection possible.",
+      "theory": "A common barrier to listening is preparing your response instead of absorbing the other person's message. This 'listening to reply' splits your attention and causes you to miss meaning. The fix is to suspend your own agenda and prioritize understanding first."
+    },
+    {
+      "id": "interpersonal-feedback-b-1",
+      "areaKey": "feedback",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which feedback is most useful because it focuses on specific behavior?",
+      "options": [
+        "In the meeting you interrupted Sam twice before he finished his point.",
+        "You're kind of rude in meetings.",
+        "You have a bad attitude.",
+        "People don't really like working with you."
+      ],
+      "correctIndex": 0,
+      "explanation": "Naming the specific observable behavior makes the feedback clear and actionable rather than a vague character judgment.",
+      "theory": "Effective feedback targets specific behaviors, not personality or character. Describing exactly what happened ('you interrupted twice') gives the person something concrete to change. Vague labels like 'rude' or 'bad attitude' feel like attacks and offer no clear path forward."
+    },
+    {
+      "id": "interpersonal-feedback-b-2",
+      "areaKey": "feedback",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Positive feedback should also be specific, not just a general 'good job.'",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Specific praise tells the person exactly what to keep doing, making it more meaningful and reinforcing than a vague compliment.",
+      "theory": "Feedback principles apply to praise as well as criticism. Specific positive feedback, such as naming the exact action that helped, reinforces the behavior you want repeated. A generic 'good job' feels nice but gives little guidance on what to continue."
+    },
+    {
+      "id": "interpersonal-feedback-i-1",
+      "areaKey": "feedback",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A report missed a deadline. Which opener delivers the concern most constructively?",
+      "options": [
+        "When the report came in two days late, I had to delay the client update.",
+        "You always miss your deadlines.",
+        "Why can't you ever get things in on time?",
+        "You made me look bad in front of the client."
+      ],
+      "correctIndex": 0,
+      "explanation": "An 'I' statement tied to a specific event and its impact avoids blame while clearly communicating the consequence.",
+      "theory": "'I' statements describe the situation, your reaction, and the impact without accusing the other person. Phrasing like 'when X happened, the effect was Y' keeps focus on facts and consequences. This reduces defensiveness compared with 'you' accusations and absolutes like 'always.'"
+    },
+    {
+      "id": "interpersonal-feedback-i-2",
+      "areaKey": "feedback",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "When is feedback generally most effective?",
+      "options": [
+        "Soon after the event, in a private and appropriate setting",
+        "Saved up and delivered all at once in the annual review",
+        "Immediately, in front of the whole team for emphasis",
+        "Only when the person specifically asks for it"
+      ],
+      "correctIndex": 0,
+      "explanation": "Timely, private feedback lets the person recall and act on the specifics while protecting their dignity.",
+      "theory": "Feedback works best when it is timely, given close enough to the event that details are fresh. Corrective feedback should typically be delivered privately to avoid embarrassment. Saving issues for a single annual review makes them harder to recall and to address."
+    },
+    {
+      "id": "interpersonal-feedback-a-1",
+      "areaKey": "feedback",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A high performer reacts defensively to your corrective feedback. What's the best next move?",
+      "options": [
+        "Acknowledge their reaction and ask for their perspective on the situation",
+        "Repeat your point more firmly until they accept it",
+        "Drop the issue to keep the peace",
+        "Remind them of your authority to give the feedback"
+      ],
+      "correctIndex": 0,
+      "explanation": "Inviting their perspective turns feedback into a two-way dialogue and lowers defensiveness so the message can land.",
+      "theory": "Feedback is most effective as a dialogue, not a verdict. When someone reacts defensively, acknowledging their emotion and seeking their view helps them feel respected and reduces threat. This collaborative stance increases the odds they will actually consider the feedback."
+    },
+    {
+      "id": "interpersonal-feedback-a-2",
+      "areaKey": "feedback",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Why is the traditional 'praise-criticism-praise sandwich' often criticized as a feedback method?",
+      "options": [
+        "It can dilute the core message and make praise feel insincere",
+        "It is too direct and harsh for most people",
+        "It removes all positive feedback from the conversation",
+        "It only works in written form, never in person"
+      ],
+      "correctIndex": 0,
+      "explanation": "Burying criticism between compliments can obscure the real point and train people to distrust your praise.",
+      "theory": "The feedback sandwich aims to soften criticism but often backfires. Recipients may miss the actual concern or learn to brace whenever they hear praise, eroding its value. Clear, respectful, direct feedback that separates genuine praise from development points is usually more honest and effective."
+    },
+    {
+      "id": "interpersonal-negotiation-b-1",
+      "areaKey": "negotiation",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "In negotiation, what is the difference between a position and an interest?",
+      "options": [
+        "A position is what someone demands; an interest is the underlying need behind it",
+        "A position is flexible; an interest is fixed and non-negotiable",
+        "They mean the same thing in practice",
+        "A position is the other side's need; an interest is your own demand"
+      ],
+      "correctIndex": 0,
+      "explanation": "Positions are the stated demands, while interests are the deeper motivations that often allow for creative solutions.",
+      "theory": "A position is the specific thing a party says they want, such as a price or deadline. An interest is the underlying need or concern driving that demand. Focusing on interests rather than positions opens room for solutions that satisfy both sides."
+    },
+    {
+      "id": "interpersonal-negotiation-b-2",
+      "areaKey": "negotiation",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Your BATNA is your best alternative to a negotiated agreement—what you'll do if no deal is reached.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "BATNA stands for Best Alternative To a Negotiated Agreement and defines your fallback if the talk fails.",
+      "theory": "BATNA is the course of action you'll take if the negotiation produces no agreement. Knowing your BATNA tells you when to accept a deal and when to walk away. A strong BATNA gives you more leverage and confidence at the table."
+    },
+    {
+      "id": "interpersonal-negotiation-i-1",
+      "areaKey": "negotiation",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Two teams both claim they need the single shared meeting room at 10 a.m. What's the most interest-based approach?",
+      "options": [
+        "Ask each team why they need that slot to find a solution that meets both needs",
+        "Give it to whoever asked first and tell the other to deal with it",
+        "Split the room in half so each gets part of it",
+        "Flip a coin to decide who gets the room"
+      ],
+      "correctIndex": 0,
+      "explanation": "Exploring the reasons behind each demand can reveal options, like a different time or format, that satisfy both teams.",
+      "theory": "When positions clash, asking 'why' uncovers the underlying interests. One team may need the room for a client call while the other just needs any quiet space. Understanding these differences often reveals a solution neither side saw from their stated positions."
+    },
+    {
+      "id": "interpersonal-negotiation-i-2",
+      "areaKey": "negotiation",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does it mean to use objective criteria in a negotiation?",
+      "options": [
+        "Grounding the deal in fair, independent standards like market rates or data",
+        "Insisting on whatever number you decided in advance",
+        "Letting the more senior person set all the terms",
+        "Splitting every difference exactly down the middle"
+      ],
+      "correctIndex": 0,
+      "explanation": "Objective criteria let both parties measure fairness against an external standard instead of a contest of wills.",
+      "theory": "Principled negotiation favors objective criteria such as market value, expert opinion, or precedent. Anchoring terms to independent standards makes outcomes feel fair and defensible. This shifts the discussion from a battle of stubbornness to a search for a legitimate benchmark."
+    },
+    {
+      "id": "interpersonal-negotiation-a-1",
+      "areaKey": "negotiation",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A counterpart opens with an extreme, aggressive demand to anchor the talk. What's the strongest response?",
+      "options": [
+        "Refuse to treat the anchor as legitimate and re-anchor with your own well-justified standard",
+        "Immediately counter near their number to seem reasonable",
+        "Accept it to avoid conflict and preserve the relationship",
+        "Walk out of the negotiation entirely on principle"
+      ],
+      "correctIndex": 0,
+      "explanation": "Declining to engage with an extreme anchor and offering your own criteria-based number prevents the demand from skewing the deal.",
+      "theory": "Anchoring is a tactic where the first number strongly influences the final outcome. To counter an extreme anchor, you avoid negotiating off of it and instead introduce your own figure backed by objective criteria. This resets the frame around fairness rather than the other side's extreme."
+    },
+    {
+      "id": "interpersonal-negotiation-a-2",
+      "areaKey": "negotiation",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "How can a negotiator create a more integrative (win-win) outcome rather than a purely distributive one?",
+      "options": [
+        "Identify differing priorities and trade across issues so each side gains on what matters most to them",
+        "Focus on claiming the largest possible share of a fixed pie",
+        "Hide all information so the other side can't gain leverage",
+        "Make concessions only when threatened"
+      ],
+      "correctIndex": 0,
+      "explanation": "Trading across issues that each side values differently expands the total value rather than just dividing a fixed amount.",
+      "theory": "Distributive negotiation treats value as a fixed pie to be divided, while integrative negotiation expands it. By sharing priorities and trading low-value-to-you items for high-value-to-you ones, both parties can gain. Logrolling across issues with different importance to each side is a key way to create joint value."
+    },
+    {
+      "id": "interpersonal-conflict-b-1",
+      "areaKey": "conflict",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A colleague comes to you visibly upset about a decision. What should you do first?",
+      "options": [
+        "Acknowledge their emotion before discussing the facts of the decision",
+        "Immediately explain why the decision was correct",
+        "Tell them not to take it personally",
+        "List all the reasons their reaction is an overreaction"
+      ],
+      "correctIndex": 0,
+      "explanation": "Acknowledging the emotion first helps the person feel heard and calms them enough to discuss the issue productively.",
+      "theory": "When someone is emotional, addressing the feeling comes before solving the problem. Acknowledging emotion ('I can see this really frustrated you') helps the person feel understood. Only once they feel heard are they ready to engage with facts and solutions."
+    },
+    {
+      "id": "interpersonal-conflict-b-2",
+      "areaKey": "conflict",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Empathy means agreeing with the other person's point of view.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "explanation": "Empathy is understanding and acknowledging another's feelings and perspective, which is distinct from agreeing with them.",
+      "theory": "Empathy is the ability to understand and share the feelings of another person. You can empathize with someone's frustration without agreeing that their conclusion is correct. Separating understanding from agreement lets you connect even during disagreement."
+    },
+    {
+      "id": "interpersonal-conflict-i-1",
+      "areaKey": "conflict",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Two teammates are in an escalating argument and both turn to you. What's the most de-escalating move?",
+      "options": [
+        "Acknowledge both viewpoints and refocus on the shared goal they both care about",
+        "Side with whoever has the stronger argument",
+        "Tell them both to calm down and stop being dramatic",
+        "Leave them to sort it out so you stay neutral"
+      ],
+      "correctIndex": 0,
+      "explanation": "Validating both perspectives and reorienting toward a common goal lowers defensiveness and creates room for resolution.",
+      "theory": "De-escalation often starts with making each party feel heard rather than picking a winner. Naming the common goal reminds both people they are on the same side. Telling people to 'calm down' usually backfires by dismissing their feelings."
+    },
+    {
+      "id": "interpersonal-conflict-i-2",
+      "areaKey": "conflict",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Which statement best reflects empathy toward a frustrated customer?",
+      "options": [
+        "I understand why this delay is frustrating—let's figure out how to fix it.",
+        "There's nothing I can do, it's company policy.",
+        "Calm down, it's really not a big deal.",
+        "Other customers don't seem to have this problem."
+      ],
+      "correctIndex": 0,
+      "explanation": "Naming and validating the customer's frustration before moving to a solution shows genuine empathy and builds trust.",
+      "theory": "Empathic responses name the other person's feeling and signal that it makes sense. This validation reduces defensiveness and shows you're on their side. Dismissive replies that minimize or deflect tend to escalate frustration instead."
+    },
+    {
+      "id": "interpersonal-conflict-a-1",
+      "areaKey": "conflict",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A long-running conflict persists because each side keeps restating its demands. What's the most effective intervention?",
+      "options": [
+        "Shift the conversation from positions to the underlying interests and needs of each side",
+        "Have the more senior person simply decide the outcome",
+        "Encourage both sides to compromise halfway on every point",
+        "Avoid the topic until tensions cool on their own"
+      ],
+      "correctIndex": 0,
+      "explanation": "Surfacing the underlying needs behind entrenched demands reveals common ground and options that repeated positions hide.",
+      "theory": "Entrenched conflicts often stall because parties argue positions rather than interests. Reframing toward the needs and concerns beneath those positions opens space for creative, mutually acceptable solutions. This separates the people from the problem and turns adversaries into joint problem-solvers."
+    },
+    {
+      "id": "interpersonal-conflict-a-2",
+      "areaKey": "conflict",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "You realize your own strong emotions are clouding your judgment during a heated disagreement. What's the most emotionally intelligent response?",
+      "options": [
+        "Pause to name and regulate your own reaction before continuing the conversation",
+        "Push through and make your point while the emotion is strong",
+        "Blame the other person for provoking your reaction",
+        "Suppress the feeling entirely and pretend it isn't there"
+      ],
+      "correctIndex": 0,
+      "explanation": "Recognizing and regulating your own emotion first restores the clear thinking needed to handle the conflict constructively.",
+      "theory": "Self-awareness and self-regulation are core to emotional intelligence in conflict. Noticing your own emotional state and taking a brief pause prevents reactive escalation. Naming a feeling to yourself helps tame it, restoring your ability to respond thoughtfully rather than react."
+    }
+  ]
+}

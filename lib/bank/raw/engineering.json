@@ -1,0 +1,275 @@
+{
+  "skillId": "engineering",
+  "areas": [
+    { "key": "mechanics", "name": "Mechanics & Forces" },
+    { "key": "circuits", "name": "Circuits & Electronics" },
+    { "key": "algorithms", "name": "Algorithms & Computing" },
+    { "key": "reliability", "name": "Units & Reliability" }
+  ],
+  "questions": [
+    {
+      "id": "engineering-mechanics-b-1",
+      "areaKey": "mechanics",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A constant net force of 10 N acts on a 2 kg cart on a frictionless surface. Using Newton's second law (F = m * a), what is the cart's acceleration?",
+      "options": ["5 m/s^2", "20 m/s^2", "0.2 m/s^2", "12 m/s^2"],
+      "correctIndex": 0,
+      "explanation": "Acceleration is force divided by mass, so a = 10 N / 2 kg = 5 m/s^2.",
+      "theory": "Newton's second law states that net force equals mass times acceleration (F = m * a). Solving for acceleration gives a = F / m. The unit newton is defined so that 1 N accelerates 1 kg at 1 m/s^2."
+    },
+    {
+      "id": "engineering-mechanics-b-2",
+      "areaKey": "mechanics",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or false: The weight of an object equals its mass multiplied by the local gravitational acceleration g.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Weight is the gravitational force on a mass, given by W = m * g.",
+      "theory": "Mass is the amount of matter in an object and is the same everywhere. Weight is a force caused by gravity acting on that mass, calculated as W = m * g. On Earth g is about 9.81 m/s^2, so a 1 kg mass weighs about 9.81 N."
+    },
+    {
+      "id": "engineering-mechanics-i-1",
+      "areaKey": "mechanics",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A force of 20 N is applied at the end of a wrench 0.25 m long, perpendicular to the handle. What torque does it produce about the bolt?",
+      "options": ["5 N*m", "80 N*m", "0.0125 N*m", "20.25 N*m"],
+      "correctIndex": 0,
+      "explanation": "Torque equals force times perpendicular lever arm, so 20 N * 0.25 m = 5 N*m.",
+      "theory": "Torque is the rotational effect of a force, calculated as the force multiplied by the perpendicular distance from the pivot (tau = F * r). It is measured in newton-meters. A longer lever arm produces more torque for the same applied force."
+    },
+    {
+      "id": "engineering-mechanics-i-2",
+      "areaKey": "mechanics",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A 4 kg object moves at 3 m/s. What is its kinetic energy, using KE = (1/2) * m * v^2?",
+      "options": ["18 J", "36 J", "12 J", "6 J"],
+      "correctIndex": 0,
+      "explanation": "KE = 0.5 * 4 kg * (3 m/s)^2 = 0.5 * 4 * 9 = 18 J.",
+      "theory": "Kinetic energy is the energy of motion, given by KE = (1/2) * m * v^2. Because velocity is squared, doubling the speed quadruples the kinetic energy. Energy is measured in joules (J), where 1 J = 1 kg*m^2/s^2."
+    },
+    {
+      "id": "engineering-mechanics-a-1",
+      "areaKey": "mechanics",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A steel rod can withstand a maximum (ultimate) tensile stress of 400 MPa. If the working stress in service is 100 MPa, what is the factor of safety?",
+      "options": ["4", "0.25", "300", "40"],
+      "correctIndex": 0,
+      "explanation": "Factor of safety is ultimate stress divided by working stress, so 400 MPa / 100 MPa = 4.",
+      "theory": "The factor of safety is the ratio of a material's failure strength to the actual stress it experiences in use. A value greater than 1 means the design has margin before failure. Engineers pick larger factors when loads are uncertain or failure would be dangerous."
+    },
+    {
+      "id": "engineering-mechanics-a-2",
+      "areaKey": "mechanics",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A simply supported beam carries a single central point load of 600 N over a span of 4 m. What is the maximum bending moment at the center, given M = (P * L) / 4?",
+      "options": ["600 N*m", "2400 N*m", "150 N*m", "300 N*m"],
+      "correctIndex": 0,
+      "explanation": "M = (P * L) / 4 = (600 N * 4 m) / 4 = 600 N*m.",
+      "theory": "For a simply supported beam with a central point load, the maximum bending moment occurs at midspan and equals (P * L) / 4. Bending moment measures the internal turning effect that tends to bend the beam. It is largest where the beam is most likely to fail in bending."
+    },
+    {
+      "id": "engineering-circuits-b-1",
+      "areaKey": "circuits",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A 12 V battery is connected across a 4 ohm resistor. Using Ohm's law (V = I * R), what current flows through the resistor?",
+      "options": ["3 A", "48 A", "0.33 A", "16 A"],
+      "correctIndex": 0,
+      "explanation": "Current is voltage divided by resistance, so I = 12 V / 4 ohm = 3 A.",
+      "theory": "Ohm's law relates voltage, current, and resistance as V = I * R. Rearranged, current equals voltage divided by resistance (I = V / R). For a fixed voltage, a smaller resistance allows a larger current to flow."
+    },
+    {
+      "id": "engineering-circuits-b-2",
+      "areaKey": "circuits",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or false: In a series circuit, the same current flows through every component.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "A series circuit provides a single path, so the current is identical through all components.",
+      "theory": "In a series circuit, components are connected end to end forming one path for current. Because there is only one path, the current is the same everywhere in the loop. The supply voltage divides across the components in proportion to their resistances."
+    },
+    {
+      "id": "engineering-circuits-i-1",
+      "areaKey": "circuits",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Two resistors of 6 ohm and 3 ohm are connected in parallel. What is their equivalent resistance?",
+      "options": ["2 ohm", "9 ohm", "4.5 ohm", "18 ohm"],
+      "correctIndex": 0,
+      "explanation": "For parallel resistors, 1/R = 1/6 + 1/3 = 1/2, so R = 2 ohm.",
+      "theory": "Resistors in parallel share the same voltage but split the current. The equivalent resistance is found from 1/R = 1/R1 + 1/R2. The result is always smaller than the smallest individual resistor because there are more paths for current."
+    },
+    {
+      "id": "engineering-circuits-i-2",
+      "areaKey": "circuits",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A device draws 2 A at 120 V. What is its power consumption, using P = V * I?",
+      "options": ["240 W", "60 W", "122 W", "480 W"],
+      "correctIndex": 0,
+      "explanation": "Power equals voltage times current, so P = 120 V * 2 A = 240 W.",
+      "theory": "Electrical power is the rate of energy use, given by P = V * I. It is measured in watts, where 1 W = 1 J/s. Combined with Ohm's law, power can also be written as P = I^2 * R or P = V^2 / R."
+    },
+    {
+      "id": "engineering-circuits-a-1",
+      "areaKey": "circuits",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "An RC circuit has R = 10 kohm and C = 100 uF. What is its time constant (tau = R * C)?",
+      "options": ["1 s", "0.1 s", "10 s", "0.001 s"],
+      "correctIndex": 0,
+      "explanation": "tau = R * C = 10000 ohm * 0.0001 F = 1 s.",
+      "theory": "The time constant of an RC circuit is tau = R * C and sets how fast a capacitor charges or discharges. After one time constant the capacitor reaches about 63 percent of its final voltage. Using SI units (ohms and farads) gives the result directly in seconds."
+    },
+    {
+      "id": "engineering-circuits-a-2",
+      "areaKey": "circuits",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A resistor carries 0.5 A and has 8 ohm of resistance. Using P = I^2 * R, how much power does it dissipate as heat?",
+      "options": ["2 W", "4 W", "16 W", "0.25 W"],
+      "correctIndex": 0,
+      "explanation": "P = I^2 * R = (0.5)^2 * 8 = 0.25 * 8 = 2 W.",
+      "theory": "Power dissipated in a resistor can be computed as P = I^2 * R, which follows from combining P = V * I with Ohm's law V = I * R. This heat-generating loss is called Joule heating. Because current is squared, doubling the current quadruples the dissipated power."
+    },
+    {
+      "id": "engineering-algorithms-b-1",
+      "areaKey": "algorithms",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the time complexity of a linear search through an unsorted array of n elements in the worst case?",
+      "options": ["O(n)", "O(1)", "O(log n)", "O(n^2)"],
+      "correctIndex": 0,
+      "explanation": "In the worst case linear search checks every one of the n elements, giving O(n).",
+      "theory": "Linear search scans elements one by one until it finds the target or reaches the end. In the worst case the target is last or absent, requiring all n comparisons. This makes its time complexity O(n), meaning runtime grows in proportion to the input size."
+    },
+    {
+      "id": "engineering-algorithms-b-2",
+      "areaKey": "algorithms",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or false: Binary search requires the input array to be sorted beforehand.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Binary search relies on order to discard half the search space each step, so the data must be sorted.",
+      "theory": "Binary search repeatedly compares the target to the middle element and eliminates half of the remaining elements. This halving only works if the array is sorted so that the discarded half cannot contain the target. Its time complexity is O(log n)."
+    },
+    {
+      "id": "engineering-algorithms-i-1",
+      "areaKey": "algorithms",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the average and worst-case time complexity of binary search on a sorted array of n elements?",
+      "options": ["O(log n)", "O(n)", "O(1)", "O(n log n)"],
+      "correctIndex": 0,
+      "explanation": "Binary search halves the search space each step, so it takes about log base 2 of n steps, giving O(log n).",
+      "theory": "Each comparison in binary search removes half of the remaining candidates. The number of halvings needed to reduce n elements to one is log base 2 of n. Therefore both the average and worst-case time complexity is O(log n)."
+    },
+    {
+      "id": "engineering-algorithms-i-2",
+      "areaKey": "algorithms",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Which data structure follows Last-In First-Out (LIFO) order, where the most recently added item is removed first?",
+      "options": ["Stack", "Queue", "Linked list", "Hash table"],
+      "correctIndex": 0,
+      "explanation": "A stack adds and removes elements at the same end, so the last item pushed is the first popped.",
+      "theory": "A stack is a linear data structure with push and pop operations at one end, giving Last-In First-Out behavior. A queue, by contrast, is First-In First-Out. Stacks are used for function call management, undo features, and expression evaluation."
+    },
+    {
+      "id": "engineering-algorithms-a-1",
+      "areaKey": "algorithms",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What is the average-case time complexity of the merge sort algorithm when sorting n elements?",
+      "options": ["O(n log n)", "O(n^2)", "O(n)", "O(log n)"],
+      "correctIndex": 0,
+      "explanation": "Merge sort splits into log n levels and does O(n) work merging at each level, giving O(n log n).",
+      "theory": "Merge sort recursively divides the array in half until single elements remain, then merges sorted halves. There are about log base 2 of n levels of division, and each level requires O(n) work to merge. The total is O(n log n) in the best, average, and worst cases."
+    },
+    {
+      "id": "engineering-algorithms-a-2",
+      "areaKey": "algorithms",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A nested loop iterates j from 0 to n for each i from 0 to n, doing constant work inside. What is the overall time complexity?",
+      "options": ["O(n^2)", "O(n)", "O(2n)", "O(n log n)"],
+      "correctIndex": 0,
+      "explanation": "The inner loop runs n times for each of the n outer iterations, giving n * n = O(n^2) operations.",
+      "theory": "When one loop is nested inside another and each runs n times, the total iterations multiply to n^2. Constant work inside the loops does not change the order of growth. This quadratic behavior is written O(n^2) and scales poorly for large n."
+    },
+    {
+      "id": "engineering-reliability-b-1",
+      "areaKey": "reliability",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "How many milliamperes (mA) are in 2.5 amperes (A)?",
+      "options": ["2500 mA", "250 mA", "25 mA", "0.0025 mA"],
+      "correctIndex": 0,
+      "explanation": "The prefix milli means one-thousandth, so 2.5 A * 1000 = 2500 mA.",
+      "theory": "SI prefixes scale base units by powers of ten. The prefix milli (m) means one-thousandth, so 1 A equals 1000 mA. To convert from amperes to milliamperes you multiply by 1000."
+    },
+    {
+      "id": "engineering-reliability-b-2",
+      "areaKey": "reliability",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or false: One kilometer equals 1000 meters.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "The prefix kilo means one thousand, so 1 km = 1000 m.",
+      "theory": "In the SI system the prefix kilo (k) multiplies a base unit by one thousand. Thus one kilometer is 1000 meters and one kilogram is 1000 grams. Recognizing prefixes lets you convert between unit scales reliably."
+    },
+    {
+      "id": "engineering-reliability-i-1",
+      "areaKey": "reliability",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A system is available 23.76 hours out of every 24-hour day. What is its availability expressed as a percentage?",
+      "options": ["99%", "90%", "97.6%", "95%"],
+      "correctIndex": 0,
+      "explanation": "Availability = 23.76 / 24 = 0.99, which is 99%.",
+      "theory": "Availability is the fraction of time a system is operational, computed as uptime divided by total time. Multiplying by 100 expresses it as a percentage. A value of 99% corresponds to roughly 0.24 hours (about 14 minutes) of downtime per day."
+    },
+    {
+      "id": "engineering-reliability-i-2",
+      "areaKey": "reliability",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Convert a pressure of 2 kilopascals (kPa) to pascals (Pa).",
+      "options": ["2000 Pa", "200 Pa", "20000 Pa", "0.002 Pa"],
+      "correctIndex": 0,
+      "explanation": "The prefix kilo means one thousand, so 2 kPa = 2 * 1000 = 2000 Pa.",
+      "theory": "The pascal (Pa) is the SI unit of pressure, equal to one newton per square meter. The prefix kilo multiplies by one thousand, so 1 kPa = 1000 Pa. Converting 2 kPa therefore gives 2000 Pa."
+    },
+    {
+      "id": "engineering-reliability-a-1",
+      "areaKey": "reliability",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A service must meet 99.9% availability over a 30-day month (720 hours). What is the maximum allowed downtime?",
+      "options": ["About 43.2 minutes", "About 7.2 hours", "About 4.32 minutes", "About 72 minutes"],
+      "correctIndex": 0,
+      "explanation": "Allowed downtime = 0.001 * 720 h = 0.72 h = 43.2 minutes.",
+      "theory": "Allowed downtime equals the unavailability fraction times the total period. For 99.9% availability the unavailability is 0.1%, or 0.001. Over 720 hours this is 0.72 hours, which is about 43.2 minutes per month."
+    },
+    {
+      "id": "engineering-reliability-a-2",
+      "areaKey": "reliability",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A component has a mean time between failures (MTBF) of 1000 hours and a mean time to repair (MTTR) of 10 hours. What is its steady-state availability, using MTBF / (MTBF + MTTR)?",
+      "options": ["About 99.0%", "About 90.0%", "About 99.9%", "About 50.0%"],
+      "correctIndex": 0,
+      "explanation": "Availability = 1000 / (1000 + 10) = 1000 / 1010 = 0.990, or about 99.0%.",
+      "theory": "Steady-state availability is the fraction of time a repairable system is working, given by MTBF / (MTBF + MTTR). MTBF measures how long the system runs between failures and MTTR measures how long repairs take. Increasing MTBF or reducing MTTR raises availability."
+    }
+  ]
+}

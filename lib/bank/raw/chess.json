@@ -1,0 +1,275 @@
+{
+  "skillId": "chess",
+  "areas": [
+    { "key": "openings", "name": "Openings & Principles" },
+    { "key": "tactics", "name": "Tactics" },
+    { "key": "endgames", "name": "Endgames" },
+    { "key": "strategy", "name": "Strategy & Planning" }
+  ],
+  "questions": [
+    {
+      "id": "chess-openings-b-1",
+      "areaKey": "openings",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which of these is a core opening principle in chess?",
+      "options": ["Control the center", "Move the same piece many times", "Bring the queen out immediately", "Push every pawn forward"],
+      "correctIndex": 0,
+      "explanation": "Controlling the central squares gives your pieces maximum mobility and influence.",
+      "theory": "The center (the e4, d4, e5, and d5 squares) is the most valuable real estate on the board. Pieces placed near or controlling the center reach more squares and react faster to threats. Classic openings begin with central pawn moves like 1.e4 or 1.d4 for this reason."
+    },
+    {
+      "id": "chess-openings-b-2",
+      "areaKey": "openings",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or False: It is generally good to castle early in the opening to keep your king safe.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Castling tucks the king behind a pawn shield and connects the rooks, so doing it early is sound.",
+      "theory": "Castling moves the king to a safer corner and brings a rook toward the center in a single move. Leaving the king in the center too long exposes it to attacks down open files. Most opening plans aim to castle within the first ten moves."
+    },
+    {
+      "id": "chess-openings-i-1",
+      "areaKey": "openings",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "After 1.e4 e5 2.Nf3 Nc6 3.Bb5, which famous opening has been reached?",
+      "options": ["Ruy Lopez (Spanish Opening)", "Italian Game", "Sicilian Defense", "French Defense"],
+      "correctIndex": 0,
+      "explanation": "The bishop move to b5, pressuring the knight defending e5, defines the Ruy Lopez.",
+      "theory": "The Ruy Lopez, or Spanish Opening, arises after 1.e4 e5 2.Nf3 Nc6 3.Bb5. White pins pressure on the c6 knight that supports the e5 pawn, creating long-term positional tension. It is one of the oldest and most deeply studied openings in chess."
+    },
+    {
+      "id": "chess-openings-i-2",
+      "areaKey": "openings",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the main idea behind a gambit such as the King's Gambit (1.e4 e5 2.f4)?",
+      "options": ["Sacrifice a pawn to gain rapid development and open lines", "Trade queens as quickly as possible", "Avoid moving any pawns in the center", "Force an immediate draw"],
+      "correctIndex": 0,
+      "explanation": "A gambit gives up material, usually a pawn, in exchange for faster development and attacking chances.",
+      "theory": "A gambit offers material, most often a pawn, to accelerate piece development and open lines toward the enemy king. The attacking side hopes the initiative outweighs the lost pawn. If the defender survives the early pressure, the extra material can decide the endgame."
+    },
+    {
+      "id": "chess-openings-a-1",
+      "areaKey": "openings",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "In the Sicilian Defense, why does Black often accept a slightly cramped position with moves like ...d6 and ...e6?",
+      "options": ["To create an asymmetrical structure with strong counterattacking chances on the queenside", "To force an immediate queen trade", "To avoid ever moving a knight", "To guarantee a symmetrical pawn structure"],
+      "correctIndex": 0,
+      "explanation": "By answering 1.e4 with 1...c5, Black creates an unbalanced position aiming for active counterplay, often on the queenside.",
+      "theory": "The Sicilian (1.e4 c5) trades central symmetry for a half-open c-file and queenside counterplay. Black often accepts a spatial disadvantage in return for dynamic, unbalanced positions where both sides play for a win. It is the most popular response to 1.e4 at the top level for exactly this fighting character."
+    },
+    {
+      "id": "chess-openings-a-2",
+      "areaKey": "openings",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "True or False: In closed openings, it is acceptable to delay development to first establish a strong pawn structure, whereas in open positions rapid development is more urgent.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Open positions punish slow development sharply, while closed structures grant more time for maneuvering.",
+      "theory": "When the center is open, lines are available for pieces to strike quickly, so a lead in development can be decisive and even justify sacrifices. In closed positions the locked pawns blunt direct attacks, allowing slower maneuvering plans. Reading whether a position is open or closed guides how urgently you must develop."
+    },
+    {
+      "id": "chess-tactics-b-1",
+      "areaKey": "tactics",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A single knight attacks both the enemy king and queen at the same time. What is this tactic called?",
+      "options": ["Fork", "Pin", "Skewer", "Zugzwang"],
+      "correctIndex": 0,
+      "explanation": "One piece attacking two or more enemy pieces simultaneously is a fork.",
+      "theory": "A fork is a double attack from a single piece, hitting two or more targets at once. Knights are especially good at forking because their unusual movement is hard to block. When the king is one of the forked pieces, the opponent must move it and you win the other target."
+    },
+    {
+      "id": "chess-tactics-b-2",
+      "areaKey": "tactics",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A bishop attacks a knight, and behind that knight on the same line sits the king, so the knight cannot move. What is this called?",
+      "options": ["A pin", "A fork", "A discovered check", "A stalemate"],
+      "correctIndex": 0,
+      "explanation": "A piece pinned against the king is absolutely pinned and may not legally move.",
+      "theory": "A pin occurs when a piece cannot move because doing so would expose a more valuable piece behind it. When the piece behind is the king, the pin is absolute and the pinned piece is frozen entirely. Pins restrict the opponent and set up follow-up attacks on the immobilized piece."
+    },
+    {
+      "id": "chess-tactics-i-1",
+      "areaKey": "tactics",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A rook attacks the enemy king, and when the king moves out of check, a more valuable queen standing behind it on the same line is captured. What is this tactic called?",
+      "options": ["Skewer", "Pin", "Fork", "Interference"],
+      "correctIndex": 0,
+      "explanation": "A skewer is like a reversed pin: the more valuable piece is in front and forced to move, exposing the piece behind.",
+      "theory": "A skewer attacks a valuable piece that is forced to move, exposing a less valuable piece behind it on the same line. It is the inverse of a pin, where the more valuable piece sits behind. Skewers are delivered by line pieces: rooks, bishops, and queens."
+    },
+    {
+      "id": "chess-tactics-i-2",
+      "areaKey": "tactics",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You move a knight that was blocking your bishop, and the bishop now gives check while the knight also captures a piece. What general tactic is this?",
+      "options": ["Discovered attack", "Back-rank mate", "Stalemate", "Underpromotion"],
+      "correctIndex": 0,
+      "explanation": "Moving one piece to unveil an attack from another behind it is a discovered attack, and when it gives check it is doubly dangerous.",
+      "theory": "A discovered attack happens when moving one piece uncovers an attack from a piece behind it. The moving piece can make its own threat at the same time, creating a double attack. A discovered check is especially powerful because the opponent must address the check, leaving the moving piece free to capture."
+    },
+    {
+      "id": "chess-tactics-a-1",
+      "areaKey": "tactics",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A sacrifice that removes or diverts the only defender of a key square or piece is best described as which tactical theme?",
+      "options": ["Deflection / removing the defender", "The opposition", "Triangulation", "Fianchetto"],
+      "correctIndex": 0,
+      "explanation": "Deflection forces a defending piece away from its duty, after which the undefended target falls.",
+      "theory": "Deflection, also called removing the defender, lures or forces a piece away from a square or piece it is guarding. Once the defender is gone, a follow-up move wins material or delivers mate. Recognizing which enemy piece is overworked is the key to spotting these combinations."
+    },
+    {
+      "id": "chess-tactics-a-2",
+      "areaKey": "tactics",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "True or False: A back-rank mate exploits a king trapped on its starting rank by its own unmoved pawns, allowing a rook or queen to deliver checkmate along that rank.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "When the pawns in front of a castled king have not moved, an invading rook or queen on the back rank can checkmate.",
+      "theory": "A back-rank mate occurs when a king is boxed in on its home rank by its own pawns and has no escape squares. A rook or queen delivering check along that rank then gives checkmate. Players often prevent it by making a 'luft' move, advancing a pawn to give the king an escape square."
+    },
+    {
+      "id": "chess-endgames-b-1",
+      "areaKey": "endgames",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which pieces are sufficient, together with the king, to force checkmate against a lone king?",
+      "options": ["King and queen", "King and single knight", "King and single bishop", "Two knights (no other pieces)"],
+      "correctIndex": 0,
+      "explanation": "A king and queen can force mate against a lone king, while a single minor piece or two knights cannot.",
+      "theory": "Basic checkmates are a core endgame skill: king and queen, or king and rook, can force mate against a lone king. A king with only one bishop or one knight has insufficient material to mate. Two knights cannot force mate against a bare king either, making the queen and rook the reliable mating pieces."
+    },
+    {
+      "id": "chess-endgames-b-2",
+      "areaKey": "endgames",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or False: In the endgame, it becomes important and usually safe to activate your king and use it as a fighting piece.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "With few pieces left, the king faces little mating danger and becomes a strong attacker and defender.",
+      "theory": "In the middlegame the king must hide from attacks, but as pieces are traded off the danger of mate drops sharply. In the endgame the king becomes a powerful piece, roughly as strong as a minor piece, and should march toward the action. Centralizing the king is often the single most important endgame idea."
+    },
+    {
+      "id": "chess-endgames-i-1",
+      "areaKey": "endgames",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "In king and pawn endgames, what does 'the opposition' refer to?",
+      "options": ["Placing your king directly facing the enemy king with one square between them, forcing the other king to give way", "Putting both rooks on the same file", "Trading queens to simplify", "Promoting a pawn to a knight"],
+      "correctIndex": 0,
+      "explanation": "Holding the opposition forces the opposing king to step aside, letting your king gain key squares.",
+      "theory": "The opposition is a king-and-pawn endgame technique where the kings stand on the same line with one square between them, and it is the opponent's move. The side not having to move holds the opposition and can outflank the enemy king. Winning the opposition often decides whether a pawn can promote."
+    },
+    {
+      "id": "chess-endgames-i-2",
+      "areaKey": "endgames",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the 'Rule of the Square' used for in pawn endgames?",
+      "options": ["Quickly checking whether a king can catch a passed pawn before it promotes", "Calculating the value of a bishop", "Deciding where to castle", "Counting how many pawns are doubled"],
+      "correctIndex": 0,
+      "explanation": "The rule of the square lets you see at a glance whether a defending king is close enough to stop a runner.",
+      "theory": "The Rule of the Square is a shortcut for passed-pawn races: imagine a square whose side stretches from the pawn to its promotion rank. If the defending king can step into that square on its move, it can catch the pawn; if not, the pawn promotes. It saves you from counting moves one by one."
+    },
+    {
+      "id": "chess-endgames-a-1",
+      "areaKey": "endgames",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "In rook endgames, what does the principle 'rooks belong behind passed pawns' mean?",
+      "options": ["A rook should be placed behind a passed pawn, whether yours to push it or the enemy's to restrain it", "A rook should always stay on the first rank", "Rooks should be traded as soon as possible", "Rooks must shield the king at all times"],
+      "correctIndex": 0,
+      "explanation": "A rook behind a passed pawn supports its advance, or behind the enemy's pawn ties down the defender, gaining activity as the pawn moves.",
+      "theory": "This Tarrasch principle states that rooks are most effective behind passed pawns. Behind your own passer, the rook supports each advance while staying mobile. Behind the enemy's passer, it restrains the pawn while the defending rook is passively tied to blocking it."
+    },
+    {
+      "id": "chess-endgames-a-2",
+      "areaKey": "endgames",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "True or False: A rook-and-pawn endgame with a defending rook on the third rank in front of the pawn, known as the Philidor position, is a well-known fortress draw.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "The Philidor defense holds the third rank until the pawn advances, then checks the attacking king from behind to force a draw.",
+      "theory": "The Philidor position is a fundamental drawing technique in rook endgames where the weaker side keeps its rook on the third rank. This prevents the enemy king from advancing in front of the pawn. Once the pawn pushes to the sixth rank, the defending rook swings behind to deliver perpetual checks, securing the draw."
+    },
+    {
+      "id": "chess-strategy-b-1",
+      "areaKey": "strategy",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Using the standard relative values, how many points is a rook worth?",
+      "options": ["5", "3", "9", "1"],
+      "correctIndex": 0,
+      "explanation": "In the common point system, a rook is worth about 5 points.",
+      "theory": "Relative piece values guide trading decisions: pawn 1, knight and bishop about 3, rook 5, and queen about 9. These numbers are guidelines rather than absolutes, since activity and position matter too. Knowing them helps you judge whether a trade or sacrifice gains or loses material."
+    },
+    {
+      "id": "chess-strategy-b-2",
+      "areaKey": "strategy",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or False: Doubled pawns (two of your pawns on the same file) are generally considered a structural weakness.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Doubled pawns cannot defend each other and are often harder to advance, making them a typical weakness.",
+      "theory": "Doubled pawns occur when two pawns of the same color sit on the same file, usually after a capture. They cannot protect one another and the rear pawn is often immobile, so they are generally a weakness. They can occasionally be useful by granting open or half-open files for rooks."
+    },
+    {
+      "id": "chess-strategy-i-1",
+      "areaKey": "strategy",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is an 'outpost' in chess strategy?",
+      "options": ["A square, often protected by a pawn and not attackable by enemy pawns, where a knight can sit strongly", "A pawn that has reached the last rank", "The square the king starts on", "Any square on the edge of the board"],
+      "correctIndex": 0,
+      "explanation": "An outpost is a secure advanced square, ideal for a knight, that enemy pawns can no longer challenge.",
+      "theory": "An outpost is a square in or near the enemy's half that cannot be attacked by enemy pawns, ideally defended by one of your own pawns. A knight placed on an outpost is extremely powerful because it cannot be easily driven away. Establishing a knight on a central outpost is a classic long-term strategic goal."
+    },
+    {
+      "id": "chess-strategy-i-2",
+      "areaKey": "strategy",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Why is an isolated pawn (a pawn with no friendly pawns on adjacent files) considered both a weakness and a potential asset?",
+      "options": ["It cannot be defended by pawns and may be a target, but it can grant open files and space for active pieces", "It can never be captured", "It automatically promotes faster", "It makes castling illegal"],
+      "correctIndex": 0,
+      "explanation": "An isolated pawn must be defended by pieces and can be a target, yet the open files beside it give pieces extra activity.",
+      "theory": "An isolated pawn has no neighboring friendly pawns to defend it, so it must be guarded by pieces and can become a long-term target. However, the half-open files on either side give rooks and other pieces active lines, and the pawn can control useful central squares. Whether it helps or hurts depends on how active the pieces around it are."
+    },
+    {
+      "id": "chess-strategy-a-1",
+      "areaKey": "strategy",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does the principle of 'the bishop pair' refer to in strategic play?",
+      "options": ["Owning both bishops, which work well together in open positions covering both color complexes", "Having two bishops on the same color squares", "Trading both bishops immediately", "Placing bishops side by side on adjacent files"],
+      "correctIndex": 0,
+      "explanation": "Two bishops cover squares of both colors and coordinate powerfully, especially when the position opens up.",
+      "theory": "The bishop pair is the advantage of having both bishops while the opponent does not. Because each bishop covers only one color, owning both lets you control squares of both colors and create threats across the whole board. This advantage grows in open positions with long diagonals and few blocking pawns."
+    },
+    {
+      "id": "chess-strategy-a-2",
+      "areaKey": "strategy",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "True or False: A sound strategic plan should be based on the specific features of the position, such as pawn structure, weak squares, and piece activity, rather than on a fixed sequence of memorized moves.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Good plans flow from concrete positional features, not from rote move sequences that ignore the opponent's play.",
+      "theory": "Strategic planning means choosing goals that fit the position's pawn structure, weak squares, open files, and piece placement. A plan grounded in these features adapts to what the board actually demands. Blindly following memorized moves without understanding the underlying reasons leads to plans that collapse when the opponent deviates."
+    }
+  ]
+}

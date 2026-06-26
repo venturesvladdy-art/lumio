@@ -1,0 +1,355 @@
+{
+  "skillId": "speaking",
+  "areas": [
+    {"key": "structure", "name": "Structure & Storytelling"},
+    {"key": "delivery", "name": "Delivery & Voice"},
+    {"key": "nerves", "name": "Handling Nerves"},
+    {"key": "audience", "name": "Audience & Q&A"}
+  ],
+  "questions": [
+    {
+      "id": "speaking-structure-b-1",
+      "areaKey": "structure",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "You have ten minutes to give an informative talk. Which overall structure makes it easiest for an audience to follow?",
+      "options": [
+        "A clear opening that previews the main points, a body that develops them in order, and a closing that summarizes",
+        "A long string of facts delivered in whatever order they come to mind",
+        "Starting with your conclusion and never explaining how you reached it",
+        "Several unrelated anecdotes with no stated purpose"
+      ],
+      "correctIndex": 0,
+      "explanation": "A preview-body-summary structure tells the audience where you are going, takes them there, and reminds them where they have been.",
+      "theory": "Classic speech structure has three parts: tell them what you will say, say it, then tell them what you said. Previewing your points up front gives listeners a mental map. A clear close that restates the key takeaways helps the message stick because people remember beginnings and endings best."
+    },
+    {
+      "id": "speaking-structure-b-2",
+      "areaKey": "structure",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Signposting phrases such as 'first', 'next', and 'finally' help listeners track where they are in your talk.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Signposts act as verbal headings that mark transitions and orient the audience without them needing to take notes.",
+      "theory": "Listeners cannot rewind a live talk, so they rely on the speaker to flag transitions. Signposting words like first, next, and finally signal movement between points. They reduce the mental effort of following along and make a talk feel organized even when content is dense."
+    },
+    {
+      "id": "speaking-structure-i-1",
+      "areaKey": "structure",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You want your three key recommendations to be memorable. Which technique best supports that goal?",
+      "options": [
+        "Grouping them into a 'rule of three' with parallel phrasing",
+        "Listing nine recommendations so nothing is left out",
+        "Burying them in the middle of a long paragraph",
+        "Mentioning each one only once, in passing"
+      ],
+      "correctIndex": 0,
+      "explanation": "The rule of three with parallel phrasing is rhythmically satisfying and easy to recall, so three points land better than a longer list.",
+      "theory": "Audiences retain a small number of ideas, and sets of three feel complete and rhythmic. Parallel phrasing makes the trio sound deliberate and quotable. Trimming to three forces you to prioritize, which also sharpens the message."
+    },
+    {
+      "id": "speaking-structure-i-2",
+      "areaKey": "structure",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Your data-heavy talk feels dry. What is the most effective way to make the numbers resonate?",
+      "options": [
+        "Wrap a key statistic inside a short, concrete story about one affected person",
+        "Add more decimal places to every figure",
+        "Read every row of the spreadsheet aloud",
+        "Remove all context and present numbers in isolation"
+      ],
+      "correctIndex": 0,
+      "explanation": "A concrete story gives an abstract statistic emotional weight and a human face, making it memorable.",
+      "theory": "People connect with stories more readily than with raw data. Pairing a statistic with a single relatable example translates scale into something felt, not just understood. The narrative provides context that makes the number meaningful rather than forgettable."
+    },
+    {
+      "id": "speaking-structure-a-1",
+      "areaKey": "structure",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "You are designing a persuasive keynote. Which narrative arc most reliably moves an audience toward action?",
+      "options": [
+        "Establish the status quo, introduce a tension or problem, then resolve it with your proposed change and a call to action",
+        "Open with administrative housekeeping and end abruptly when time runs out",
+        "Present every counterargument first and never state your own position",
+        "Repeat a single claim louder each time without development"
+      ],
+      "correctIndex": 0,
+      "explanation": "A status-quo to tension to resolution arc creates a gap the audience wants closed, and your call to action closes it.",
+      "theory": "Persuasive talks work like stories: they create a contrast between what is and what could be. The tension between those states generates the desire for change. Ending with a specific, achievable call to action channels that desire into a concrete next step."
+    },
+    {
+      "id": "speaking-structure-a-2",
+      "areaKey": "structure",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "A 'callback', where your closing returns to an image or phrase from your opening, can give a talk a satisfying sense of unity.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Returning to the opening image creates a frame that signals closure and rewards the audience for staying with you.",
+      "theory": "A callback bookends the talk by echoing something the audience already heard, which feels intentional and complete. It reinforces the central theme by revisiting it with the added meaning the talk has supplied. This sense of return is a reliable way to make an ending feel earned rather than abrupt."
+    },
+    {
+      "id": "speaking-delivery-b-1",
+      "areaKey": "delivery",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "You tend to rush when speaking. What is the simplest delivery fix to help the audience absorb your points?",
+      "options": [
+        "Slow your pace and add deliberate pauses after key points",
+        "Speak even faster to fit everything in",
+        "Drop your volume to a near-whisper throughout",
+        "Read directly from a dense script in a monotone"
+      ],
+      "correctIndex": 0,
+      "explanation": "Slowing down and pausing gives listeners time to process and signals which ideas matter.",
+      "theory": "Nervous speakers often speed up, which overwhelms listeners. A measured pace plus pauses after important statements lets ideas land and adds emphasis. Silence is not dead air; it gives the audience a moment to absorb what you just said."
+    },
+    {
+      "id": "speaking-delivery-b-2",
+      "areaKey": "delivery",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Making natural eye contact with individuals across the room helps build connection more than staring at your slides.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Eye contact signals confidence and engagement and makes listeners feel personally addressed.",
+      "theory": "Eye contact creates a sense of one-to-one connection even in a large room. Looking at your slides or notes the whole time breaks that bond and reads as disengaged. Holding a gaze briefly with different people across the audience helps everyone feel included."
+    },
+    {
+      "id": "speaking-delivery-i-1",
+      "areaKey": "delivery",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Your voice sounds flat and your audience is glazing over. Which vocal adjustment best re-engages them?",
+      "options": [
+        "Vary your pitch, pace, and volume to match the meaning of what you are saying",
+        "Speak in a single steady tone to sound authoritative",
+        "Increase your speed uniformly for the rest of the talk",
+        "Lower your volume so people lean in for the entire section"
+      ],
+      "correctIndex": 0,
+      "explanation": "Vocal variety in pitch, pace, and volume keeps attention and conveys emphasis and emotion.",
+      "theory": "A monotone delivery flattens meaning and quickly bores listeners. Varying pitch, pace, and volume highlights important ideas and signals shifts in tone. This vocal variety mirrors how we speak naturally in conversation and keeps the audience alert."
+    },
+    {
+      "id": "speaking-delivery-i-2",
+      "areaKey": "delivery",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You catch yourself saying 'um' and 'like' frequently. What is the most effective way to reduce filler words?",
+      "options": [
+        "Pause silently where you would have said a filler",
+        "Speak faster so the fillers slip by unnoticed",
+        "Add even more fillers so they sound intentional",
+        "Memorize the talk word for word and recite it rigidly"
+      ],
+      "correctIndex": 0,
+      "explanation": "Fillers usually fill thinking time, so a deliberate silent pause replaces them while sounding more composed.",
+      "theory": "Filler words tend to appear when the brain needs a moment to find the next thought. Replacing that moment with a brief silence removes the filler and reads as confident and considered. Becoming comfortable with short pauses is the core skill behind clean delivery."
+    },
+    {
+      "id": "speaking-delivery-a-1",
+      "areaKey": "delivery",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "You want gestures to strengthen rather than distract from your message. Which approach is best?",
+      "options": [
+        "Use purposeful gestures that illustrate specific ideas and keep hands at rest otherwise",
+        "Keep both hands rigidly at your sides the entire time",
+        "Make constant, repetitive hand movements regardless of content",
+        "Grip the lectern tightly so your hands never move"
+      ],
+      "correctIndex": 0,
+      "explanation": "Gestures that map to specific ideas reinforce meaning, while a neutral resting position prevents nervous fidgeting from distracting.",
+      "theory": "Effective gestures are deliberate and tied to what you are saying, such as showing size, sequence, or contrast. Constant or random movement becomes visual noise that competes with your words. A calm resting position between gestures lets each intentional movement carry weight."
+    },
+    {
+      "id": "speaking-delivery-a-2",
+      "areaKey": "delivery",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "Strategic silence immediately before a key statement can heighten its impact more than rushing into it.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "A pause before a key line creates anticipation and focuses attention on what follows.",
+      "theory": "Silence is a powerful delivery tool, not a gap to fill. A deliberate pause before an important point builds tension and signals that something worth hearing is coming. Skilled speakers use these pauses to frame their most important lines and let them resonate."
+    },
+    {
+      "id": "speaking-nerves-b-1",
+      "areaKey": "nerves",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Minutes before going on stage your heart is racing. Which technique most directly calms your nervous system?",
+      "options": [
+        "Slow, deep diaphragmatic breathing",
+        "Holding your breath until you feel calmer",
+        "Drinking several cups of coffee for energy",
+        "Replaying every possible thing that could go wrong"
+      ],
+      "correctIndex": 0,
+      "explanation": "Slow diaphragmatic breathing lowers heart rate and signals the body to relax before you speak.",
+      "theory": "Pre-talk nerves trigger a fight-or-flight response that speeds the heart and shortens the breath. Slow, deep breathing from the diaphragm activates the body's calming response and steadies the voice. A few measured breaths before you begin can noticeably reduce the physical symptoms of anxiety."
+    },
+    {
+      "id": "speaking-nerves-b-2",
+      "areaKey": "nerves",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Thorough preparation and rehearsal generally reduce performance anxiety.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Knowing your material well removes uncertainty, which is a major source of nervousness.",
+      "theory": "Much speaking anxiety comes from fear of forgetting or fumbling. Rehearsing out loud builds familiarity so the talk feels automatic under pressure. The better you know your opening and your transitions, the less there is to worry about on the day."
+    },
+    {
+      "id": "speaking-nerves-i-1",
+      "areaKey": "nerves",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You feel a surge of adrenaline before speaking. Which mindset reframe is most useful?",
+      "options": [
+        "Interpret the arousal as excitement and energy that will help your performance",
+        "Tell yourself the feeling means you are about to fail",
+        "Try to suppress all emotion and feel nothing",
+        "Assume the audience can see exactly how scared you are"
+      ],
+      "correctIndex": 0,
+      "explanation": "Reframing arousal as excitement keeps the energy without the dread, and it is easier than forcing yourself to feel calm.",
+      "theory": "Anxiety and excitement produce nearly identical bodily signals, so the body is already primed; the label you give it shapes the experience. Telling yourself 'I am excited' channels that energy into engaged delivery. This reframe is more achievable than trying to extinguish the adrenaline entirely."
+    },
+    {
+      "id": "speaking-nerves-i-2",
+      "areaKey": "nerves",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You lose your place mid-talk and your mind goes blank. What is the best in-the-moment recovery?",
+      "options": [
+        "Pause, take a breath, glance at your notes or last slide, and resume",
+        "Apologize repeatedly and announce that you have frozen",
+        "Speed up and improvise unrelated content to fill the silence",
+        "Walk off and end the talk early"
+      ],
+      "correctIndex": 0,
+      "explanation": "A calm pause and a quick glance at your notes lets you find your place without drawing attention to the lapse.",
+      "theory": "Brief silences feel much longer to the speaker than to the audience, so a short pause goes mostly unnoticed. Taking a breath and checking your notes or current slide reorients you quickly. Drawing attention to the slip with apologies usually makes it more memorable than the slip itself."
+    },
+    {
+      "id": "speaking-nerves-a-1",
+      "areaKey": "nerves",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "You want a long-term strategy to build genuine confidence rather than just managing symptoms on the day. Which is most effective?",
+      "options": [
+        "Seek frequent low-stakes speaking opportunities to build experience through gradual exposure",
+        "Avoid all speaking until you feel completely fearless",
+        "Rely on a single high-pressure event to overcome the fear at once",
+        "Read books about speaking but never actually speak"
+      ],
+      "correctIndex": 0,
+      "explanation": "Gradual, repeated exposure desensitizes the fear and builds real competence and confidence over time.",
+      "theory": "Confidence is built through repeated successful experience, not avoidance. Seeking frequent low-stakes chances to speak lets you accumulate evidence that you can handle it. This gradual exposure steadily lowers anxiety while sharpening skill, which a single dramatic attempt cannot reliably do."
+    },
+    {
+      "id": "speaking-nerves-a-2",
+      "areaKey": "nerves",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "Visualizing yourself delivering the talk successfully can reduce anxiety and improve actual performance.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Mental rehearsal primes confidence and familiarity, much like physical rehearsal does.",
+      "theory": "Visualization is a technique used by athletes and performers to prepare for high-pressure moments. Vividly imagining a smooth, successful delivery builds a sense of familiarity and lowers anticipatory anxiety. It complements physical rehearsal by training the mind to expect success rather than disaster."
+    },
+    {
+      "id": "speaking-audience-b-1",
+      "areaKey": "audience",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "You are preparing a talk for a non-technical audience on a technical subject. What should guide your choices most?",
+      "options": [
+        "Tailoring vocabulary, examples, and depth to what this audience already knows and cares about",
+        "Using as much specialist jargon as possible to sound credible",
+        "Delivering the exact same talk you would give to experts",
+        "Ignoring the audience and focusing only on covering all the content"
+      ],
+      "correctIndex": 0,
+      "explanation": "Adapting language and examples to the audience's knowledge ensures they actually understand and stay engaged.",
+      "theory": "Audience awareness means starting from what listeners know and value rather than from everything you know. Choosing accessible language and relevant examples bridges the gap to a non-expert audience. A talk that ignores who is listening will lose people no matter how accurate it is."
+    },
+    {
+      "id": "speaking-audience-b-2",
+      "areaKey": "audience",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "If you do not know the answer to an audience question, it is better to admit it and offer to follow up than to bluff.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Honesty preserves credibility, while a bluff risks being exposed and undermining trust.",
+      "theory": "Audiences respect speakers who acknowledge the limits of their knowledge. Saying you will find out and follow up is credible and professional. Bluffing an answer risks being wrong in front of everyone, which damages trust far more than a candid 'I don't know'."
+    },
+    {
+      "id": "speaking-audience-i-1",
+      "areaKey": "audience",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "During Q&A you get a rambling, multi-part question. What is the best way to handle it?",
+      "options": [
+        "Briefly restate the core question you will answer, then respond to that",
+        "Try to answer every tangent in the exact order given",
+        "Ignore the question entirely and move on",
+        "Interrupt the questioner before they finish"
+      ],
+      "correctIndex": 0,
+      "explanation": "Restating the core question focuses the exchange, confirms understanding, and lets the whole room follow your answer.",
+      "theory": "Long questions often contain one main point buried in detail. Paraphrasing it back confirms you understood and makes the question audible to everyone. It also lets you frame a focused answer instead of getting lost in every tangent."
+    },
+    {
+      "id": "speaking-audience-i-2",
+      "areaKey": "audience",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A questioner pushes you off-topic toward an issue you would rather not dwell on. Which technique keeps control respectfully?",
+      "options": [
+        "Bridge: briefly acknowledge the point, then steer back to your key message",
+        "Argue with the questioner until they concede",
+        "Pretend you did not hear and stay silent",
+        "Abandon your message and follow wherever the question leads"
+      ],
+      "correctIndex": 0,
+      "explanation": "Bridging acknowledges the question while transitioning back to the message you came to deliver.",
+      "theory": "Bridging is a technique for acknowledging a question and then linking back to your main points. A short phrase like 'that's worth noting, and what really matters here is...' redirects without dismissing the questioner. It keeps you on message while still treating the audience with respect."
+    },
+    {
+      "id": "speaking-audience-a-1",
+      "areaKey": "audience",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A hostile audience member challenges your credibility aggressively during Q&A. What is the most effective response?",
+      "options": [
+        "Stay calm, acknowledge the concern, respond to the substance, and avoid mirroring the hostility",
+        "Match their aggression to show you will not be intimidated",
+        "Dismiss them and refuse to engage at all",
+        "Become defensive and over-explain at length"
+      ],
+      "correctIndex": 0,
+      "explanation": "A calm, substantive response defuses hostility and preserves your authority in front of the rest of the room.",
+      "theory": "Hostile questions are partly performances for the audience, so your composure matters as much as your content. Staying calm and engaging the substance signals confidence and fairness. Mirroring the aggression escalates the conflict and can turn the rest of the room against you."
+    },
+    {
+      "id": "speaking-audience-a-2",
+      "areaKey": "audience",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "Reading the room and adjusting your pace or content when the audience looks confused or disengaged is a hallmark of a skilled speaker.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Responsive speakers monitor audience cues and adapt in real time to keep the room with them.",
+      "theory": "Audience feedback is constant and nonverbal: puzzled faces, lost attention, or nods of agreement. Skilled speakers watch for these cues and adjust by slowing down, adding an example, or moving on. This responsiveness keeps the talk a two-way connection rather than a rigid recitation."
+    }
+  ]
+}

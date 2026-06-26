@@ -171,7 +171,7 @@ export default function TermsPage() {
       title="Terms of Service"
       sections={SECTIONS}
       dateLabel={`Last updated: ${TERMS_UPDATED}`}
-      note="Draft for review — have qualified U.S. counsel review these Terms before relying on them. This is not legal advice."
+      showDraft={false}
     />
   );
 }

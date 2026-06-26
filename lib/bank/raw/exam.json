@@ -1,0 +1,275 @@
+{
+  "skillId": "exam",
+  "areas": [
+    {"key": "math", "name": "Math (SAT/GMAT/GRE)"},
+    {"key": "reading", "name": "Reading & Comprehension"},
+    {"key": "grammar", "name": "Grammar & Writing"},
+    {"key": "reasoning", "name": "Logic & Critical Reasoning"}
+  ],
+  "questions": [
+    {
+      "id": "exam-math-b-1",
+      "areaKey": "math",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "If 3x + 5 = 20, what is the value of x?",
+      "options": ["3", "5", "7", "15"],
+      "correctIndex": 1,
+      "explanation": "Subtracting 5 from both sides gives 3x = 15, and dividing both sides by 3 gives x = 5.",
+      "theory": "To solve a linear equation, isolate the variable by performing inverse operations on both sides. First undo addition or subtraction, then undo multiplication or division. Always do the same operation to both sides to keep the equation balanced."
+    },
+    {
+      "id": "exam-math-b-2",
+      "areaKey": "math",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is 20% of 150?",
+      "options": ["20", "30", "45", "75"],
+      "correctIndex": 1,
+      "explanation": "20% equals 0.20, and 0.20 multiplied by 150 equals 30.",
+      "theory": "A percent means 'per hundred,' so to find a percent of a number you convert the percent to a decimal by dividing by 100, then multiply. For example, 20% becomes 0.20. Multiplying the decimal by the whole gives the part."
+    },
+    {
+      "id": "exam-math-i-1",
+      "areaKey": "math",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A shirt originally priced at $40 is discounted by 25%. What is the sale price?",
+      "options": ["$10", "$25", "$30", "$35"],
+      "correctIndex": 2,
+      "explanation": "A 25% discount removes 0.25 times 40, which is $10, leaving 40 minus 10 equals $30.",
+      "theory": "To apply a percentage discount, calculate the discount amount by multiplying the original price by the percent as a decimal, then subtract it from the original. Alternatively, multiply the original price by (1 minus the discount rate). Both methods give the final sale price."
+    },
+    {
+      "id": "exam-math-i-2",
+      "areaKey": "math",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "If the average (arithmetic mean) of 4, 8, and x is 10, what is the value of x?",
+      "options": ["10", "12", "16", "18"],
+      "correctIndex": 3,
+      "explanation": "The mean of 10 over 3 numbers means their sum is 30, and 30 minus 4 minus 8 equals 18.",
+      "theory": "The arithmetic mean equals the sum of the values divided by how many values there are. To find a missing value, multiply the mean by the count to get the total sum, then subtract the known values. This reverses the averaging process."
+    },
+    {
+      "id": "exam-math-a-1",
+      "areaKey": "math",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "If x^2 - 5x + 6 = 0, what are all the solutions for x?",
+      "options": ["x = 1 and x = 6", "x = 2 and x = 3", "x = -2 and x = -3", "x = 5 and x = 6"],
+      "correctIndex": 1,
+      "explanation": "The quadratic factors as (x - 2)(x - 3) = 0, giving roots x = 2 and x = 3 since each factor can equal zero.",
+      "theory": "A quadratic equation can often be solved by factoring it into two binomials whose product is zero. Find two numbers that multiply to the constant term and add to the coefficient of the middle term. By the zero-product property, setting each factor to zero gives the solutions."
+    },
+    {
+      "id": "exam-math-a-2",
+      "areaKey": "math",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A jar holds 5 red and 3 blue marbles. If two marbles are drawn without replacement, what is the probability that both are red?",
+      "options": ["5/14", "25/64", "5/8", "1/2"],
+      "correctIndex": 0,
+      "explanation": "The first red has probability 5/8 and the second 4/7, and (5/8) times (4/7) equals 20/56, which simplifies to 5/14.",
+      "theory": "For dependent events without replacement, multiply the probability of the first event by the probability of the second given the first occurred. Each draw changes both the favorable count and the total count. Simplify the resulting fraction to lowest terms."
+    },
+    {
+      "id": "exam-reading-b-1",
+      "areaKey": "reading",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Read this sentence: 'The marathon runner felt utterly depleted as she crossed the finish line.' In this context, 'depleted' most nearly means:",
+      "options": ["energized", "exhausted", "joyful", "confused"],
+      "correctIndex": 1,
+      "explanation": "After running a marathon a runner would feel drained of energy, so 'depleted' means exhausted.",
+      "theory": "Vocabulary-in-context questions ask for a word's meaning based on the surrounding sentence, not just its dictionary definition. Use clues such as the situation described and nearby descriptive words to infer the intended sense. Substitute each option into the sentence to test which fits the tone and logic."
+    },
+    {
+      "id": "exam-reading-b-2",
+      "areaKey": "reading",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Read this passage: 'Honeybees communicate the location of food through a movement called the waggle dance. The angle and duration of the dance tell other bees the direction and distance to the flowers.' What is the main idea?",
+      "options": ["Honeybees prefer certain flowers", "The waggle dance conveys food location information", "Bees cannot see colors", "Dancing tires the bees out"],
+      "correctIndex": 1,
+      "explanation": "Both sentences focus on how the waggle dance communicates the direction and distance to food, making that the main idea.",
+      "theory": "The main idea is the central point a passage is built around, supported by its details. Look for the topic that every sentence relates to rather than a single specific fact. Distractors often state true but minor details or claims the passage never makes."
+    },
+    {
+      "id": "exam-reading-i-1",
+      "areaKey": "reading",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Read this passage: 'Although the new policy was praised by economists, ordinary citizens found their daily costs rising with little visible benefit.' What can be inferred about the citizens' view of the policy?",
+      "options": ["They strongly supported it", "They were skeptical or dissatisfied with it", "They did not notice the policy", "They were economists themselves"],
+      "correctIndex": 1,
+      "explanation": "Rising costs with little visible benefit implies citizens were dissatisfied, contrasting with the economists' praise.",
+      "theory": "An inference is a conclusion drawn from evidence in the text that is not stated outright. Words like 'although' signal a contrast that helps reveal an implied attitude. Choose the option best supported by the passage without going beyond what the clues justify."
+    },
+    {
+      "id": "exam-reading-i-2",
+      "areaKey": "reading",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Read this sentence: 'The critic's review was scathing, dismissing the film as a hollow spectacle.' What is the author's tone toward the film, as reported by the critic?",
+      "options": ["Admiring", "Neutral", "Harshly critical", "Nostalgic"],
+      "correctIndex": 2,
+      "explanation": "Words like 'scathing' and 'dismissing' and the phrase 'hollow spectacle' convey a harshly critical tone.",
+      "theory": "Tone is the author's or speaker's attitude toward the subject, revealed through word choice. Strongly charged words such as 'scathing' or 'hollow' signal negative judgment. Identify the emotional weight of key words to determine whether the tone is positive, negative, or neutral."
+    },
+    {
+      "id": "exam-reading-a-1",
+      "areaKey": "reading",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Read this passage: 'Proponents claim the bridge will ease congestion. Yet by making driving more convenient, such projects often attract more drivers, eventually restoring the very gridlock they sought to relieve.' The second sentence primarily serves to:",
+      "options": ["Restate the proponents' claim", "Provide a counterargument to the proponents' claim", "Give an example of a successful bridge", "Define the word congestion"],
+      "correctIndex": 1,
+      "explanation": "The word 'Yet' introduces a rebuttal arguing the bridge may not ease congestion, so it functions as a counterargument.",
+      "theory": "Function questions ask what role a sentence plays in the structure of an argument, not just what it says. Transition words like 'yet,' 'however,' or 'therefore' reveal whether a sentence supports, qualifies, or opposes a prior claim. Identify the relationship between sentences to name the rhetorical purpose."
+    },
+    {
+      "id": "exam-reading-a-2",
+      "areaKey": "reading",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Read this passage: 'The author argues that solitude, far from being mere loneliness, is a fertile ground for creativity, citing writers who produced their best work in isolation.' Which assumption underlies the author's argument?",
+      "options": ["All creative people are lonely", "Isolation can foster, rather than hinder, creative production", "Writers dislike company", "Loneliness and solitude are identical"],
+      "correctIndex": 1,
+      "explanation": "By presenting solitude as 'fertile ground' supported by isolated writers, the author assumes isolation can foster creativity rather than hinder it.",
+      "theory": "An underlying assumption is an unstated premise that must be true for an argument to hold. To find it, identify the gap between the evidence given and the conclusion drawn. The correct assumption bridges that gap without overstating or contradicting the passage."
+    },
+    {
+      "id": "exam-grammar-b-1",
+      "areaKey": "grammar",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Choose the option that correctly completes the sentence: 'The team of scientists ___ presenting its findings tomorrow.'",
+      "options": ["are", "is", "were", "be"],
+      "correctIndex": 1,
+      "explanation": "The subject 'team' is a singular collective noun acting as one unit, so it takes the singular verb 'is.'",
+      "theory": "Subject-verb agreement requires a verb to match its subject in number, ignoring intervening prepositional phrases like 'of scientists.' Collective nouns such as 'team' are usually treated as singular when the group acts as a unit. Identify the true subject before choosing the verb form."
+    },
+    {
+      "id": "exam-grammar-b-2",
+      "areaKey": "grammar",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Which sentence uses the apostrophe correctly to show possession?",
+      "options": ["The dogs bone was buried.", "The dog's bone was buried.", "The dogs' bone was buried by one dog.", "The dogs bone's was buried."],
+      "correctIndex": 1,
+      "explanation": "A single dog owning the bone takes an apostrophe plus s, giving 'dog's bone.'",
+      "theory": "A possessive apostrophe shows ownership. For a singular noun, add apostrophe plus s; for a plural noun already ending in s, add only an apostrophe after the s. Apostrophes are not used to make ordinary nouns plural."
+    },
+    {
+      "id": "exam-grammar-i-1",
+      "areaKey": "grammar",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Which sentence corrects the dangling modifier in 'Walking into the room, the lights were already on.'?",
+      "options": ["Walking into the room, the lights were already on.", "The lights were already on, walking into the room.", "Walking into the room, I saw that the lights were already on.", "Walking into the room the lights, were already on."],
+      "correctIndex": 2,
+      "explanation": "The modifier 'walking into the room' needs a person to perform the action, so adding 'I saw' gives it a logical subject.",
+      "theory": "A dangling modifier is an introductory phrase that does not logically attach to the subject that follows it. To fix it, rewrite the sentence so the word the phrase describes appears right after the modifier. Lights cannot walk, so the sentence needs a person as the subject."
+    },
+    {
+      "id": "exam-grammar-i-2",
+      "areaKey": "grammar",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Choose the correctly punctuated sentence.",
+      "options": ["I finished my work, I went home.", "I finished my work; I went home.", "I finished my work I went home.", "I finished my work, so; I went home."],
+      "correctIndex": 1,
+      "explanation": "Two independent clauses can be joined by a semicolon, so 'I finished my work; I went home.' is correct.",
+      "theory": "A comma alone cannot join two independent clauses, which is the error called a comma splice. A semicolon correctly links two closely related independent clauses without a conjunction. Alternatively, a comma plus a coordinating conjunction, or a period, would also be correct."
+    },
+    {
+      "id": "exam-grammar-a-1",
+      "areaKey": "grammar",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Which sentence maintains correct parallel structure?",
+      "options": ["She likes hiking, swimming, and to bike.", "She likes hiking, swimming, and biking.", "She likes to hike, swimming, and biking.", "She likes hike, swim, and biking."],
+      "correctIndex": 1,
+      "explanation": "All three items use the same '-ing' gerund form, making 'hiking, swimming, and biking' parallel.",
+      "theory": "Parallel structure requires that items in a list or series share the same grammatical form. Mixing gerunds with infinitives, as in 'hiking' and 'to bike,' breaks parallelism. Ensure every element in a coordinated series matches in form."
+    },
+    {
+      "id": "exam-grammar-a-2",
+      "areaKey": "grammar",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Which sentence correctly uses the subjunctive mood?",
+      "options": ["If I was rich, I would travel.", "If I were rich, I would travel.", "If I am rich, I would travel.", "If I be rich, I would travel."],
+      "correctIndex": 1,
+      "explanation": "Contrary-to-fact conditions use the subjunctive 'were,' giving 'If I were rich, I would travel.'",
+      "theory": "The subjunctive mood expresses hypothetical, wishful, or contrary-to-fact situations. In such 'if' clauses, use 'were' for all subjects instead of 'was.' The main clause typically pairs it with 'would' plus a base verb."
+    },
+    {
+      "id": "exam-reasoning-b-1",
+      "areaKey": "reasoning",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "All cats are mammals. Whiskers is a cat. Which conclusion logically follows?",
+      "options": ["Whiskers is a mammal", "All mammals are cats", "Whiskers is a dog", "Some mammals are not cats"],
+      "correctIndex": 0,
+      "explanation": "If all cats are mammals and Whiskers is a cat, then Whiskers must be a mammal.",
+      "theory": "A valid syllogism draws a conclusion that must be true if its premises are true. When every member of a category has a property and an individual belongs to that category, the individual has the property. Be careful not to reverse the relationship, which is a common logical error."
+    },
+    {
+      "id": "exam-reasoning-b-2",
+      "areaKey": "reasoning",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Consider the statement: 'If it rains, the ground gets wet. The ground is wet.' It logically follows with certainty that it rained.",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "explanation": "The ground could be wet from another cause such as a sprinkler, so it does not follow with certainty that it rained.",
+      "theory": "Affirming the consequent is a logical fallacy where one assumes a cause from an observed effect. 'If A then B' does not mean 'if B then A,' because B may have other causes. A wet ground is consistent with rain but does not prove it."
+    },
+    {
+      "id": "exam-reasoning-i-1",
+      "areaKey": "reasoning",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A study found that towns with more ice cream sales also had more drownings. Which statement best explains this without claiming ice cream causes drownings?",
+      "options": ["Ice cream makes people swim poorly", "Hot weather increases both ice cream sales and swimming", "Drowning increases appetite for ice cream", "The study must be wrong"],
+      "correctIndex": 1,
+      "explanation": "Hot weather is a common cause that raises both ice cream sales and swimming, explaining the correlation without direct causation.",
+      "theory": "Correlation does not imply causation; two variables can rise together because of a third factor. A confounding variable, such as hot weather here, influences both observed variables. Identifying a plausible common cause explains the link without asserting one variable causes the other."
+    },
+    {
+      "id": "exam-reasoning-i-2",
+      "areaKey": "reasoning",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "An ad claims: 'Nine out of ten dentists surveyed recommend our toothpaste.' Which question most weakens this claim?",
+      "options": ["What flavor is the toothpaste?", "How many dentists were surveyed and how were they chosen?", "Do dentists like toothpaste?", "Is the toothpaste sold in stores?"],
+      "correctIndex": 1,
+      "explanation": "If very few dentists were surveyed or they were selected in a biased way, the statistic is unreliable, so asking about sample size and selection weakens it.",
+      "theory": "Statistical claims depend heavily on how the sample was gathered. A small or non-random sample can produce misleading results that do not represent the broader population. Questioning sample size and selection method exposes potential bias in the claim."
+    },
+    {
+      "id": "exam-reasoning-a-1",
+      "areaKey": "reasoning",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Argument: 'Since the new manager arrived, sales have doubled, so the manager caused the increase.' Which is the strongest objection to this reasoning?",
+      "options": ["The manager is well liked", "Other factors, like a new product launch, may have driven sales", "Sales figures are hard to read", "The manager arrived on a Monday"],
+      "correctIndex": 1,
+      "explanation": "Attributing the rise solely to the manager ignores other possible causes such as a product launch, which is the strongest objection.",
+      "theory": "A causal argument is weakened when alternative explanations for the outcome are overlooked. The fact that one event preceded another does not prove it caused it, a fallacy called post hoc reasoning. Pointing to plausible competing causes undermines the claimed cause-and-effect link."
+    },
+    {
+      "id": "exam-reasoning-a-2",
+      "areaKey": "reasoning",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A politician says, 'My opponent wants to cut the military budget, so he clearly wants the country to be defenseless.' Which logical flaw does this argument commit?",
+      "options": ["Circular reasoning", "Straw man (misrepresenting the opponent's position)", "Appeal to authority", "Valid deduction"],
+      "correctIndex": 1,
+      "explanation": "Reducing a budget is not the same as wanting defenselessness, so the politician distorts the opponent's view, which is a straw man.",
+      "theory": "A straw man fallacy misrepresents or exaggerates an opponent's position to make it easier to attack. Refuting the distorted version does not address the actual argument. Recognizing the gap between the real claim and the caricature reveals the flaw."
+    }
+  ]
+}

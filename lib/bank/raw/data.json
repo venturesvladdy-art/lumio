@@ -1,0 +1,275 @@
+{
+  "skillId": "data",
+  "areas": [
+    { "key": "averages", "name": "Averages & Spread" },
+    { "key": "probability", "name": "Probability" },
+    { "key": "charts", "name": "Charts & Graphs" },
+    { "key": "studies", "name": "Interpreting Studies" }
+  ],
+  "questions": [
+    {
+      "id": "data-averages-b-1",
+      "areaKey": "averages",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the mean (average) of the numbers 4, 8, and 9?",
+      "options": ["7", "8", "21", "6"],
+      "correctIndex": 0,
+      "explanation": "Add the values to get 21, then divide by 3 to get 7.",
+      "theory": "The mean is found by adding all the values together and dividing by how many values there are. It is the most common type of average. It can be pulled toward unusually large or small values."
+    },
+    {
+      "id": "data-averages-b-2",
+      "areaKey": "averages",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the median of the sorted list 2, 5, 7, 10, 14?",
+      "options": ["7", "5", "10", "8"],
+      "correctIndex": 0,
+      "explanation": "With five values, the median is the middle (third) value, which is 7.",
+      "theory": "The median is the middle value when the data is sorted in order. For an odd count it is the single central value; for an even count it is the average of the two central values. It is less affected by extreme values than the mean."
+    },
+    {
+      "id": "data-averages-i-1",
+      "areaKey": "averages",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A dataset is 3, 3, 4, 5, 100. Which measure best describes a typical value, given the outlier?",
+      "options": ["The median (4)", "The mean (23)", "The range (97)", "The maximum (100)"],
+      "correctIndex": 0,
+      "explanation": "The mean of 23 is distorted by the outlier 100, while the median of 4 reflects a typical value.",
+      "theory": "Outliers are values far from the rest of the data. The mean is sensitive to outliers because every value affects the sum, but the median is resistant because it depends only on position. When data is skewed or has outliers, the median often describes a typical value better."
+    },
+    {
+      "id": "data-averages-i-2",
+      "areaKey": "averages",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the mode of the dataset 6, 2, 6, 9, 2, 6?",
+      "options": ["6", "2", "9", "There is no mode"],
+      "correctIndex": 0,
+      "explanation": "The value 6 appears three times, more often than any other value.",
+      "theory": "The mode is the value that occurs most frequently in a dataset. A dataset can have one mode, more than one mode, or no mode if all values appear equally often. The mode is the only average that can be used with non-numeric categories."
+    },
+    {
+      "id": "data-averages-a-1",
+      "areaKey": "averages",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Two classes both have a mean test score of 70. Class A scores cluster between 65 and 75; Class B has many scores near 40 and near 100. Which statement is correct?",
+      "options": ["Class B has a larger standard deviation than Class A", "Class A has a larger standard deviation than Class B", "Both classes have the same standard deviation", "Standard deviation cannot differ when means are equal"],
+      "correctIndex": 0,
+      "explanation": "Class B's scores are spread far from the mean, giving it a larger standard deviation despite the equal means.",
+      "theory": "Standard deviation measures how spread out values are around the mean. A small standard deviation means values cluster tightly near the mean; a large one means they are widely scattered. Two datasets can share a mean yet have very different spreads."
+    },
+    {
+      "id": "data-averages-a-2",
+      "areaKey": "averages",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "True or false: Adding a value equal to the current mean to a dataset leaves the mean unchanged.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Adding a value equal to the mean increases the sum and count proportionally, so the mean stays the same.",
+      "theory": "The mean balances the data so that deviations above and below it cancel out. Adding a new value equal to the mean contributes zero net deviation, leaving the balance point fixed. Adding a value above or below the mean would shift the mean in that direction."
+    },
+    {
+      "id": "data-probability-b-1",
+      "areaKey": "probability",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the probability of rolling a 3 on a fair six-sided die?",
+      "options": ["1/6", "1/3", "3/6", "1/2"],
+      "correctIndex": 0,
+      "explanation": "There is one favorable outcome (a 3) out of six equally likely outcomes, giving 1/6.",
+      "theory": "Probability is the number of favorable outcomes divided by the total number of equally likely outcomes. It ranges from 0 (impossible) to 1 (certain). For a fair die, each of the six faces is equally likely."
+    },
+    {
+      "id": "data-probability-b-2",
+      "areaKey": "probability",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A bag has 3 red and 7 blue marbles. What is the probability of drawing a red marble at random?",
+      "options": ["3/10", "7/10", "3/7", "1/3"],
+      "correctIndex": 0,
+      "explanation": "There are 3 red marbles out of 10 total, so the probability is 3/10.",
+      "theory": "When outcomes are equally likely, probability equals favorable outcomes over total outcomes. Here every marble is equally likely to be drawn. The total is the sum of all marbles, not just one color."
+    },
+    {
+      "id": "data-probability-i-1",
+      "areaKey": "probability",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "If the probability that it rains tomorrow is 0.3, what is the probability that it does not rain?",
+      "options": ["0.7", "0.3", "0.5", "1.3"],
+      "correctIndex": 0,
+      "explanation": "The complement of an event is 1 minus its probability, so 1 - 0.3 = 0.7.",
+      "theory": "The complement of an event is everything that is not that event. Because something must happen, the probability of an event and its complement add up to 1. So the probability of 'not rain' is 1 minus the probability of rain."
+    },
+    {
+      "id": "data-probability-i-2",
+      "areaKey": "probability",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "You flip a fair coin twice. What is the probability of getting heads both times?",
+      "options": ["1/4", "1/2", "1/3", "2/4"],
+      "correctIndex": 0,
+      "explanation": "Each flip is independent with probability 1/2, so 1/2 x 1/2 = 1/4.",
+      "theory": "Two events are independent when one does not affect the other. For independent events, the probability that both happen is the product of their individual probabilities. Two coin flips are independent, so you multiply 1/2 by 1/2."
+    },
+    {
+      "id": "data-probability-a-1",
+      "areaKey": "probability",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A test for a rare disease is 99% accurate, but the disease affects only 1 in 1000 people. If someone tests positive, the chance they actually have the disease is closest to:",
+      "options": ["About 9%", "About 99%", "About 50%", "About 1%"],
+      "correctIndex": 0,
+      "explanation": "Because the disease is rare, false positives from the healthy majority outnumber true positives, so the true-positive rate is only around 9%.",
+      "theory": "When a condition is rare, even an accurate test produces many false positives relative to true positives, a result known as the base rate fallacy. The chance of truly having the condition given a positive test depends heavily on how common the condition is. This is why screening rare events can be misleading without considering the base rate."
+    },
+    {
+      "id": "data-probability-a-2",
+      "areaKey": "probability",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "True or false: After a fair coin lands heads five times in a row, the next flip is more likely to be tails.",
+      "options": ["False", "True"],
+      "correctIndex": 0,
+      "explanation": "Each flip is independent, so the probability of tails remains 1/2 regardless of past results.",
+      "theory": "The gambler's fallacy is the mistaken belief that past independent outcomes change future probabilities. A fair coin has no memory, so each flip stays at 1/2 no matter what came before. Past streaks do not make a balancing outcome more likely."
+    },
+    {
+      "id": "data-charts-b-1",
+      "areaKey": "charts",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A bar chart shows sales: Monday 10, Tuesday 25, Wednesday 15, Thursday 30. Which day had the highest sales?",
+      "options": ["Thursday", "Tuesday", "Wednesday", "Monday"],
+      "correctIndex": 0,
+      "explanation": "Thursday's value of 30 is the largest, so its bar is the tallest.",
+      "theory": "A bar chart represents values with the heights or lengths of bars, making comparisons across categories easy. The tallest bar corresponds to the largest value. Bar charts are best for comparing separate categories rather than showing trends over continuous time."
+    },
+    {
+      "id": "data-charts-b-2",
+      "areaKey": "charts",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "A pie chart of a budget shows Rent 50%, Food 25%, Transport 15%, and Savings as the remainder. What percentage is Savings?",
+      "options": ["10%", "15%", "25%", "5%"],
+      "correctIndex": 0,
+      "explanation": "The slices must sum to 100%, so Savings is 100 - 50 - 25 - 15 = 10%.",
+      "theory": "A pie chart shows how a whole is divided into parts, with each slice proportional to its share. All slices together must add up to 100%. To find a missing slice, subtract the known slices from 100%."
+    },
+    {
+      "id": "data-charts-i-1",
+      "areaKey": "charts",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A line graph shows monthly revenue rising from 100 in January to 160 in March. What is the overall trend?",
+      "options": ["Increasing", "Decreasing", "Flat", "Cyclical with no net change"],
+      "correctIndex": 0,
+      "explanation": "Revenue moves upward from 100 to 160 over the period, indicating an increasing trend.",
+      "theory": "A line graph connects data points over a continuous variable such as time, making trends easy to see. An upward slope shows growth and a downward slope shows decline. Reading the start and end points reveals the overall direction of change."
+    },
+    {
+      "id": "data-charts-i-2",
+      "areaKey": "charts",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A bar chart's vertical axis starts at 90 instead of 0, making a bar of 100 look twice as tall as a bar of 95. What problem does this create?",
+      "options": ["It exaggerates small differences between values", "It makes the values easier to read accurately", "It changes the actual data values", "It has no effect on interpretation"],
+      "correctIndex": 0,
+      "explanation": "A truncated axis that does not start at zero visually magnifies small differences, misleading the viewer.",
+      "theory": "When a bar chart's value axis does not start at zero, the relative heights of bars no longer reflect the true ratios between values. Small differences can appear dramatic, which can mislead viewers. Always check the axis range before judging how big a difference really is."
+    },
+    {
+      "id": "data-charts-a-1",
+      "areaKey": "charts",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A scatter plot shows that as study hours increase, exam scores tend to increase, with points sloping upward. This pattern indicates:",
+      "options": ["A positive correlation", "A negative correlation", "No correlation", "That studying causes higher scores for certain"],
+      "correctIndex": 0,
+      "explanation": "Points sloping upward together indicate a positive correlation between the two variables.",
+      "theory": "A scatter plot displays the relationship between two numeric variables, one on each axis. An upward pattern is a positive correlation and a downward pattern is a negative correlation. Correlation describes association only and does not by itself prove that one variable causes the other."
+    },
+    {
+      "id": "data-charts-a-2",
+      "areaKey": "charts",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A histogram of incomes has a long tail stretching to the right toward very high values. This distribution is described as:",
+      "options": ["Right-skewed", "Left-skewed", "Symmetric", "Uniform"],
+      "correctIndex": 0,
+      "explanation": "A tail extending toward the high (right) end of the axis indicates a right-skewed distribution.",
+      "theory": "A histogram groups numeric data into bins and shows their frequencies as bars. Skew refers to the direction of a long tail: a right-skewed distribution has a tail toward higher values. In right-skewed data the mean is typically pulled above the median by the high values."
+    },
+    {
+      "id": "data-studies-b-1",
+      "areaKey": "studies",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or false: A survey of only a company's own employees is a reliable way to measure the general public's opinion of that company.",
+      "options": ["False", "True"],
+      "correctIndex": 0,
+      "explanation": "Employees are not representative of the general public, so the sample is biased.",
+      "theory": "A sample should represent the larger population you want to study. When a sample is drawn from an unrepresentative group, the results suffer from selection bias. Conclusions about the public require a sample that actually reflects the public."
+    },
+    {
+      "id": "data-studies-b-2",
+      "areaKey": "studies",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "Ice cream sales and drowning deaths both rise in summer. What is the most likely explanation?",
+      "options": ["A third factor, hot weather, drives both", "Ice cream causes drowning", "Drowning causes ice cream sales", "The link is impossible to explain"],
+      "correctIndex": 0,
+      "explanation": "Warm weather independently increases both swimming and ice cream consumption, creating a spurious link.",
+      "theory": "Two things can rise and fall together without one causing the other. Often a third variable, called a confounder, influences both. Correlation alone does not establish causation."
+    },
+    {
+      "id": "data-studies-i-1",
+      "areaKey": "studies",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A study finds people who drink coffee live longer, but coffee drinkers also exercise more. Exercise here is best described as:",
+      "options": ["A confounding variable", "The outcome variable", "A random error", "A placebo effect"],
+      "correctIndex": 0,
+      "explanation": "Exercise is associated with both coffee drinking and longevity, so it confounds the observed link.",
+      "theory": "A confounding variable is associated with both the supposed cause and the outcome, distorting the apparent relationship. If confounders are not controlled, an observed association may be misleading. Well-designed studies try to account for confounders before claiming a cause."
+    },
+    {
+      "id": "data-studies-i-2",
+      "areaKey": "studies",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Why is a randomized controlled trial considered stronger evidence of causation than an observational study?",
+      "options": ["Random assignment balances out confounding factors between groups", "It always uses a larger sample size", "It avoids using any statistics", "It guarantees the result is true"],
+      "correctIndex": 0,
+      "explanation": "Randomly assigning participants tends to balance known and unknown confounders across groups, isolating the treatment's effect.",
+      "theory": "In a randomized controlled trial, participants are assigned to treatment or control groups by chance. Randomization tends to distribute confounding factors evenly, so differences in outcomes can be attributed to the treatment. Observational studies lack this control, making causal claims weaker."
+    },
+    {
+      "id": "data-studies-a-1",
+      "areaKey": "studies",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "A weight-loss ad reports an 'average loss of 20 pounds,' but most participants lost about 5 pounds while a few lost over 60. Which is the likely issue?",
+      "options": ["The mean is inflated by a few extreme results, so the median would be more honest", "The median is too high to report", "The data must be fabricated", "Twenty pounds is the most common result"],
+      "correctIndex": 0,
+      "explanation": "A few very large losses pull the mean upward, making it unrepresentative of a typical participant.",
+      "theory": "When results are skewed, the mean can be dominated by a few extreme values and overstate the typical outcome. Advertisers may choose the mean precisely because it sounds more impressive. The median better reflects what a typical participant experienced."
+    },
+    {
+      "id": "data-studies-a-2",
+      "areaKey": "studies",
+      "difficulty": "advanced",
+      "format": "truefalse",
+      "question": "True or false: An online poll where readers choose whether to respond can be safely generalized to the whole population.",
+      "options": ["False", "True"],
+      "correctIndex": 0,
+      "explanation": "Self-selected respondents differ systematically from non-responders, producing self-selection bias.",
+      "theory": "Voluntary-response or self-selected samples include only people motivated enough to participate, who often hold stronger or unusual opinions. This creates self-selection bias that distorts the results. Reliable generalization requires a randomly drawn, representative sample rather than whoever chooses to respond."
+    }
+  ]
+}

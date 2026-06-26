@@ -1,0 +1,375 @@
+{
+  "skillId": "ai",
+  "areas": [
+    { "key": "ml", "name": "ML Foundations" },
+    { "key": "neural", "name": "Neural Networks" },
+    { "key": "llms", "name": "Large Language Models" },
+    { "key": "prompting", "name": "Prompting & Evaluation" }
+  ],
+  "questions": [
+    {
+      "id": "ai-ml-b-1",
+      "areaKey": "ml",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "In machine learning, what distinguishes supervised learning from unsupervised learning?",
+      "options": [
+        "Supervised learning trains on labeled examples, while unsupervised learning finds structure in unlabeled data",
+        "Supervised learning requires a human to watch the model run at all times",
+        "Unsupervised learning always produces more accurate predictions than supervised learning",
+        "Supervised learning can only be used for images, unsupervised only for text"
+      ],
+      "correctIndex": 0,
+      "explanation": "Supervised learning uses input-output pairs with known labels, whereas unsupervised learning discovers patterns such as clusters in data that has no labels.",
+      "theory": "Supervised learning learns a mapping from inputs to known target labels, as in classifying emails as spam or not. Unsupervised learning works on data without labels and instead uncovers hidden structure, such as grouping similar customers together. The key difference is whether the correct answers are provided during training."
+    },
+    {
+      "id": "ai-ml-b-2",
+      "areaKey": "ml",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or false: A classification task predicts a discrete category label, while a regression task predicts a continuous numeric value.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Classification outputs categories such as cat or dog, whereas regression outputs continuous numbers such as a predicted price.",
+      "theory": "Classification and regression are the two main types of supervised learning problems. Classification assigns inputs to one of a fixed set of classes, like spam versus not spam. Regression predicts a real-valued quantity, such as tomorrow's temperature or a house price."
+    },
+    {
+      "id": "ai-ml-i-1",
+      "areaKey": "ml",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "A model achieves 99% accuracy on training data but only 70% on new test data. What is the most likely problem?",
+      "options": [
+        "Overfitting: the model memorized training noise and fails to generalize",
+        "Underfitting: the model is too simple to capture the data",
+        "The test set is guaranteed to be corrupted",
+        "The learning rate must be set to exactly zero"
+      ],
+      "correctIndex": 0,
+      "explanation": "A large gap between high training accuracy and lower test accuracy is the classic signature of overfitting.",
+      "theory": "Overfitting happens when a model fits the training data so closely that it captures noise and idiosyncrasies rather than the underlying pattern. Such a model performs well on data it has seen but poorly on new data. Techniques like regularization, more data, and simpler models help improve generalization."
+    },
+    {
+      "id": "ai-ml-i-2",
+      "areaKey": "ml",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Why is data typically split into separate training and test sets before evaluating a model?",
+      "options": [
+        "To estimate how well the model generalizes to unseen data rather than data it memorized",
+        "To make training run faster by using fewer examples overall",
+        "Because models can only read data that has been split into two files",
+        "To guarantee the model will reach 100% accuracy on the training set"
+      ],
+      "correctIndex": 0,
+      "explanation": "Holding out a test set gives an honest estimate of performance on data the model never saw during training.",
+      "theory": "If a model is evaluated on the same data it trained on, the score is overly optimistic because the model may have memorized those examples. A held-out test set simulates new, unseen data and provides a fairer measure of generalization. A separate validation set is often used as well to tune hyperparameters without touching the test set."
+    },
+    {
+      "id": "ai-ml-a-1",
+      "areaKey": "ml",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "In the context of the bias-variance tradeoff, what characterizes a model with high variance?",
+      "options": [
+        "It is very sensitive to the specific training data and tends to overfit",
+        "It is too rigid and underfits regardless of the data",
+        "It always has lower test error than any low-variance model",
+        "It ignores the training data entirely and predicts constants"
+      ],
+      "correctIndex": 0,
+      "explanation": "High variance means the model changes a lot with different training samples, capturing noise and overfitting.",
+      "theory": "The bias-variance tradeoff describes two sources of error. High bias means the model is too simple and systematically misses the pattern (underfitting). High variance means the model is too flexible and reacts strongly to fluctuations in the training data (overfitting). Good generalization requires balancing the two."
+    },
+    {
+      "id": "ai-ml-a-2",
+      "areaKey": "ml",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "When using k-fold cross-validation, what is the primary benefit over a single train-test split?",
+      "options": [
+        "It uses every data point for both training and validation across folds, giving a more reliable performance estimate",
+        "It eliminates the need for any test data at all",
+        "It always increases the model's training accuracy to 100%",
+        "It removes the need to choose any hyperparameters"
+      ],
+      "correctIndex": 0,
+      "explanation": "Cross-validation rotates the validation fold so the estimate is averaged over multiple splits, reducing dependence on one lucky or unlucky split.",
+      "theory": "In k-fold cross-validation the data is partitioned into k folds; the model is trained k times, each time holding out a different fold for validation. Averaging the results gives a more stable estimate of performance than a single split, especially with limited data. It is particularly useful for comparing models and tuning hyperparameters."
+    },
+    {
+      "id": "ai-neural-b-1",
+      "areaKey": "neural",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the role of an activation function in a neural network?",
+      "options": [
+        "It introduces non-linearity so the network can model complex relationships",
+        "It stores the training data inside each neuron",
+        "It guarantees the network never makes mistakes",
+        "It converts the network into a single linear equation"
+      ],
+      "correctIndex": 0,
+      "explanation": "Non-linear activation functions let stacked layers represent complex, non-linear functions instead of collapsing into one linear transformation.",
+      "theory": "Each neuron computes a weighted sum of its inputs and then applies an activation function. Without a non-linear activation, stacking many layers would still only produce a linear function. Non-linear activations such as ReLU or sigmoid give networks the power to approximate complicated patterns."
+    },
+    {
+      "id": "ai-neural-b-2",
+      "areaKey": "neural",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or false: A neuron in a neural network computes a weighted sum of its inputs and then applies an activation function to that sum.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Each neuron multiplies inputs by weights, adds a bias, and passes the result through an activation function.",
+      "theory": "An artificial neuron takes several inputs, multiplies each by a learned weight, and adds them together along with a bias term. The resulting value is fed through an activation function to produce the neuron's output. Connecting many such neurons in layers forms a neural network."
+    },
+    {
+      "id": "ai-neural-i-1",
+      "areaKey": "neural",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does the backpropagation algorithm compute during neural network training?",
+      "options": [
+        "The gradient of the loss with respect to each weight, used to update the weights",
+        "The final accuracy of the model on the test set",
+        "A random reshuffling of the training examples",
+        "The number of neurons that should be added to each layer"
+      ],
+      "correctIndex": 0,
+      "explanation": "Backpropagation applies the chain rule to efficiently compute how the loss changes with each weight, enabling gradient-based updates.",
+      "theory": "Backpropagation propagates the error from the output layer back through the network using the chain rule of calculus. This yields the gradient of the loss with respect to every weight. An optimizer like gradient descent then nudges each weight in the direction that reduces the loss."
+    },
+    {
+      "id": "ai-neural-i-2",
+      "areaKey": "neural",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "In gradient descent, what is the purpose of the learning rate?",
+      "options": [
+        "It controls the step size taken when updating weights along the gradient",
+        "It sets the number of layers in the network",
+        "It determines how many output classes the model has",
+        "It measures the accuracy of the model directly"
+      ],
+      "correctIndex": 0,
+      "explanation": "The learning rate scales how far weights move on each update; too large can overshoot, too small can be slow.",
+      "theory": "Gradient descent updates weights by moving them opposite to the gradient of the loss. The learning rate is a hyperparameter that multiplies the gradient to decide the size of each step. A rate that is too high can cause the loss to diverge, while one that is too low makes training painfully slow."
+    },
+    {
+      "id": "ai-neural-a-1",
+      "areaKey": "neural",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Why is the ReLU activation function often preferred over sigmoid in deep networks?",
+      "options": [
+        "ReLU does not saturate for positive inputs, helping mitigate the vanishing gradient problem",
+        "ReLU always outputs values between 0 and 1 like a probability",
+        "ReLU has no derivative anywhere, which speeds up training",
+        "ReLU guarantees the network cannot overfit"
+      ],
+      "correctIndex": 0,
+      "explanation": "Sigmoid gradients shrink toward zero for large-magnitude inputs, whereas ReLU keeps a constant gradient of 1 for positive inputs, easing gradient flow in deep nets.",
+      "theory": "The vanishing gradient problem occurs when gradients become extremely small as they propagate back through many layers, stalling learning. Sigmoid and tanh saturate at their extremes, producing tiny gradients. ReLU keeps a gradient of 1 for positive inputs, allowing gradients to flow more effectively through deep networks."
+    },
+    {
+      "id": "ai-neural-a-2",
+      "areaKey": "neural",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What problem does dropout primarily address during neural network training?",
+      "options": [
+        "Overfitting, by randomly deactivating neurons so the network cannot rely on any single one",
+        "Slow data loading from disk during each epoch",
+        "The need to compute gradients at all",
+        "Choosing the optimal number of output classes"
+      ],
+      "correctIndex": 0,
+      "explanation": "Dropout randomly zeros out neurons during training, forcing redundancy and acting as a regularizer that reduces overfitting.",
+      "theory": "Dropout is a regularization technique where, during each training step, a random subset of neurons is temporarily turned off. This prevents the network from becoming overly dependent on specific neurons and encourages more robust, distributed representations. At inference time all neurons are used, with activations scaled appropriately."
+    },
+    {
+      "id": "ai-llms-b-1",
+      "areaKey": "llms",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "In a large language model, what is a token?",
+      "options": [
+        "A chunk of text, often a word or sub-word piece, that the model processes as a unit",
+        "A password that unlocks the model",
+        "A single pixel in an input image",
+        "The name of the optimizer used during training"
+      ],
+      "correctIndex": 0,
+      "explanation": "Text is broken into tokens (words or sub-word fragments) which are the basic units the model reads and predicts.",
+      "theory": "Language models do not read raw characters directly; instead text is split into tokens by a tokenizer. A token may be a whole word, a sub-word fragment, or punctuation. The model processes sequences of tokens and predicts the next token, and usage and context limits are measured in tokens."
+    },
+    {
+      "id": "ai-llms-b-2",
+      "areaKey": "llms",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "True or false: An embedding represents a token or piece of text as a vector of numbers that captures aspects of its meaning.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Embeddings map tokens or text into numeric vectors where similar meanings tend to be located close together.",
+      "theory": "An embedding is a dense vector of real numbers that represents a token, word, or chunk of text. These vectors are learned so that items with similar meaning or usage end up near each other in the vector space. Embeddings let models and search systems reason about semantic similarity numerically."
+    },
+    {
+      "id": "ai-llms-i-1",
+      "areaKey": "llms",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What core mechanism in the transformer architecture lets a model weigh the relevance of different tokens to each other?",
+      "options": [
+        "Self-attention",
+        "Max pooling",
+        "A single fixed convolution filter",
+        "Manual keyword matching"
+      ],
+      "correctIndex": 0,
+      "explanation": "Self-attention lets each token attend to and incorporate information from other tokens based on learned relevance scores.",
+      "theory": "Transformers, introduced in 2017, rely on the self-attention mechanism to relate tokens within a sequence. For each token, attention computes weighted combinations of other tokens based on their relevance. This lets the model capture long-range dependencies and context far more flexibly than older recurrent approaches."
+    },
+    {
+      "id": "ai-llms-i-2",
+      "areaKey": "llms",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does a language model's context window refer to?",
+      "options": [
+        "The maximum amount of text, measured in tokens, the model can consider at once",
+        "The screen resolution required to display the model's output",
+        "The number of parameters in the model",
+        "The time of day the model is allowed to run"
+      ],
+      "correctIndex": 0,
+      "explanation": "The context window is the token limit for the combined prompt and generated output that the model can attend to in a single pass.",
+      "theory": "The context window is the maximum number of tokens a model can process together, including the prompt and its response. Text beyond this limit must be truncated, summarized, or otherwise handled. Larger context windows let models work with longer documents and conversations, but they increase computational cost."
+    },
+    {
+      "id": "ai-llms-a-1",
+      "areaKey": "llms",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What is the main purpose of Retrieval-Augmented Generation (RAG)?",
+      "options": [
+        "To fetch relevant external documents at query time and feed them into the prompt so answers are grounded in that information",
+        "To permanently retrain the model's weights on each new question",
+        "To compress the model so it runs on smaller hardware",
+        "To remove the need for any prompt at all"
+      ],
+      "correctIndex": 0,
+      "explanation": "RAG retrieves relevant text from an external knowledge source and supplies it as context, grounding responses without retraining the model.",
+      "theory": "Retrieval-Augmented Generation combines a retrieval step with generation. When a query arrives, relevant documents are fetched from a knowledge base, often using embedding-based similarity search, and inserted into the model's context. This grounds answers in up-to-date or proprietary information and can reduce hallucination without modifying the model's weights."
+    },
+    {
+      "id": "ai-llms-a-2",
+      "areaKey": "llms",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "In the context of large language models, what does the term hallucination describe?",
+      "options": [
+        "When the model produces fluent, confident output that is factually incorrect or unsupported",
+        "When the model refuses to answer any question",
+        "When the model runs out of memory and crashes",
+        "When the model only outputs text it has copied verbatim from training data"
+      ],
+      "correctIndex": 0,
+      "explanation": "A hallucination is plausible-sounding but false or fabricated content generated by the model.",
+      "theory": "Language models generate text by predicting likely token sequences, not by looking up verified facts. As a result they can produce confident statements that are wrong or invented, known as hallucinations. Grounding techniques like RAG, citation, and careful evaluation help detect and reduce them."
+    },
+    {
+      "id": "ai-prompting-b-1",
+      "areaKey": "prompting",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does few-shot prompting mean?",
+      "options": [
+        "Including a few example input-output pairs in the prompt to guide the model's response",
+        "Running the model only a few times per day",
+        "Training the model from scratch on a few images",
+        "Limiting the model to answers of a few words"
+      ],
+      "correctIndex": 0,
+      "explanation": "Few-shot prompting provides several worked examples in the prompt so the model can infer the desired pattern.",
+      "theory": "Few-shot prompting gives the model a handful of examples demonstrating the task within the prompt itself. The model uses these examples to infer the expected format and behavior, without any change to its weights. Zero-shot prompting, by contrast, provides instructions but no examples."
+    },
+    {
+      "id": "ai-prompting-b-2",
+      "areaKey": "prompting",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "When sampling from a language model, what does a higher temperature setting generally do?",
+      "options": [
+        "Makes the output more random and varied",
+        "Makes the output strictly shorter",
+        "Forces the model to always pick the single most likely token",
+        "Disables the model's ability to generate text"
+      ],
+      "correctIndex": 0,
+      "explanation": "Higher temperature flattens the probability distribution over tokens, increasing randomness and diversity in the output.",
+      "theory": "Temperature is a sampling parameter that scales the model's token probabilities before selection. Low temperature makes the model favor the most probable tokens, producing focused and deterministic text. High temperature spreads probability more evenly, yielding more diverse and creative but less predictable output."
+    },
+    {
+      "id": "ai-prompting-i-1",
+      "areaKey": "prompting",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the main idea behind chain-of-thought prompting?",
+      "options": [
+        "Encouraging the model to generate intermediate reasoning steps before giving a final answer",
+        "Chaining several different models together in a pipeline",
+        "Forcing the model to answer in a single word",
+        "Hiding all instructions from the model"
+      ],
+      "correctIndex": 0,
+      "explanation": "Chain-of-thought prompting asks the model to reason step by step, which often improves accuracy on multi-step problems.",
+      "theory": "Chain-of-thought prompting instructs or shows the model to work through a problem in explicit intermediate steps rather than jumping straight to an answer. This tends to improve performance on tasks that require arithmetic, logic, or multi-step reasoning. The reasoning trace also makes the model's process more transparent and easier to check."
+    },
+    {
+      "id": "ai-prompting-i-2",
+      "areaKey": "prompting",
+      "difficulty": "intermediate",
+      "format": "truefalse",
+      "question": "True or false: Setting temperature to 0 makes a language model's sampling effectively deterministic, usually selecting the most probable next token each time.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "At temperature 0 the model greedily picks the highest-probability token, so for a given prompt the output is essentially deterministic.",
+      "theory": "Temperature controls randomness in token sampling. As temperature approaches 0, the distribution collapses onto the single most likely token, a strategy known as greedy decoding. This produces consistent, repeatable output, which is useful when you want reliable answers rather than creative variety."
+    },
+    {
+      "id": "ai-prompting-a-1",
+      "areaKey": "prompting",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "When evaluating an LLM on an open-ended generation task, why is exact-match accuracy against a single reference often a poor metric?",
+      "options": [
+        "Many different responses can be equally correct, so a single reference unfairly penalizes valid variations",
+        "Exact-match always overestimates model quality",
+        "Open-ended tasks have no correct answers at all",
+        "Exact-match can only be used for images"
+      ],
+      "correctIndex": 0,
+      "explanation": "Open-ended tasks admit many valid wordings, so requiring an exact string match misses correct answers phrased differently.",
+      "theory": "For open-ended generation there is rarely one right answer; correct responses can vary in wording, structure, and detail. Exact-match scoring against a single reference therefore underestimates quality. Better approaches include human evaluation, rubric-based grading, semantic similarity, or using a strong model as a judge."
+    },
+    {
+      "id": "ai-prompting-a-2",
+      "areaKey": "prompting",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What is a key risk when using an LLM as an automated judge to evaluate other models' outputs?",
+      "options": [
+        "The judge can carry its own biases, such as favoring longer or more confident answers regardless of correctness",
+        "The judge is mathematically guaranteed to be perfectly accurate",
+        "The judge cannot read text at all",
+        "Using an LLM judge removes all need for any reference answers, with no downsides"
+      ],
+      "correctIndex": 0,
+      "explanation": "LLM judges exhibit systematic biases, such as preferring verbose or self-assured responses, which can distort evaluation results.",
+      "theory": "Using an LLM as a judge scales evaluation but introduces reliability concerns. Such judges can show position bias, verbosity bias, and a tendency to prefer outputs that resemble their own style. Calibrating with human-labeled examples, randomizing answer order, and using clear rubrics help mitigate these biases."
+    }
+  ]
+}

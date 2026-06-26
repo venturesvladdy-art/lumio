@@ -1,0 +1,375 @@
+{
+  "skillId": "finance",
+  "areas": [
+    { "key": "budgeting", "name": "Budgeting & Saving" },
+    { "key": "credit", "name": "Credit & Debt" },
+    { "key": "investing", "name": "Investing Basics" },
+    { "key": "retirement", "name": "Taxes & Retirement" }
+  ],
+  "questions": [
+    {
+      "id": "finance-budgeting-b-1",
+      "areaKey": "budgeting",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is the main purpose of a personal budget?",
+      "options": [
+        "To plan how income is allocated across spending and saving",
+        "To guarantee a higher salary each year",
+        "To eliminate the need to ever track expenses",
+        "To replace the need for a bank account"
+      ],
+      "correctIndex": 0,
+      "explanation": "A budget is a plan that allocates your income across expenses, savings, and goals.",
+      "theory": "A budget is a forward-looking plan for your money. It assigns every dollar of income to a purpose, such as bills, spending, or saving. Reviewing it regularly helps you spot overspending and stay on track toward goals."
+    },
+    {
+      "id": "finance-budgeting-b-2",
+      "areaKey": "budgeting",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "An emergency fund is money set aside to cover unexpected expenses such as car repairs or medical bills.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "An emergency fund is savings reserved specifically for unexpected, urgent costs.",
+      "theory": "An emergency fund is a cash reserve held in an easily accessible account. It cushions against surprises like job loss or sudden repairs so you avoid borrowing at high interest. A common guideline is to save three to six months of essential expenses."
+    },
+    {
+      "id": "finance-budgeting-i-1",
+      "areaKey": "budgeting",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "In the popular 50/30/20 budgeting guideline, what does the 20% portion represent?",
+      "options": [
+        "Savings and debt repayment",
+        "Housing costs only",
+        "Entertainment and dining out",
+        "Taxes withheld from your paycheck"
+      ],
+      "correctIndex": 0,
+      "explanation": "In the 50/30/20 guideline, 20% of after-tax income goes to savings and paying down debt.",
+      "theory": "The 50/30/20 rule splits after-tax income into three buckets. Fifty percent covers needs, thirty percent covers wants, and twenty percent goes to savings and extra debt repayment. It is a flexible starting framework, not a rigid rule."
+    },
+    {
+      "id": "finance-budgeting-i-2",
+      "areaKey": "budgeting",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Why is paying yourself first considered an effective saving strategy?",
+      "options": [
+        "Saving happens automatically before money can be spent",
+        "It increases your gross salary",
+        "It removes the need for any budget",
+        "It guarantees investment returns"
+      ],
+      "correctIndex": 0,
+      "explanation": "Paying yourself first moves savings out automatically before discretionary spending can consume it.",
+      "theory": "Paying yourself first means directing a set amount to savings as soon as you are paid, often through automation. Because the money leaves before you can spend it, saving becomes consistent and effortless. This habit treats savings as a fixed priority rather than leftover money."
+    },
+    {
+      "id": "finance-budgeting-a-1",
+      "areaKey": "budgeting",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What distinguishes a zero-based budget from other budgeting methods?",
+      "options": [
+        "Every dollar of income is assigned a specific job until nothing is left unallocated",
+        "You must spend down your account to zero each month",
+        "It only works for people with no debt",
+        "It ignores irregular or variable expenses"
+      ],
+      "correctIndex": 0,
+      "explanation": "In a zero-based budget, income minus all allocations equals zero, so every dollar has an assigned purpose.",
+      "theory": "Zero-based budgeting gives every dollar a job, including savings and debt payments, until allocations equal income. It does not mean your bank balance hits zero. The method forces deliberate decisions about all income, which improves awareness and reduces aimless spending."
+    },
+    {
+      "id": "finance-budgeting-a-2",
+      "areaKey": "budgeting",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "When building a budget around an irregular income, which approach is generally most stable?",
+      "options": [
+        "Base spending on a conservative estimate of your lowest typical monthly income",
+        "Base spending on your single highest-earning month",
+        "Spend each month's full income immediately",
+        "Avoid saving until income becomes predictable"
+      ],
+      "correctIndex": 0,
+      "explanation": "Budgeting from a conservative low-income baseline prevents overcommitting during lean months.",
+      "theory": "Variable income makes fixed commitments risky if based on good months. Budgeting from a conservative baseline of your lowest typical earnings keeps essential spending sustainable. Surplus from stronger months can then build a buffer that smooths out the lean periods."
+    },
+    {
+      "id": "finance-credit-b-1",
+      "areaKey": "credit",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does a credit score primarily measure?",
+      "options": [
+        "How likely you are to repay borrowed money",
+        "How much money you currently have in savings",
+        "Your total annual income",
+        "The value of your home"
+      ],
+      "correctIndex": 0,
+      "explanation": "A credit score estimates your creditworthiness, or how likely you are to repay debt.",
+      "theory": "A credit score is a number summarizing your credit history. Lenders use it to gauge the risk of lending to you, which affects approval and interest rates. It reflects borrowing behavior, not your income or wealth."
+    },
+    {
+      "id": "finance-credit-b-2",
+      "areaKey": "credit",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "Paying your credit card bill in full each month lets you avoid interest charges on purchases.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "Paying the full statement balance by the due date avoids interest on regular purchases during the grace period.",
+      "theory": "Credit cards typically offer a grace period on purchases when you pay the statement balance in full by the due date. Carrying a balance forfeits that grace period and triggers interest charges. Paying in full each month is the cheapest way to use a credit card."
+    },
+    {
+      "id": "finance-credit-i-1",
+      "areaKey": "credit",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Credit utilization, an important scoring factor, refers to what?",
+      "options": [
+        "The share of your available revolving credit that you are currently using",
+        "The number of years your oldest account has been open",
+        "How many times you check your own credit report",
+        "The total amount you have ever borrowed in your life"
+      ],
+      "correctIndex": 0,
+      "explanation": "Credit utilization is the ratio of your balances to your available credit limits.",
+      "theory": "Credit utilization compares how much revolving credit you are using to your total available limits. Lower utilization generally signals less risk and supports a higher score. Keeping balances well below your limits is widely recommended."
+    },
+    {
+      "id": "finance-credit-i-2",
+      "areaKey": "credit",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "Which factor typically has the largest influence on a common credit score?",
+      "options": [
+        "Your payment history",
+        "Your employer's name",
+        "Your account passwords",
+        "The brand of card you carry"
+      ],
+      "correctIndex": 0,
+      "explanation": "Payment history, whether you pay on time, is usually the most heavily weighted scoring factor.",
+      "theory": "Most scoring models weight payment history most heavily because on-time payment is the strongest signal of reliability. Even one late payment can hurt a score and linger on a report for years. Consistently paying on time is the single best way to build credit."
+    },
+    {
+      "id": "finance-credit-a-1",
+      "areaKey": "credit",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "With the debt avalanche repayment method, which debt do you target first?",
+      "options": [
+        "The debt with the highest interest rate",
+        "The debt with the smallest balance",
+        "The newest debt you took on",
+        "The debt with the longest term"
+      ],
+      "correctIndex": 0,
+      "explanation": "The avalanche method prioritizes the highest-interest debt to minimize total interest paid.",
+      "theory": "The debt avalanche attacks the highest interest rate first while paying minimums on the rest. Mathematically it minimizes total interest and time to payoff. It contrasts with the snowball method, which targets the smallest balance first for motivational quick wins."
+    },
+    {
+      "id": "finance-credit-a-2",
+      "areaKey": "credit",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Why can closing an old, unused credit card sometimes lower your credit score?",
+      "options": [
+        "It can reduce total available credit and shorten average account age",
+        "It immediately erases your entire credit history",
+        "It always converts the account into a loan",
+        "It raises your income on file"
+      ],
+      "correctIndex": 0,
+      "explanation": "Closing a card removes its limit and can raise utilization while reducing average account age.",
+      "theory": "Closing a card eliminates its credit limit, which can push your utilization ratio higher across remaining cards. It may also lower the average age of your accounts over time. Both effects can modestly reduce a score, so keeping old cards open is often wise."
+    },
+    {
+      "id": "finance-investing-b-1",
+      "areaKey": "investing",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What does diversification mean in investing?",
+      "options": [
+        "Spreading money across many investments to reduce risk",
+        "Putting all your money in one promising stock",
+        "Avoiding the stock market entirely",
+        "Trading as frequently as possible"
+      ],
+      "correctIndex": 0,
+      "explanation": "Diversification spreads investments across assets so no single loss is devastating.",
+      "theory": "Diversification means holding a mix of investments rather than concentrating in one. Because different assets often move differently, losses in one may be offset by gains in another. This reduces the impact of any single investment performing poorly."
+    },
+    {
+      "id": "finance-investing-b-2",
+      "areaKey": "investing",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "In general, investments offering higher potential returns also tend to carry higher risk.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "The risk-return tradeoff means higher expected returns generally come with greater risk.",
+      "theory": "The risk-return tradeoff is a core investing principle. Assets with higher potential reward, like stocks, typically come with greater volatility and chance of loss. Lower-risk assets, like cash, usually offer smaller returns."
+    },
+    {
+      "id": "finance-investing-i-1",
+      "areaKey": "investing",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is a key advantage of a low-cost index fund?",
+      "options": [
+        "It offers broad market exposure with low fees",
+        "It guarantees you will beat the market every year",
+        "It eliminates all investment risk",
+        "It requires picking individual winning stocks"
+      ],
+      "correctIndex": 0,
+      "explanation": "Index funds track a broad market index cheaply, giving wide diversification at low cost.",
+      "theory": "An index fund passively tracks a market index rather than trying to beat it. This keeps fees low and provides instant diversification across many holdings. Lower costs and broad exposure are why index funds are a common core holding."
+    },
+    {
+      "id": "finance-investing-i-2",
+      "areaKey": "investing",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What does dollar-cost averaging involve?",
+      "options": [
+        "Investing a fixed amount at regular intervals regardless of price",
+        "Investing only when prices reach a yearly low",
+        "Selling everything whenever the market drops",
+        "Putting your entire savings in at one moment"
+      ],
+      "correctIndex": 0,
+      "explanation": "Dollar-cost averaging invests a set amount on a regular schedule, smoothing out price swings.",
+      "theory": "Dollar-cost averaging means investing a fixed sum at regular intervals no matter the price. You buy more shares when prices are low and fewer when high, averaging your cost over time. It reduces the pressure to time the market and encourages consistent investing."
+    },
+    {
+      "id": "finance-investing-a-1",
+      "areaKey": "investing",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "How does compound interest differ from simple interest over the long term?",
+      "options": [
+        "Compound interest earns returns on both the principal and previously earned interest",
+        "Compound interest only ever applies to loans, never savings",
+        "Compound interest always produces lower totals than simple interest",
+        "Compound interest ignores the principal entirely"
+      ],
+      "correctIndex": 0,
+      "explanation": "Compounding earns returns on accumulated interest as well as principal, accelerating growth over time.",
+      "theory": "Simple interest is calculated only on the original principal. Compound interest is calculated on the principal plus all previously accumulated interest. Over long periods this compounding effect causes balances to grow far faster, which is why starting early matters so much."
+    },
+    {
+      "id": "finance-investing-a-2",
+      "areaKey": "investing",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What is the main purpose of periodically rebalancing a portfolio?",
+      "options": [
+        "To restore the target mix of assets after market moves shift the weights",
+        "To sell all investments and hold only cash",
+        "To chase whichever asset rose the most recently",
+        "To avoid ever paying any taxes"
+      ],
+      "correctIndex": 0,
+      "explanation": "Rebalancing realigns holdings to your intended allocation after returns drift the weights apart.",
+      "theory": "Over time, stronger-performing assets grow to occupy a larger share of a portfolio, shifting its risk level. Rebalancing sells some of what has grown and buys what has lagged to restore target weights. This keeps risk aligned with your plan and enforces a disciplined buy-low, sell-high habit."
+    },
+    {
+      "id": "finance-retirement-b-1",
+      "areaKey": "retirement",
+      "difficulty": "beginner",
+      "format": "mcq",
+      "question": "What is a primary purpose of a retirement account?",
+      "options": [
+        "To save and invest money for income later in life, often with tax advantages",
+        "To provide unlimited free withdrawals at any age",
+        "To replace the need for any other savings",
+        "To avoid earning any investment returns"
+      ],
+      "correctIndex": 0,
+      "explanation": "Retirement accounts help you save and invest for later life, usually with tax benefits.",
+      "theory": "Retirement accounts are designed to help you accumulate money for your non-working years. Many offer tax advantages to encourage long-term saving. In exchange, they often restrict withdrawals until you reach a certain age."
+    },
+    {
+      "id": "finance-retirement-b-2",
+      "areaKey": "retirement",
+      "difficulty": "beginner",
+      "format": "truefalse",
+      "question": "If an employer matches contributions to your retirement plan, contributing at least enough to get the full match is generally a good idea.",
+      "options": ["True", "False"],
+      "correctIndex": 0,
+      "explanation": "An employer match is essentially free money, so capturing the full match is widely recommended.",
+      "theory": "Many employers match a portion of what you contribute to a workplace retirement plan. That match is additional compensation you only receive if you contribute. Contributing enough to earn the full match is one of the most reliable ways to boost retirement savings."
+    },
+    {
+      "id": "finance-retirement-i-1",
+      "areaKey": "retirement",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the main difference between a traditional and a Roth retirement account regarding taxes?",
+      "options": [
+        "Traditional contributions are typically pre-tax while Roth withdrawals are typically tax-free",
+        "Both are taxed identically in every situation",
+        "Roth accounts can never be invested in stocks",
+        "Traditional accounts are always tax-free at every stage"
+      ],
+      "correctIndex": 0,
+      "explanation": "Traditional accounts generally defer taxes until withdrawal, while Roth accounts are funded after tax and grow tax-free.",
+      "theory": "A traditional account often gives a tax break when you contribute, with taxes due on withdrawals in retirement. A Roth account uses after-tax money now, but qualified withdrawals later are tax-free. The choice often hinges on whether you expect a higher tax rate now or in retirement."
+    },
+    {
+      "id": "finance-retirement-i-2",
+      "areaKey": "retirement",
+      "difficulty": "intermediate",
+      "format": "mcq",
+      "question": "What is the difference between a tax deduction and a tax credit?",
+      "options": [
+        "A deduction lowers taxable income while a credit directly reduces the tax owed",
+        "They are two names for exactly the same thing",
+        "A credit increases your taxable income",
+        "A deduction always saves more than a credit of equal size"
+      ],
+      "correctIndex": 0,
+      "explanation": "Deductions reduce the income that is taxed, while credits subtract directly from the tax bill.",
+      "theory": "A tax deduction reduces the amount of income subject to tax, so its value depends on your tax rate. A tax credit reduces the actual tax you owe dollar for dollar. Because of this, a credit of a given size usually saves more than a deduction of the same size."
+    },
+    {
+      "id": "finance-retirement-a-1",
+      "areaKey": "retirement",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "Why does starting retirement contributions earlier in life have an outsized effect on the final balance?",
+      "options": [
+        "Earlier contributions have more time to compound, multiplying their growth",
+        "Early contributions are taxed at a lower rate by law",
+        "Money invested early is exempt from all market risk",
+        "Starting early reduces the total amount you must ever contribute to zero"
+      ],
+      "correctIndex": 0,
+      "explanation": "More years of compounding mean early contributions grow far larger than identical later ones.",
+      "theory": "Time is the most powerful lever in retirement saving because of compounding. A dollar invested in your twenties has decades to earn returns on returns, while the same dollar invested later has less time to grow. This is why even small early contributions can outweigh larger ones made later."
+    },
+    {
+      "id": "finance-retirement-a-2",
+      "areaKey": "retirement",
+      "difficulty": "advanced",
+      "format": "mcq",
+      "question": "What does the concept of asset location (as opposed to allocation) refer to?",
+      "options": [
+        "Choosing which type of account holds each investment to improve tax efficiency",
+        "Deciding the overall percentage split between stocks and bonds",
+        "Picking which country to retire in",
+        "Storing physical share certificates in a safe place"
+      ],
+      "correctIndex": 0,
+      "explanation": "Asset location places investments in taxable or tax-advantaged accounts to minimize taxes.",
+      "theory": "Asset allocation decides your overall mix of investments, while asset location decides which account type holds each one. Placing tax-inefficient assets in tax-advantaged accounts and tax-efficient ones in taxable accounts can reduce the taxes you pay. Thoughtful location can improve after-tax returns without changing your overall allocation."
+    }
+  ]
+}
