@@ -386,7 +386,7 @@ function Done({ skill, correct, total }: { skill: SkillDef; correct: number; tot
         </div>
 
         <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-          <ButtonLink href="/register" size="lg">
+          <ButtonLink href="/login?mode=signup" size="lg">
             Create a free account
             <Icon name="ArrowRight" className="h-4 w-4" />
           </ButtonLink>
@@ -410,7 +410,7 @@ function NotAvailable() {
         <p className="mt-3 text-slate-600">This skill doesn&apos;t have a sample set yet — pick one that does.</p>
         <div className="mt-7 flex justify-center gap-3">
           <ButtonLink href="/try">Browse free tastes</ButtonLink>
-          <ButtonLink href="/register" variant="outline">
+          <ButtonLink href="/login?mode=signup" variant="outline">
             Create a free account
           </ButtonLink>
         </div>

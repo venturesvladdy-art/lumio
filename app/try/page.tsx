@@ -62,7 +62,7 @@ export default function TryPage() {
           mastery tracking, XP and streaks.
         </p>
         <div className="mt-5 flex justify-center">
-          <ButtonLink href="/register">
+          <ButtonLink href="/login?mode=signup">
             Create a free account
             <Icon name="ArrowRight" className="h-4 w-4" />
           </ButtonLink>

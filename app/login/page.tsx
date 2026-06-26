@@ -63,7 +63,9 @@ function DbLogin() {
   const search = useSearchParams();
   const next = search.get("next") || "/dashboard";
 
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(
+    search.get("mode") === "signup" ? "signup" : "signin"
+  );
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
