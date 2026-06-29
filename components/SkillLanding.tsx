@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const BASE = "https://skillsprinter.com";
+const BASE = "https://www.skillsprinter.com";
 
 export interface SkillLandingProps {
   /** Path segment under /skills, e.g. "python" or "sat-prep" (for canonical/schema). */

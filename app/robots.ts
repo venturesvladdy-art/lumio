@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-/** https://skillsprinter.com/robots.txt — allow marketing pages, keep API and
+/** https://www.skillsprinter.com/robots.txt — allow marketing pages, keep API and
  *  gated app pages out of the index. */
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/dashboard", "/learn/"],
       },
     ],
-    sitemap: "https://skillsprinter.com/sitemap.xml",
-    host: "https://skillsprinter.com",
+    sitemap: "https://www.skillsprinter.com/sitemap.xml",
+    host: "https://www.skillsprinter.com",
   };
 }

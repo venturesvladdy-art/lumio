@@ -21,7 +21,7 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://skillsprinter.com"),
+  metadataBase: new URL("https://www.skillsprinter.com"),
   title: {
     default: "SkillSprinter — Master any skill, one question at a time",
     template: "%s | SkillSprinter",
@@ -64,17 +64,17 @@ const orgJsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://skillsprinter.com/#org",
+      "@id": "https://www.skillsprinter.com/#org",
       name: "SkillSprinter",
-      url: "https://skillsprinter.com",
-      logo: "https://skillsprinter.com/icon.svg",
+      url: "https://www.skillsprinter.com",
+      logo: "https://www.skillsprinter.com/icon.svg",
     },
     {
       "@type": "WebSite",
-      "@id": "https://skillsprinter.com/#website",
-      url: "https://skillsprinter.com",
+      "@id": "https://www.skillsprinter.com/#website",
+      url: "https://www.skillsprinter.com",
       name: "SkillSprinter",
-      publisher: { "@id": "https://skillsprinter.com/#org" },
+      publisher: { "@id": "https://www.skillsprinter.com/#org" },
     },
   ],
 };

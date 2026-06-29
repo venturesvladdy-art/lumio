@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SKILLS } from "@/lib/skills";
 import { POSTS } from "@/lib/blog/posts";
 
-const BASE = "https://skillsprinter.com";
+const BASE = "https://www.skillsprinter.com";
 
 /** XML sitemap of public, indexable pages (gated /dashboard and /learn are excluded). */
 export default function sitemap(): MetadataRoute.Sitemap {
