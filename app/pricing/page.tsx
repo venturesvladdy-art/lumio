@@ -23,6 +23,17 @@ export default function PricingPage() {
     { q: t("pricing.q4"), a: t("pricing.a4") },
   ];
 
+  // FAQPage structured data — eligible for FAQ rich results in Google.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <div className="container-page py-14 lg:py-20">
       {/* Header */}
@@ -75,6 +86,10 @@ export default function PricingPage() {
 
       {/* FAQ */}
       <div className="mx-auto mt-24 max-w-3xl">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
         <h2 className="text-center font-display text-3xl font-bold tracking-tight text-ink">
           {t("pricing.faqTitle")}
         </h2>

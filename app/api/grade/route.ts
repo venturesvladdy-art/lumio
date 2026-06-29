@@ -4,6 +4,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { recordUsage, usageFromResponse } from "@/lib/budget";
+import { rateLimit } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -41,6 +42,9 @@ export async function POST(req: Request) {
   const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+  if (!rateLimit(`grade:${userId}`, 30, 60_000)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   // AI free-text grading is a paid (Smart/Guru) feature (Proposal junction matrix).

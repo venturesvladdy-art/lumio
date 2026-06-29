@@ -6,6 +6,7 @@ import { resolveTaxonomy, findSubarea } from "@/lib/taxonomy";
 import { deriveProfile } from "@/lib/survey/profile";
 import { activeTarget } from "@/lib/mastery";
 import { remainingBudget, EST_COST } from "@/lib/budget";
+import { rateLimit } from "@/lib/ratelimit";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import type { Difficulty, OnboardingAnswers, PlanTier } from "@/lib/types";
@@ -61,6 +62,11 @@ export async function POST(req: Request) {
   // (Opus/Sonnet) and is a cost-amplification vector. (Guests use static banks.)
   if (prisma && !userId) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  // Per-user burst cap on live AI generation (cost-amplification guard).
+  if (userId && !rateLimit(`plan:${userId}`, 15, 60_000)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   // Server-side limit: the Basic (free) tier may only have ONE skill. Block a

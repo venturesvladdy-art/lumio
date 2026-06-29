@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { generateTheory } from "@/lib/theory";
 import { remainingBudget, recordUsage, EST_COST } from "@/lib/budget";
+import { rateLimit } from "@/lib/ratelimit";
 import type { PlanTier } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -24,6 +25,9 @@ export async function POST(req: Request) {
   const userId = (session?.user as { id?: string } | undefined)?.id;
   if (!userId) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+  if (!rateLimit(`theory:${userId}`, 60, 60_000)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   let body: z.infer<typeof Schema>;
