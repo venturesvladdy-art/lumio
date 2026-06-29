@@ -19,7 +19,7 @@ export function appBaseUrl(): string {
     process.env.AUTH_URL ||
     process.env.NEXTAUTH_URL ||
     (process.env.NODE_ENV === "production"
-      ? "https://www.skillsprinter.com"
+      ? "https://skillsprinter.com"
       : "http://localhost:3000");
   return url.replace(/\/+$/, "");
 }
