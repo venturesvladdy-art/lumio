@@ -108,7 +108,15 @@ export function PlanCards({
       } else if (j.action === "none") {
         router.push("/dashboard");
       } else if (j.error) {
-        setNotice({ ok: false, text: j.error });
+        setNotice({ ok: false, text: j.message || j.error });
+      } else {
+        // Non-OK or unrecognized response — never fail silently again.
+        setNotice({
+          ok: false,
+          text: res.ok
+            ? "Couldn't start checkout — unexpected response. Please try again."
+            : `Couldn't start checkout (error ${res.status}). Please try again, or contact support if it persists.`,
+        });
       }
     } catch {
       setNotice({ ok: false, text: "Something went wrong. Please try again." });

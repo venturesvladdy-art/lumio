@@ -22,6 +22,17 @@ export const runtime = "nodejs";
  * All subscriptions are recurring (monthly by default; yearly is also recurring).
  */
 export async function POST(req: Request) {
+  try {
+    return await handleCheckout(req);
+  } catch (e) {
+    // Never let a thrown Stripe/DB error become a bare 500 the client swallows.
+    console.error("[stripe/checkout] error", e);
+    const message = e instanceof Error ? e.message : "Checkout failed";
+    return NextResponse.json({ error: "checkout_failed", message }, { status: 500 });
+  }
+}
+
+async function handleCheckout(req: Request): Promise<NextResponse> {
   if (!stripe || !prisma) {
     return NextResponse.json({ error: "Billing not configured" }, { status: 503 });
   }

@@ -19,7 +19,6 @@ export default function PricingPage() {
 
   const faqs = [
     { q: t("pricing.q1"), a: t("pricing.a1") },
-    { q: t("pricing.q2"), a: t("pricing.a2") },
     { q: t("pricing.q3"), a: t("pricing.a3") },
     { q: t("pricing.q4"), a: t("pricing.a4") },
   ];
