@@ -11,11 +11,11 @@ export const maxDuration = 60;
 /**
  * Valid codes are configured via the PROMO_CODES env var (format
  * "CODE:tier;CODE2:tier"), so they can be rotated or disabled without a deploy
- * and never ship in source. Falls back to the original launch code if unset.
+ * and never ship in source. No codes are valid until the env var is set.
  */
 function loadCodes(): Record<string, "guru" | "smart"> {
   const raw = process.env.PROMO_CODES;
-  if (!raw) return { VLADDYXOXO: "guru" };
+  if (!raw) return {};
   const map: Record<string, "guru" | "smart"> = {};
   for (const pair of raw.split(/[;,]/)) {
     const [code, tier] = pair.split(":").map((s) => s.trim());
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       data: {
         userId,
         type: "promo.redeemed",
-        data: { code: normalised, tier },
+        data: { tier },
       },
     })
     .catch(() => {});

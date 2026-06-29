@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
+import { rateLimit, clientIp } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 
@@ -23,6 +24,15 @@ function escapeHtml(s: string): string {
 }
 
 export async function POST(req: Request) {
+  // Unauthenticated endpoint that writes a row and sends mail — throttle by IP
+  // so it can't be used to mail-bomb the inbox or flood the audit table.
+  if (!rateLimit(`contact:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: "Too many messages. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   let body: z.infer<typeof Schema>;
   try {
     body = Schema.parse(await req.json());

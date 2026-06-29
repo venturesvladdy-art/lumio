@@ -32,7 +32,7 @@ export async function sendEmail(opts: {
 }): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
-    console.warn("[email] RESEND_API_KEY not set; skipping send to", opts.to);
+    console.warn("[email] RESEND_API_KEY not set; skipping send.");
     return false;
   }
   try {

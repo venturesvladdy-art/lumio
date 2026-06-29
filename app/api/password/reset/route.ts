@@ -43,14 +43,15 @@ export async function POST(req: Request) {
 
   // Bump the token version so every JWT issued before this reset is rejected
   // (Phase 6 session-revoke) — a stolen session can't outlive a password reset.
-  await prisma.user.update({
+  const updated = await prisma.user.update({
     where: { email },
     data: { passwordHash, pwTokenVersion: { increment: 1 } },
   });
   await prisma.verificationToken.delete({ where: { token: body.token } }).catch(() => {});
 
+  // Audit the event without persisting the email (scoped by userId instead).
   await prisma.auditEvent
-    .create({ data: { type: "password.reset", data: { email } } })
+    .create({ data: { userId: updated.id, type: "password.reset" } })
     .catch(() => {});
 
   return NextResponse.json({ ok: true });
