@@ -19,8 +19,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/login",
   ];
 
-  // Per-skill "taste" landing pages for the predefined catalogue.
-  const skillPaths = SKILLS.filter((s) => s.predefined).map((s) => `/try/${s.id}`);
+  // Per-skill SEO landing pages for the predefined catalogue.
+  const skillPaths = SKILLS.filter((s) => s.predefined).map((s) => `/skills/${s.id}`);
 
   return [...staticPaths, ...skillPaths].map((path) => ({
     url: `${BASE}${path}`,

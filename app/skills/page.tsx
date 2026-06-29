@@ -38,7 +38,7 @@ export default function SkillsPage() {
         </h2>
         <div className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {SKILLS.map((skill) => (
-            <SkillCard key={skill.id} skill={skill} />
+            <SkillCard key={skill.id} skill={skill} href={`/skills/${skill.id}`} />
           ))}
         </div>
       </div>
