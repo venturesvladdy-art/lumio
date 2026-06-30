@@ -7,6 +7,7 @@ import { AppProvider, useStore } from "@/lib/store";
 import { AuthProvider, tierForEmail, useAuth } from "@/lib/auth";
 import { DemoSessionBridge, DbSessionBridge } from "@/lib/session";
 import { ClaimBridge } from "@/components/ClaimBridge";
+import { CelebrationProvider } from "@/components/Celebration";
 import { USE_DB } from "@/lib/flags";
 
 /** Demo mode only: grant Guru to allowlisted accounts (mirrors a billing webhook). */
@@ -31,10 +32,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <LanguageProvider>
         <SessionProvider>
           <AppProvider dbMode>
-            <DbSessionBridge>
-              <ClaimBridge />
-              {children}
-            </DbSessionBridge>
+            <CelebrationProvider>
+              <DbSessionBridge>
+                <ClaimBridge />
+                {children}
+              </DbSessionBridge>
+            </CelebrationProvider>
           </AppProvider>
         </SessionProvider>
       </LanguageProvider>
@@ -45,8 +48,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <LanguageProvider>
       <AuthProvider>
         <AppProvider>
-          <AuthTierBridge />
-          <DemoSessionBridge>{children}</DemoSessionBridge>
+          <CelebrationProvider>
+            <AuthTierBridge />
+            <DemoSessionBridge>{children}</DemoSessionBridge>
+          </CelebrationProvider>
         </AppProvider>
       </AuthProvider>
     </LanguageProvider>

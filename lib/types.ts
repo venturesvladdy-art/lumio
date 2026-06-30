@@ -194,6 +194,34 @@ export interface SkillMastery {
   subareas: SubareaMastery[];
 }
 
+/** ---- Gamification: goals & daily quests ---- */
+
+/** A daily/weekly XP target, derived from the intake survey's commitment signals. */
+export interface XpGoals {
+  dailyXp: number;
+  weeklyXp: number;
+}
+
+export type QuestMetric = "xp" | "answered" | "correct" | "combo";
+
+/** One of today's rotating challenges. Progress is read from the daily counters. */
+export interface Quest {
+  id: string;
+  /** human label, e.g. "Earn 30 XP today" */
+  label: string;
+  metric: QuestMetric;
+  target: number;
+  xpReward: number;
+  icon: string; // lucide-react icon name
+  claimed: boolean;
+}
+
+/** The set of quests generated for one local day. */
+export interface DailyQuests {
+  date: string; // todayKey()
+  quests: Quest[];
+}
+
 export interface UserState {
   tier: PlanTier;
   xp: number;
@@ -201,6 +229,22 @@ export interface UserState {
   lastActiveDate: string | null;
   dailyAnswered: number;
   dailyDate: string | null;
+  /** XP earned today (resets with dailyDate) — drives the daily XP goal. */
+  dailyXp: number;
+  /** Correct answers today (resets with dailyDate) — drives quests. */
+  dailyCorrect: number;
+  /** Best correct-combo reached today (resets with dailyDate) — drives quests. */
+  dailyBestCombo: number;
+  /** XP earned this ISO week — drives the weekly goal & leaderboard. */
+  weekXp: number;
+  /** weekKey() this weekXp belongs to; reset when it rolls over. */
+  weekKey: string | null;
+  /** Daily/weekly XP targets (survey-derived, with a sensible default). */
+  goals: XpGoals;
+  /** Streak-saver tokens: auto-spent to protect a streak on a missed day. */
+  streakFreezes: number;
+  /** Today's challenges (regenerated each local day). */
+  quests?: DailyQuests;
   earnedBadges: string[];
   skills: Record<string, SkillProgress>;
   onboarded: boolean;

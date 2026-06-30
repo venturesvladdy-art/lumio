@@ -15,9 +15,17 @@ import type {
   QAItem,
   SkillProgress,
   UserState,
+  XpGoals,
 } from "@/lib/types";
-import { dayDiff, todayKey } from "@/lib/utils";
-import { comboBonus, evaluateBadges, levelInfo } from "@/lib/gamification";
+import { dayDiff, todayKey, weekKey } from "@/lib/utils";
+import {
+  comboBonus,
+  dailyQuests,
+  DEFAULT_GOALS,
+  evaluateBadges,
+  levelInfo,
+  questProgress,
+} from "@/lib/gamification";
 
 const STORAGE_KEY = "skillsprinter.state.v1";
 
@@ -28,6 +36,14 @@ const INITIAL: UserState = {
   lastActiveDate: null,
   dailyAnswered: 0,
   dailyDate: null,
+  dailyXp: 0,
+  dailyCorrect: 0,
+  dailyBestCombo: 0,
+  weekXp: 0,
+  weekKey: null,
+  goals: DEFAULT_GOALS,
+  streakFreezes: 2,
+  quests: undefined,
   earnedBadges: [],
   skills: {},
   onboarded: false,
@@ -38,6 +54,17 @@ export interface AnswerResult {
   newBadges: string[];
   leveledUp: boolean;
   combo: number;
+  /** true when a streak-freeze was spent to keep the streak alive across a gap */
+  freezeUsed: boolean;
+  /** ids of quests this answer just completed (ready to claim) */
+  questsCompleted: string[];
+}
+
+export interface QuestClaimResult {
+  claimed: boolean;
+  xp: number;
+  newBadges: string[];
+  leveledUp: boolean;
 }
 
 interface StoreValue {
@@ -50,17 +77,53 @@ interface StoreValue {
   recordAnswer: (skillId: string, item: QAItem, correct: boolean) => AnswerResult;
   resetAll: () => void;
   hasSkill: (skillId: string) => boolean;
+  /** Set the daily/weekly XP targets (called when the intake survey completes). */
+  setGoals: (goals: XpGoals) => void;
+  /** Claim a completed daily quest, banking its bonus XP. */
+  claimQuest: (questId: string) => QuestClaimResult;
   /** DB mode: replace the whole state with the server's authoritative copy. */
   hydrateServerState: (next: UserState) => void;
 }
 
 const StoreContext = createContext<StoreValue | null>(null);
 
-/** Reset the per-day counter if the stored day is not today. */
-function normalizeDaily(s: UserState): UserState {
+/** Backfill gamification fields that older stored/server states may lack. */
+function withGamificationDefaults(s: UserState): UserState {
+  return {
+    ...s,
+    dailyXp: s.dailyXp ?? 0,
+    dailyCorrect: s.dailyCorrect ?? 0,
+    dailyBestCombo: s.dailyBestCombo ?? 0,
+    weekXp: s.weekXp ?? 0,
+    weekKey: s.weekKey ?? null,
+    goals: s.goals ?? DEFAULT_GOALS,
+    streakFreezes: s.streakFreezes ?? 2,
+  };
+}
+
+/**
+ * Roll over per-day and per-week counters when the date changed, and ensure the
+ * day's quests exist. Idempotent — safe to call on every read/write.
+ */
+function normalizePeriods(input: UserState): UserState {
+  let s = withGamificationDefaults(input);
   const today = todayKey();
+  const wk = weekKey();
   if (s.dailyDate !== today) {
-    return { ...s, dailyDate: today, dailyAnswered: 0 };
+    s = {
+      ...s,
+      dailyDate: today,
+      dailyAnswered: 0,
+      dailyXp: 0,
+      dailyCorrect: 0,
+      dailyBestCombo: 0,
+    };
+  }
+  if (s.weekKey !== wk) {
+    s = { ...s, weekKey: wk, weekXp: 0 };
+  }
+  if (!s.quests || s.quests.date !== today) {
+    s = { ...s, quests: dailyQuests(today, s.goals) };
   }
   return s;
 }
@@ -88,7 +151,7 @@ export function AppProvider({
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<UserState>;
-        const merged = normalizeDaily({ ...INITIAL, ...parsed });
+        const merged = normalizePeriods({ ...INITIAL, ...parsed });
         ref.current = merged;
         setState(merged);
       }
@@ -115,7 +178,7 @@ export function AppProvider({
   }, []);
 
   const hydrateServerState = useCallback((next: UserState) => {
-    const merged = normalizeDaily(next);
+    const merged = normalizePeriods(next);
     ref.current = merged;
     setState(merged);
     setHydrated(true);
@@ -177,23 +240,46 @@ export function AppProvider({
 
   const recordAnswer = useCallback(
     (skillId: string, item: QAItem, correct: boolean): AnswerResult => {
-      const s = normalizeDaily(ref.current);
+      const s = normalizePeriods(ref.current);
       const today = todayKey();
       const sp = s.skills[skillId];
       if (!sp) {
-        return { xpGained: 0, newBadges: [], leveledUp: false, combo: 0 };
+        return {
+          xpGained: 0,
+          newBadges: [],
+          leveledUp: false,
+          combo: 0,
+          freezeUsed: false,
+          questsCompleted: [],
+        };
       }
 
       const already = sp.completedItemIds.includes(item.id);
 
-      // Streak: bump once for the first activity of the day.
+      // Streak: bump once for the first activity of the day. On a short gap,
+      // spend streak-freezes to keep the streak alive instead of resetting.
       let streakDays = s.streakDays;
       let lastActiveDate = s.lastActiveDate;
+      let streakFreezes = s.streakFreezes;
+      let freezeUsed = false;
       if (lastActiveDate !== today) {
-        streakDays =
-          lastActiveDate && dayDiff(today, lastActiveDate) === 1
-            ? streakDays + 1
-            : 1;
+        if (!lastActiveDate) {
+          streakDays = 1;
+        } else {
+          const gap = dayDiff(today, lastActiveDate);
+          if (gap === 1) {
+            streakDays = streakDays + 1;
+          } else if (gap > 1) {
+            const missed = gap - 1;
+            if (missed <= 2 && streakFreezes >= missed) {
+              streakFreezes -= missed;
+              streakDays = streakDays + 1;
+              freezeUsed = true;
+            } else {
+              streakDays = 1;
+            }
+          }
+        }
         lastActiveDate = today;
       }
 
@@ -222,14 +308,44 @@ export function AppProvider({
       const prevLevel = levelInfo(s.xp).level;
       const newXp = s.xp + xpGained;
       const leveledUp = levelInfo(newXp).level > prevLevel;
+
+      // Daily / weekly counters that drive the XP goals and quests.
+      const before = {
+        xp: s.dailyXp,
+        answered: s.dailyAnswered,
+        correct: s.dailyCorrect,
+        bestCombo: s.dailyBestCombo,
+      };
       const dailyAnswered = already ? s.dailyAnswered : s.dailyAnswered + 1;
+      const after = {
+        xp: s.dailyXp + xpGained,
+        answered: dailyAnswered,
+        correct: s.dailyCorrect + (correct && !already ? 1 : 0),
+        bestCombo: Math.max(s.dailyBestCombo, newCombo),
+      };
+
+      // Quests this answer just pushed over the line (claimed on the dashboard).
+      const questsCompleted =
+        s.quests?.quests
+          .filter(
+            (q) =>
+              !q.claimed &&
+              questProgress(q, before) < q.target &&
+              questProgress(q, after) >= q.target
+          )
+          .map((q) => q.id) ?? [];
 
       let next: UserState = {
         ...s,
         xp: newXp,
         streakDays,
         lastActiveDate,
+        streakFreezes,
         dailyAnswered,
+        dailyXp: after.xp,
+        dailyCorrect: after.correct,
+        dailyBestCombo: after.bestCombo,
+        weekXp: s.weekXp + xpGained,
         skills: { ...s.skills, [skillId]: newSp },
       };
 
@@ -245,7 +361,14 @@ export function AppProvider({
       }
 
       commit(next);
-      return { xpGained, newBadges, leveledUp, combo: newCombo };
+      return {
+        xpGained,
+        newBadges,
+        leveledUp,
+        combo: newCombo,
+        freezeUsed,
+        questsCompleted,
+      };
     },
     [commit]
   );
@@ -253,6 +376,64 @@ export function AppProvider({
   const resetAll = useCallback(() => {
     commit({ ...INITIAL, tier: ref.current.tier });
   }, [commit]);
+
+  const setGoals = useCallback(
+    (goals: XpGoals) => {
+      const s = ref.current;
+      // Regenerate today's quests so the XP quest scales to the new target.
+      commit({ ...s, goals, quests: dailyQuests(todayKey(), goals) });
+    },
+    [commit]
+  );
+
+  const claimQuest = useCallback(
+    (questId: string): QuestClaimResult => {
+      const s = normalizePeriods(ref.current);
+      const q = s.quests?.quests.find((x) => x.id === questId);
+      if (!s.quests || !q || q.claimed) {
+        return { claimed: false, xp: 0, newBadges: [], leveledUp: false };
+      }
+      const daily = {
+        xp: s.dailyXp,
+        answered: s.dailyAnswered,
+        correct: s.dailyCorrect,
+        bestCombo: s.dailyBestCombo,
+      };
+      if (questProgress(q, daily) < q.target) {
+        return { claimed: false, xp: 0, newBadges: [], leveledUp: false };
+      }
+      const prevLevel = levelInfo(s.xp).level;
+      const newXp = s.xp + q.xpReward;
+      const quests = {
+        ...s.quests,
+        quests: s.quests.quests.map((x) =>
+          x.id === questId ? { ...x, claimed: true } : x
+        ),
+      };
+      let next: UserState = {
+        ...s,
+        xp: newXp,
+        weekXp: s.weekXp + q.xpReward,
+        quests,
+      };
+      const satisfied = evaluateBadges(next);
+      const newBadges = satisfied.filter((id) => !next.earnedBadges.includes(id));
+      if (newBadges.length) {
+        next = {
+          ...next,
+          earnedBadges: Array.from(new Set([...next.earnedBadges, ...satisfied])),
+        };
+      }
+      commit(next);
+      return {
+        claimed: true,
+        xp: q.xpReward,
+        newBadges,
+        leveledUp: levelInfo(newXp).level > prevLevel,
+      };
+    },
+    [commit]
+  );
 
   const value: StoreValue = {
     hydrated,
@@ -263,6 +444,8 @@ export function AppProvider({
     recordAnswer,
     resetAll,
     hasSkill,
+    setGoals,
+    claimQuest,
     hydrateServerState,
   };
 

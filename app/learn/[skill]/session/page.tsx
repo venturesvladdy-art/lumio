@@ -24,6 +24,7 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Pill, ProgressBar, SectionLabel } from "@/components/ui/primitives";
 import { ACCENT_TILE } from "@/components/ui/accent";
+import { useCelebration } from "@/components/Celebration";
 
 interface Toast {
   id: number;
@@ -45,6 +46,7 @@ function SessionInner() {
   const t = useT();
   const tx = useTx();
   const { state, hydrated, recordAnswer } = useStore();
+  const { celebrate, burst } = useCelebration();
   const { ready: authReady, user } = useRequireAuth();
 
   // Optional ?module=<id> scopes the session to one plan section; ?review=1
@@ -261,11 +263,21 @@ function SessionInner() {
     setSessionXp((x) => x + res.xpGained);
     setSessionCount((n) => n + 1);
     if (correct) setSessionCorrect((n) => n + 1);
-    if (res.leveledUp) pushToast(t("dashboard.levelLabel") + " ↑", "TrendingUp");
+    if (res.leveledUp) {
+      celebrate({
+        title: "Level up!",
+        subtitle: t("dashboard.levelLabel") + " ↑",
+        icon: "TrendingUp",
+      });
+    } else if (res.newBadges.length || res.questsCompleted.length) {
+      burst();
+    }
     res.newBadges.forEach((bid) => {
       const b = getBadge(bid);
       if (b) pushToast(tx(b.name), b.icon);
     });
+    res.questsCompleted.forEach(() => pushToast("Quest complete!", "CheckCircle2"));
+    if (res.freezeUsed) pushToast("Streak saved with a freeze", "Snowflake");
   };
 
   const check = async () => {

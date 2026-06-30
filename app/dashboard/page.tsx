@@ -10,12 +10,7 @@ import { resolveSkill } from "@/lib/skills";
 import { planItemIds } from "@/lib/agent";
 import type { Difficulty, SkillMastery, SubareaMastery } from "@/lib/types";
 import { LEVEL_LABEL } from "@/lib/mastery";
-import {
-  aggregate,
-  BADGES,
-  getBadge,
-  levelInfo,
-} from "@/lib/gamification";
+import { aggregate, levelInfo } from "@/lib/gamification";
 import {
   activeSkillCount,
   dailyLimit,
@@ -36,6 +31,9 @@ import {
   SectionLabel,
 } from "@/components/ui/primitives";
 import { ACCENT_TILE } from "@/components/ui/accent";
+import { Achievements } from "@/components/Achievements";
+import { DailyQuests } from "@/components/DailyQuests";
+import { Leaderboard } from "@/components/Leaderboard";
 
 export default function DashboardPage() {
   const t = useT();
@@ -73,6 +71,17 @@ export default function DashboardPage() {
   const dailyPct = unlimited
     ? Math.min(100, doneToday * 20)
     : Math.round((doneToday / limit) * 100);
+
+  const dailyXpGoal = state.goals.dailyXp;
+  const dailyXpPct =
+    dailyXpGoal > 0
+      ? Math.min(100, Math.round((state.dailyXp / dailyXpGoal) * 100))
+      : 0;
+  const weeklyXpGoal = state.goals.weeklyXp;
+  const weeklyPct =
+    weeklyXpGoal > 0
+      ? Math.min(100, Math.round((state.weekXp / weeklyXpGoal) * 100))
+      : 0;
 
   const empty = skillIds.length === 0;
 
@@ -139,35 +148,83 @@ export default function DashboardPage() {
               label={t("dashboard.xpLabel")}
             />
 
-            {/* Streak */}
-            <StatTile
-              icon="Flame"
-              tone="bg-amber-50 text-amber-600"
-              value={state.streakDays}
-              label={`${t("dashboard.streakLabel")} · ${t("dashboard.streakUnit")}`}
-            />
+            {/* Streak (with freeze tokens) */}
+            <Card className="flex items-center gap-4 p-5">
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-amber-50 text-amber-600">
+                <Icon name="Flame" className="h-7 w-7" />
+              </span>
+              <div>
+                <div className="font-display text-2xl font-bold text-ink">
+                  {state.streakDays}
+                </div>
+                <div className="text-xs text-slate-500">
+                  {t("dashboard.streakLabel")} · {t("dashboard.streakUnit")}
+                </div>
+                {state.streakFreezes > 0 && (
+                  <div className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-sky-600">
+                    <Icon name="Snowflake" className="h-3 w-3" />
+                    {state.streakFreezes} freeze{state.streakFreezes > 1 ? "s" : ""}
+                  </div>
+                )}
+              </div>
+            </Card>
 
-            {/* Daily goal */}
+            {/* Daily XP goal */}
             <Card className="flex items-center gap-4 p-5">
               <ProgressRing
-                value={dailyPct}
+                value={dailyXpPct}
                 size={84}
                 stroke={9}
                 barClassName="text-emerald-500"
               >
-                <Icon name="Target" className="h-6 w-6 text-emerald-500" />
+                <div className="text-center leading-none">
+                  <div className="font-display text-base font-bold text-ink">
+                    {state.dailyXp}
+                  </div>
+                  <div className="mt-0.5 text-[10px] text-slate-400">
+                    /{dailyXpGoal}
+                  </div>
+                </div>
               </ProgressRing>
               <div>
                 <div className="font-display text-lg font-semibold text-ink">
-                  {t("dashboard.dailyGoal")}
+                  Today&apos;s XP
                 </div>
                 <div className="text-xs text-slate-500">
-                  {unlimited
-                    ? t("dashboard.dailyUnlimited", { done: doneToday })
-                    : t("dashboard.dailyDone", { done: doneToday, limit })}
+                  {state.dailyXp >= dailyXpGoal
+                    ? "Daily goal reached! 🎉"
+                    : `${Math.max(0, dailyXpGoal - state.dailyXp)} XP to goal`}
                 </div>
               </div>
             </Card>
+          </div>
+
+          {/* Weekly XP goal */}
+          <Card className="mt-4 p-5">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-50 text-brand-600">
+                  <Icon name="CalendarCheck" className="h-5 w-5" />
+                </span>
+                <div>
+                  <h2 className="font-display text-lg font-semibold text-ink">
+                    This week&apos;s goal
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    {state.weekXp} / {weeklyXpGoal} XP
+                  </p>
+                </div>
+              </div>
+              <span className="text-sm font-semibold text-brand-600">
+                {weeklyPct}%
+              </span>
+            </div>
+            <ProgressBar value={weeklyPct} className="mt-3 h-2.5" />
+          </Card>
+
+          {/* Achievements */}
+          <div className="mt-6">
+            <Achievements />
           </div>
 
           {/* Main grid */}
@@ -284,36 +341,11 @@ export default function DashboardPage() {
 
             {/* Right column */}
             <div className="space-y-6">
-              {/* Badges */}
-              <Card className="p-5">
-                <h2 className="font-display text-lg font-semibold text-ink">
-                  {t("dashboard.badgesTitle")}
-                </h2>
-                {state.earnedBadges.length === 0 ? (
-                  <p className="mt-2 text-sm text-slate-500">
-                    {t("dashboard.badgesEmpty")}
-                  </p>
-                ) : null}
-                <div className="mt-4 grid grid-cols-4 gap-3">
-                  {BADGES.map((b) => {
-                    const earned = state.earnedBadges.includes(b.id);
-                    return (
-                      <div
-                        key={b.id}
-                        title={`${tx(b.name)} — ${tx(b.desc)}`}
-                        className={cn(
-                          "group grid aspect-square place-items-center rounded-2xl border transition-all",
-                          earned
-                            ? "border-amber-200 bg-amber-50 text-amber-600"
-                            : "border-slate-100 bg-slate-50 text-slate-300"
-                        )}
-                      >
-                        <Icon name={earned ? b.icon : "Lock"} className="h-6 w-6" />
-                      </div>
-                    );
-                  })}
-                </div>
-              </Card>
+              {/* Daily quests */}
+              <DailyQuests />
+
+              {/* Leaderboard */}
+              <Leaderboard />
 
               {/* Guru-only advanced analytics */}
               {state.tier === "guru" && <AdvancedInsights mastery={state.mastery} />}

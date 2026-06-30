@@ -16,6 +16,7 @@ import { useStore } from "@/lib/store";
 import { useRequireAuth } from "@/lib/session";
 import { useT, useTx } from "@/lib/i18n";
 import { canAddSkill } from "@/lib/plans";
+import { deriveXpGoals } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -61,7 +62,7 @@ function Onboarding() {
   const params = useParams();
   const search = useSearchParams();
   const router = useRouter();
-  const { state, hydrated, startSkill, loadSkillProgress } = useStore();
+  const { state, hydrated, startSkill, loadSkillProgress, setGoals } = useStore();
   const { ready: authReady, user } = useRequireAuth();
 
   const id = String(params.skill);
@@ -203,6 +204,16 @@ function Onboarding() {
       setPhase("survey");
     }
   }, [hydrated, areas, skill.id, state, forcePick, isContinue, contAreaId, contAreaName, levelParam, resumeOrBuild]);
+
+  // Once the survey reveals the learner's commitment, set their XP goals.
+  useEffect(() => {
+    if (!hydrated || !answers.timeBudget) return;
+    const g = deriveXpGoals(answers);
+    if (state.goals.dailyXp !== g.dailyXp || state.goals.weeklyXp !== g.weeklyXp) {
+      setGoals(g);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, answers.timeBudget, answers.depth, answers.deadline]);
 
   const current = nextQuestion(SURVEY, answers);
 
