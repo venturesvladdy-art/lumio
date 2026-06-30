@@ -34,6 +34,7 @@ import { ACCENT_TILE } from "@/components/ui/accent";
 import { Achievements } from "@/components/Achievements";
 import { DailyQuests } from "@/components/DailyQuests";
 import { Leaderboard } from "@/components/Leaderboard";
+import { MasteryTrophies } from "@/components/MasteryTrophies";
 
 export default function DashboardPage() {
   const t = useT();
@@ -341,6 +342,9 @@ export default function DashboardPage() {
 
             {/* Right column */}
             <div className="space-y-6">
+              {/* Per-skill mastery trophies */}
+              <MasteryTrophies />
+
               {/* Daily quests */}
               <DailyQuests />
 

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { resolveSkill } from "@/lib/skills";
 import { assemblePlan, assembleDrill } from "@/lib/agent";
-import { evaluateBadges } from "@/lib/gamification";
+import { deriveXpGoals, evaluateBadges } from "@/lib/gamification";
 import { getCachedTaxonomy } from "@/lib/taxonomy";
 import {
   clampTarget,
@@ -11,7 +11,7 @@ import {
   startLevelFor,
 } from "@/lib/mastery";
 import { proficiencyFromAnswers } from "@/lib/survey/profile";
-import { dayDiff } from "@/lib/utils";
+import { dayDiff, weekKey } from "@/lib/utils";
 import type {
   AreaCoverage,
   Brief,
@@ -156,14 +156,25 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
   // Use one consistent (UTC) day key for bucketing and "today".
   let totalXp = 0;
   const today = dayOf(new Date());
+  const thisWeek = weekKey(new Date());
   let dailyAnswered = 0;
+  let dailyXp = 0;
+  let weekXp = 0;
+  let dailyCorrect = 0;
+  const todayAttempts: typeof attempts = [];
   const activeDays = new Set<string>();
 
   for (const a of attempts) {
     totalXp += a.xpGained;
     const day = dayOf(a.answeredAt);
     activeDays.add(day);
-    if (day === today) dailyAnswered += 1;
+    if (weekKey(a.answeredAt) === thisWeek) weekXp += a.xpGained;
+    if (day === today) {
+      dailyAnswered += 1;
+      dailyXp += a.xpGained;
+      if (a.correct) dailyCorrect += 1;
+      todayAttempts.push(a);
+    }
 
     const sp = skills[a.skillId];
     if (!sp) continue; // attempt for a skill with no current curriculum
@@ -179,6 +190,19 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
   }
   // `combo` is a live counter; it shouldn't persist across reloads.
   for (const sp of Object.values(skills)) sp.combo = 0;
+
+  // Best correct-combo achieved *today* (drives the combo quest).
+  let dailyBestCombo = 0;
+  let comboRun = 0;
+  for (const a of todayAttempts) {
+    comboRun = a.correct ? comboRun + 1 : 0;
+    if (comboRun > dailyBestCombo) dailyBestCombo = comboRun;
+  }
+
+  // Daily/weekly XP goals from the earliest survey answers (else default).
+  let goals = { dailyXp: 40, weeklyXp: 200 };
+  const firstAnswers = curricula.find((c) => c.answers)?.answers;
+  if (firstAnswers) goals = deriveXpGoals(firstAnswers as SurveyAnswers);
 
   // Streak: length of the consecutive-day run ending on the last active day.
   const sortedDays = Array.from(activeDays).sort();
@@ -251,12 +275,12 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
     lastActiveDate,
     dailyAnswered,
     dailyDate: today,
-    dailyXp: 0,
-    dailyCorrect: 0,
-    dailyBestCombo: 0,
-    weekXp: 0,
-    weekKey: null,
-    goals: { dailyXp: 40, weeklyXp: 200 },
+    dailyXp,
+    dailyCorrect,
+    dailyBestCombo,
+    weekXp,
+    weekKey: thisWeek,
+    goals,
     streakFreezes: 2,
     earnedBadges: [],
     skills,
@@ -267,8 +291,6 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
       periodEnd: user?.currentPeriodEnd ? user.currentPeriodEnd.toISOString() : null,
     },
   };
-  state.earnedBadges = evaluateBadges(state);
-
   // ---- v2: subarea mastery levels (concept-deduped, survey-seeded) ----
   // Distinct mastered concepts + distinct answered/correct questions per subarea.
   const masteredBySub = new Map<string, Set<string>>();
@@ -351,6 +373,9 @@ export async function reconstructUserState(userId: string): Promise<UserState> {
     };
   }
   state.mastery = mastery;
+
+  // Badges last, so mastery trophies (Expert skills) are counted.
+  state.earnedBadges = evaluateBadges(state);
 
   return state;
 }

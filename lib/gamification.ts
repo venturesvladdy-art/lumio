@@ -2,6 +2,7 @@ import type { SurveyAnswers } from "@/lib/survey/types";
 import type {
   DailyQuests,
   I18nText,
+  MasteryLevel,
   Quest,
   UserState,
   XpGoals,
@@ -77,6 +78,8 @@ export interface Aggregate {
   xp: number;
   level: number;
   accuracy: number; // 0..100
+  /** number of skills at Expert mastery (drives mastery badges/trophies) */
+  expertSkills: number;
 }
 
 export function aggregate(state: UserState): Aggregate {
@@ -88,6 +91,9 @@ export function aggregate(state: UserState): Aggregate {
     correct += p.correctItemIds.length;
     bestCombo = Math.max(bestCombo, p.bestCombo);
   }
+  const expertSkills = state.mastery
+    ? Object.values(state.mastery).filter((m) => m.level === "expert").length
+    : 0;
   return {
     answered,
     correct,
@@ -97,6 +103,7 @@ export function aggregate(state: UserState): Aggregate {
     xp: state.xp,
     level: levelInfo(state.xp).level,
     accuracy: answered > 0 ? Math.round((correct / answered) * 100) : 0,
+    expertSkills,
   };
 }
 
@@ -246,6 +253,22 @@ export const BADGES: BadgeDef[] = [
     tier: "gold",
     progress: (a) => [a.xp, 1000],
   },
+  {
+    id: "skill-master",
+    name: { en: "Skill Master", pl: "Mistrz umiejętności" },
+    desc: { en: "Reach Expert in any skill", pl: "Osiągnij poziom Ekspert w dowolnej umiejętności" },
+    icon: "Medal",
+    tier: "gold",
+    progress: (a) => [a.expertSkills, 1],
+  },
+  {
+    id: "mastermind",
+    name: { en: "Mastermind", pl: "Mózg operacji" },
+    desc: { en: "Master 3 different skills", pl: "Opanuj 3 różne umiejętności" },
+    icon: "Award",
+    tier: "gold",
+    progress: (a) => [a.expertSkills, 3],
+  },
 ];
 
 export function getBadge(id: string): BadgeDef | undefined {
@@ -293,6 +316,32 @@ export function badgesForDisplay(
       if (x.prog.earned) return tierRank[x.badge.tier] - tierRank[y.badge.tier];
       return y.prog.pct - x.prog.pct; // locked: closest first
     });
+}
+
+/** ---- Per-skill mastery trophies ---- */
+
+export interface SkillTrophy {
+  skillId: string;
+  level: MasteryLevel;
+  pct: number; // 0..100 overall mastery of the skill
+  earned: boolean; // true once the skill hits Expert
+}
+
+/**
+ * One trophy per skill the learner has touched, earned at Expert mastery.
+ * Earned first, then closest-to-mastered. Empty until the mastery system has
+ * data (tracking tiers / DB mode), so it renders nothing for guests.
+ */
+export function masteryTrophies(state: UserState): SkillTrophy[] {
+  if (!state.mastery) return [];
+  return Object.values(state.mastery)
+    .map((m) => ({
+      skillId: m.skillId,
+      level: m.level,
+      pct: m.pct,
+      earned: m.level === "expert",
+    }))
+    .sort((a, b) => (a.earned !== b.earned ? (a.earned ? -1 : 1) : b.pct - a.pct));
 }
 
 /** Combo bonus XP for a streak of correct answers (caps to keep things sane). */
